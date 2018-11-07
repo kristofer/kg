@@ -11,7 +11,7 @@ char_t get_at(buffer_t *bp, point_t pt)
 	return (*ptr(bp, pt));
 }
 
-static char_t symbols[] = "{}[]()!'£$%^&*-+=:;@~#<>,.?/\\|";
+static char_t symbols[] = "{}[]()!'£$^&*-+=:;@~#<>,.?/\\|"; // minus % sign!!
 
 int is_symbol(char_t c)
 {
