@@ -63,28 +63,6 @@ type Keymapt struct {
 	Do       *func() // function to call for Keymap-ping
 }
 
-type Buffer struct {
-	b_next    *Buffer /* Link to next buffer_t */
-	b_mark    Point   /* the mark */
-	b_point   Point   /* the point */
-	b_cpoint  Point   /* the original current point, used for mutliple window displaying */
-	b_page    Point   /* start of page */
-	b_epage   Point   /* end of page */
-	b_reframe Point   /* force a reframe of the display */
-	b_cnt     int     /* count of windows referencing this buffer */
-	b_size    int     /* current size of text being edited (not including gap) */
-	b_psize   int     /* previous size */
-	b_buf     *string /* start of buffer */
-	b_ebuf    *string /* end of buffer */
-	b_gap     *string /* start of gap */
-	b_egap    *string /* end of gap */
-	b_row     int     /* cursor row */
-	b_col     int     /* cursor col */
-	b_fname   string  //[NAME_MAX + 1]; /* filename */
-	b_bname   string  //[STRBUF_S];   /* buffer name */
-	b_flags   byte    /* buffer flags */
-}
-
 type Window struct {
 	w_next   *Window /* Next window */
 	w_bufp   *Buffer /* Buffer displayed in window */

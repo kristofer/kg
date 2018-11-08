@@ -4,23 +4,47 @@ package kg
 * Buffer
  */
 
-func buffer_init(bp *Buffer) {
-	bp.b_mark = NOMARK
-	bp.b_point = 0
-	bp.b_cpoint = 0
-	bp.b_page = 0
-	bp.b_epage = 0
-	bp.b_reframe = 0
-	bp.b_size = 0
-	bp.b_psize = 0
-	bp.b_flags = 0
-	bp.b_cnt = 0
-	bp.b_buf = nil
-	bp.b_ebuf = nil
-	bp.b_gap = nil
-	bp.b_egap = nil
-	bp.b_next = nil
-	bp.b_fname = ""
+type Buffer struct {
+	Next      *Buffer /* Link to next buffer_t */
+	Mark      Point   /* the mark */
+	Point     Point   /* the point */
+	CurPoint  Point   /* the original current point, used for mutliple window displaying */
+	PageStart Point   /* start of page */
+	PageEnd   Point   /* end of page */
+	Reframe   Point   /* force a reframe of the display */
+	WinCount  int     /* count of windows referencing this buffer */
+	TextSize  int     /* current size of text being edited (not including gap) */
+	PrevSize  int     /* previous size */
+	// BufferStart *string /* start of buffer */
+	// BufferEnd   *string /* end of buffer */
+	// GapStart    *string /* start of gap */
+	// GapEnd      *string /* end of gap */
+	Buffer     *GapBuffer /* actual buffer*/
+	CursorRow  int        /* cursor row */
+	CursorCol  int        /* cursor col */
+	Filename   string     //[NAME_MAX + 1]; /* filename */
+	Buffername string     //[STRBUF_S];   /* buffer name */
+	Flags      byte       /* buffer flags */
+}
+
+func BufferInit(bp *Buffer) {
+	bp.Buffer = NewGapBuffer()
+	bp.Mark = NOMARK
+	bp.Point = 0
+	bp.CurPoint = 0
+	bp.PageStart = 0
+	bp.PageEnd = 0
+	bp.Reframe = 0
+	bp.TextSize = 0
+	bp.PrevSize = 0
+	bp.Flags = 0
+	bp.WinCount = 0
+	// bp.BufferStart = nil
+	// bp.BufferEnd = nil
+	// bp.GapStart = nil
+	// bp.GapEnd = nil
+	bp.Next = nil
+	bp.Filename = ""
 }
 
 /* Find a buffer by filename or create if requested */
@@ -30,10 +54,10 @@ func find_buffer(fname string, cflag bool) *Buffer {
 
 	bp = Bheadp
 	for bp != nil {
-		if string.Compare(fname, bp.b_fname) == 0 || string.Compare(fname, bp.b_bname) == 0 {
+		if string.Compare(fname, bp.filename) == 0 || string.Compare(fname, bp.Buffername) == 0 {
 			return bp
 		}
-		bp = bp.b_next
+		bp = bp.Next
 	}
 
 	if cflag != false {
@@ -41,65 +65,68 @@ func find_buffer(fname string, cflag bool) *Buffer {
 		// 	return (0);
 		bp = make(Buffer())
 
-		buffer_init(bp)
+		BufferInit(bp)
 		//assert(bp != nil);
 
 		/* find the place in the list to insert this buffer */
 		if Bheadp == nil {
 			Bheadp = bp
-		} else if string.Compare(Bheadp.b_fname, fname) > 0 {
+		} else if string.Compare(Bheadp.filename, fname) > 0 {
 			/* insert at the begining */
-			bp.b_next = Bheadp
+			bp.Next = Bheadp
 			Bheadp = bp
 		} else {
-			for sb = Bheadp; sb.b_next != nil; sb = sb.b_next {
-				if string.Compare(sb.b_next.b_fname, fname) > 0 {
+			for sb = Bheadp; sb.Next != nil; sb = sb.Next {
+				if string.Compare(sb.Next.filename, fname) > 0 {
 					break
 				}
 			}
 			/* and insert it */
-			bp.b_next = sb.b_next
-			sb.b_next = bp
+			bp.Next = sb.Next
+			sb.Next = bp
 		}
 	}
 	return bp
 }
 
 /* unlink from the list of buffers, free associated memory, assumes buffer has been saved if modified */
-func delete_buffer(bp *Buffer) bool {
+func DeleteBuffer(bp *Buffer) bool {
 	var sb *Buffer
 
 	/* we must have switched to a different buffer first */
-	assert(bp != Curbp)
+	//assert(bp != Curbp)
+	if bp != Curbp {
+		/* if buffer is the head buffer */
+		if bp == Bheadp {
+			Bheadp = bp.Next
+		} else {
+			/* find place where the bp buffer is next */
+			for sb = Bheadp; sb.Next != bp && sb.Next != nil; sb = sb.Next {
+			}
+			if sb.Next == bp || sb.Next == nil {
+				sb.Next = bp.Next
+			}
+		}
 
-	/* if buffer is the head buffer */
-	if bp == Bheadp {
-		Bheadp = bp.b_next
+		/* now we can delete */
+		//free(bp.BufferStart);
+		bp.BufferStart = nil
+		//free(bp);
+		bp = nil
 	} else {
-		/* find place where the bp buffer is next */
-		for sb = Bheadp; sb.b_next != bp && sb.b_next != nil; sb = sb.b_next {
-		}
-		if sb.b_next == bp || sb.b_next == nil {
-			sb.b_next = bp.b_next
-		}
+		return false
 	}
-
-	/* now we can delete */
-	//free(bp.b_buf);
-	bp.b_buf = nil
-	//free(bp);
-	bp = nil
 	return true
 }
 
-func next_buffer() {
+func NextBuffer() {
 	// assert(Curbp != nil);
 	// assert(Bheadp != nil);
 	if Curbp != nil && Bheadp != nil {
 		disassociate_b(Curwp)
-		//Curbp = (Curbp.b_next != nil ? Curbp.b_next : Bheadp);
-		if Curbp.b_next != nil {
-			Curbp = Curbp.b_next
+		//Curbp = (Curbp.Next != nil ? Curbp.Next : Bheadp);
+		if Curbp.Next != nil {
+			Curbp = Curbp.Next
 
 		} else {
 			Curbp = Bheadp
@@ -108,28 +135,28 @@ func next_buffer() {
 	}
 }
 
-func get_buffer_name(bp *Buffer) string {
-	if bp.b_fname != nil && bp.b_fname != "" {
-		return bp.b_fname
+func GetBufferName(bp *Buffer) string {
+	if bp.filename != nil && bp.filename != "" {
+		return bp.filename
 	}
-	return bp.b_bname
+	return bp.Buffername
 }
 
-func count_buffers() int {
+func CountBuffers() int {
 	var bp *Buffer
 	i := 0
 
-	for bp = Bheadp; bp != nil; bp = bp.b_next {
+	for bp = Bheadp; bp != nil; bp = bp.Next {
 		i++
 	}
 	return i
 }
 
-func modified_buffers() bool {
+func ModifiedBuffers() bool {
 	var bp *Buffer
 
-	for bp = Bheadp; bp != nil; bp = bp.b_next {
-		if bp.b_flags & B_MODIFIED {
+	for bp = Bheadp; bp != nil; bp = bp.Next {
+		if bp.Flags & B_MODIFIED {
 			return true
 		}
 	}

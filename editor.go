@@ -49,7 +49,7 @@ func StartEditor(argv []string, argc int) {
 	// init_pair(ID_SINGLE_STRING, COLOR_YELLOW, COLOR_BLACK);  /* single quoted strings */
 	// init_pair(ID_DOUBLE_STRING, COLOR_YELLOW, COLOR_BLACK);  /* double quoted strings */
 
-	if 1 < argc {
+	if argc > 1 {
 		Curbp = find_buffer(argv[1], TRUE)
 		insert_file(argv[1], FALSE)
 		/* Save filename irregardless of load() success. */
