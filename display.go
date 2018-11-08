@@ -7,13 +7,23 @@ package kg
 //#include "header.h"
 
 /* Reverse scan for start of logical line containing offset */
-point_t lnstart(buffer_t *bp, register point_t off)
-{
-	register char_t *p;
-	do
-		p = ptr(bp, --off);
-	while (bp->b_buf < p && *p != '\n');
-	return (bp->b_buf < p ? ++off : 0);
+func (bp *Buffer)LineStart(off Point) Point {
+	// register char_t *p;
+	// do
+	// 	p = ptr(bp, --off);
+	// while (bp->b_buf < p && *p != '\n');
+	// return (bp->b_buf < p ? ++off : 0);
+	off -= 1
+	p := bp.Ptr(off)
+	for p >= 0 && bp.ReadRune(p) != '\n' {
+		off -= 1
+		p = bp.Ptr(off)
+	}
+	if p > 0 {
+		off =+ 1
+		return off
+	}
+	return 0
 }
 
 /* Forward scan for start of logical line segment (corresponds to screen line)  containing 'finish' */
