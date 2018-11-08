@@ -26,6 +26,7 @@ import (
 // window_t *curwp;
 // window_t *wheadp;
 
+// StartEditor is the old C main function
 func StartEditor(argv []string, argc int) {
 
 	// Still need for Termbox...
