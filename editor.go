@@ -77,9 +77,7 @@ var (
 // typedef unsigned char char_t;
 //type Char character
 
-// typedef long point_t;
-type Point int64
-
+// typedef long point_t
 // typedef struct keymap_t {
 // 	char *key_desc;                 /* name of bound function */
 // 	char *key_bytes;		/* the string of bytes when this key is pressed */

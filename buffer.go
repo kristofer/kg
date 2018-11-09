@@ -8,12 +8,12 @@ import "strings"
 
 type Buffer struct {
 	Next      *Buffer /* b_next Link to next buffer_t */
-	Mark      Point   /* b_mark the mark */
-	Point     Point   /* b_point the point */
-	OrigPoint Point   /* b_cpoint the original current point, used for mutliple window displaying */
-	PageStart Point   /* b_page start of page */
-	PageEnd   Point   /* b_epage end of page */
-	Reframe   Point   /* b_reframe force a reframe of the display */
+	Mark      int     /* b_mark the mark */
+	Point     int     /* b_point the point */
+	OrigPoint int     /* b_cpoint the original current point, used for mutliple window displaying */
+	PageStart int     /* b_page start of page */
+	PageEnd   int     /* b_epage end of page */
+	Reframe   int     /* b_reframe force a reframe of the display */
 	WinCount  int     /* b_cnt count of windows referencing this buffer */
 	TextSize  int     /* b_size current size of text being edited (not including gap) */
 	PrevSize  int     /* b_psize previous size */
@@ -49,14 +49,14 @@ func BufferInit(bp *Buffer) {
 	bp.Filename = ""
 }
 
-func (bp *Buffer) GetCurrentRune() (*rune, Point) {
+func (bp *Buffer) GetCurrentRune() (*rune, int) {
 	return &(bp.Buffer[Point]), Point
 }
-func (bp *Buffer) GetCurrentRune(arb Point) (*rune, Point) {
+func (bp *Buffer) GetCurrentRune(arb int) (*rune, int) {
 	return &(bp.Buffer[arb]), arb
 }
-func (bp *Buffer) EndOfBuffer() Point {
-	return Point{(bp.TextSize - 1)}
+func (bp *Buffer) EndOfBuffer() int {
+	return bp.TextSize - 1
 }
 
 /* Find a buffer by filename or create if requested */
@@ -173,4 +173,129 @@ func ModifiedBuffers() bool {
 		}
 	}
 	return false
+}
+
+/* Enlarge gap by n chars, position of gap cannot change */
+func (bp *Buffer) GrowGap(n int) bool {
+	//char_t *new;
+	// var buflen, newlen, xgap, xegap int
+
+	// assert(bp->b_buf <= bp->b_gap);
+	// assert(bp->b_gap <= bp->b_egap);
+	// assert(bp->b_egap <= bp->b_ebuf);
+
+	// xgap = bp->b_gap - bp->b_buf;
+	// xegap = bp->b_egap - bp->b_buf;
+	// buflen = bp->b_ebuf - bp->b_buf;
+
+	// /* reduce number of reallocs by growing by a minimum amount */
+	// n = (n < MIN_GAP_EXPAND ? MIN_GAP_EXPAND : n);
+	// newlen = buflen + n * sizeof (char_t);
+
+	// if (buflen == 0) {
+	// 	if (newlen < 0 || MAX_SIZE_T < newlen)
+	// 		fatal("%s: Failed to allocate required memory.\n");
+	// 	new = (char_t*) malloc((size_t) newlen);
+	// 	if (new == NULL)
+	// 		fatal("%s: Failed to allocate required memory.\n");	/* Cannot edit a file without a buffer. */
+	// } else {
+	// 	if (newlen < 0 || MAX_SIZE_T < newlen) {
+	// 		msg("Failed to allocate required memory");
+	// 		return (FALSE);
+	// 	}
+	// 	new = (char_t*) realloc(bp->b_buf, (size_t) newlen);
+	// 	if (new == NULL) {
+	// 		msg("Failed to allocate required memory");    /* Report non-fatal error. */
+	// 		return (FALSE);
+	// 	}
+	// }
+
+	// /* Relocate inters in new buffer and append the new
+	//  * extension to the end of the gap.
+	//  */
+	// bp->b_buf = new;
+	// bp->b_gap = bp->b_buf + xgap;
+	// bp->b_ebuf = bp->b_buf + buflen;
+	// bp->b_egap = bp->b_buf + newlen;
+	// while (xegap < buflen--)
+	// 	*--bp->b_egap = *--bp->b_ebuf;
+	// bp->b_ebuf = bp->b_buf + newlen;
+
+	// assert(bp->b_buf < bp->b_ebuf);          /* Buffer must exist. */
+	// assert(bp->b_buf <= bp->b_gap);
+	// assert(bp->b_gap < bp->b_egap);          /* Gap must grow only. */
+	// assert(bp->b_egap <= bp->b_ebuf);
+	// return (TRUE);
+	return false
+}
+
+//int_t movegap(bp *Buffer, int_t offset)
+func (bp *Buffer) MoveGap(offset int) int {
+
+	// char_t *p = ptr(bp, offset);
+	// while (p < bp->b_gap)
+	// 	*--bp->b_egap = *--bp->b_gap;
+	// while (bp->b_egap < p)
+	// 	*bp->b_gap++ = *bp->b_egap++;
+	// assert(bp->b_gap <= bp->b_egap);
+	// assert(bp->b_buf <= bp->b_gap);
+	// assert(bp->b_egap <= bp->b_ebuf);
+	// return (pos(bp, bp->b_egap));
+	return 0
+}
+
+/* Given a buffer offset, convert it to a inter into the buffer */
+//char_t * ptr(bp *Buffer, register int_t offset)
+func (bp *Buffer) Ptr(offset int) int {
+	// if (offset < 0)
+	// 	return (bp->b_buf);
+	// return (bp->b_buf+offset + (bp->b_buf + offset < bp->b_gap ? 0 : bp->b_egap-bp->b_gap));
+	return 0
+}
+
+/* Given a inter into the buffer, convert it to a buffer offset */
+//int_t pos(bp *Buffer, register char_t *cp)
+func (bp *Buffer) Pos(cp int) int {
+	// assert(bp->b_buf <= cp && cp <= bp->b_ebuf);
+	// return (cp - bp->b_buf - (cp < bp->b_egap ? 0 : bp->b_egap - bp->b_gap));
+	return 0
+}
+
+/* find the int for start of line ln */
+func (bp *Buffer) LineToint(ln int) int {
+	// int_t end_p = pos(curbp, curbp->b_ebuf);
+	// int_t p, start;
+
+	// for (p=0, start=0; p < end_p; p++) {
+	// 	if ( *(ptr(curbp, p)) == '\n') {
+	// 		if (--ln == 0)
+	// 			return start;
+	// 		if (p + 1 < end_p)
+	// 			start = p + 1;
+	// 	}
+	// }
+	return 0
+}
+
+/* scan buffer and fill in curline and lastline */
+func (bp *Buffer) GetLineStats(curline int, lastline int) {
+	// int_t end_p = pos(curbp, curbp->b_ebuf);
+	// int_t p;
+	// int line;
+
+	// *curline = -1;
+
+	// for (p=0, line=0; p < end_p; p++) {
+	// 	line += (*(ptr(curbp,p)) == '\n') ? 1 : 0;
+	// 	*lastline = line;
+
+	// 	if (*curline == -1 && p == curbp->b_int) {
+	// 		*curline = (*(ptr(curbp,p)) == '\n') ? line : line + 1;
+	// 	}
+	// }
+
+	// *lastline = *lastline + 1;
+
+	// if (curbp->b_int == end_p)
+	// 	*curline = *lastline;
 }
