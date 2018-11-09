@@ -237,62 +237,79 @@ void display_prompt_and_response(char *prompt, char *response)
 	clrtoeol();
 }
 
-void update_display()
+void UpdateDisplay()
 {   
-	window_t *wp;
-	buffer_t *bp;
+	//window_t *wp;
+	//buffer_t *bp;
 
-	bp = CurrentWin.w_bufp;
-	bp.b_cpoint = bp.b_point; /* cpoint only ever set here */
+	bp := CurrentWin.Buffer
+	bp.OrigPoint = bp.Point /* cpoint only ever set here */
 	
 	/* only one window */
-	if (wheadp.w_next == nil) {
-		display(CurrentWin, TRUE);
-		refresh();
-		bp.b_psize = bp.b_size;
+	if (Wheadp.Next == nil) {
+		display(CurrentWin, true)
+		refresh()
+		bp.PrevSize = bp.TextSize
 		return;
 	}
 
-	display(CurrentWin, false); /* this is key, we must call our win first to get accurate page and epage etc */
+	display(CurrentWin, false) /* this is key, we must call our win first to get accurate page and epage etc */
 	
 	/* never CurrentWin,  but same buffer in different window or update flag set*/
-	for (wp=wheadp; wp != nil; wp = wp.w_next) {
-		if (wp != CurrentWin && (wp.w_bufp == bp || wp.w_update)) {
-			w2b(wp);
-			display(wp, false);
+	for (wp := wheadp; wp != nil; wp = wp.Next) {
+		if (wp != CurrentWin && (wp.Buffer == bp || wp.Updated)) {
+			wSyncBuffer2b(wp)
+			display(wp, false)
 		}
 	}
 
 	/* now display our window and buffer */
-	w2b(CurrentWin);
-	dispmsg();
-	move(CurrentWin.w_row, CurrentWin.w_col); /* set cursor for CurrentWin */
-	refresh();
-	bp.b_psize = bp.b_size;  /* now safe to save previous size for next time */
+	w2b(CurrentWin)
+	dispmsg()
+	move(CurrentWin.CurRow, CurrentWin.CurCol) /* set cursor for CurrentWin */
+	refresh()
+	bp.PrevSize = bp.TextSize  /* now safe to save previous size for next time */
 }
 
-void w2b(window_t *w)
-{
-	w.w_bufp.b_point = w.w_point;
-	w.w_bufp.b_page = w.w_page;
-	w.w_bufp.b_epage = w.w_epage;
-	w.w_bufp.b_row = w.w_row;
-	w.w_bufp.b_col = w.w_col;
+void SyncBuffer(w *Window) { //sync w2b win to buff
+	b := w.Buffer
+	// w.w_bufp.b_point = w.w_point;
+	b.Point = w.Point
+	// w.w_bufp.b_page = w.w_page;
+	b.PageStart = w.WinStart
+	// w.w_bufp.b_epage = w.w_epage;
+	b.PageEnd = w.WnEnd
+	// w.w_bufp.b_row = w.w_row;
+	b.CursorRow = w.CurRow
+	// w.w_bufp.b_col = w.w_col;
+	b.CursorCol = w.CurCol
 	
 	/* fixup pointers in other windows of the same buffer, if size of edit text changed */
-	if (w.w_bufp.b_point > w.w_bufp.b_cpoint) {
-		w.w_bufp.b_point += (w.w_bufp.b_size - w.w_bufp.b_psize);
-		w.w_bufp.b_page += (w.w_bufp.b_size - w.w_bufp.b_psize);
-		w.w_bufp.b_epage += (w.w_bufp.b_size - w.w_bufp.b_psize);
-	}
+	// if (w.w_bufp.b_point > w.w_bufp.b_cpoint) {
+		if b.Point > b.OrigPoint {
+			sizeDelta := b.TextSize - b.PrevSize
+	// 	w.w_bufp.b_point += (w.w_bufp.b_size - w.w_bufp.b_psize);
+		b.Point += sizeDelta
+	// 	w.w_bufp.b_page += (w.w_bufp.b_size - w.w_bufp.b_psize);
+		b.PageStart += sizeDelta
+	// 	w.w_bufp.b_epage += (w.w_bufp.b_size - w.w_bufp.b_psize);
+		b.PageEnd += sizeDelta
+	 }
 }
 
-void b2w(window_t *w)
+func PushBuffer2Window(window_t *w)
 {
-	w.w_point = w.w_bufp.b_point;
-	w.w_page = w.w_bufp.b_page;
-	w.w_epage = w.w_bufp.b_epage;
-	w.w_row = w.w_bufp.b_row;
-	w.w_col = w.w_bufp.b_col;
-	w.w_bufp.b_size = (w.w_bufp.b_ebuf - w.w_bufp.b_buf) - (w.w_bufp.b_egap - w.w_bufp.b_gap);
+	b := w.Buffer
+	// w.w_point = w.w_bufp.b_point;
+	w.Point = b.Point
+	// w.w_page = w.w_bufp.b_page;
+	w.WinStart = b.PageStart
+	// w.w_epage = w.w_bufp.b_epage;
+	w.WinEnd = b.PageEnd
+	// w.w_row = w.w_bufp.b_row;
+	w.CurRow = b.CursorRow
+	// w.w_col = w.w_bufp.b_col;
+	w.CurRow = b.CursorRow
+	// w.w_bufp.b_size = (w.w_bufp.b_ebuf - w.w_bufp.b_buf) - (w.w_bufp.b_egap - w.w_bufp.b_gap);
+	b.TextSize = b.Buffer.BufferLen()
 }

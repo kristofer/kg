@@ -34,7 +34,11 @@ func (r *GapBuffer) GetText() string {
 	return string(ret)
 }
 
-func (r *GapBuffer) gapStart() int {
+func (r *GapBuffer) BufferLen() int {
+	return r.preLen+r.postLen
+}
+
+unc (r *GapBuffer) gapStart() int {
 	return r.preLen
 }
 
