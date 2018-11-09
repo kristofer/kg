@@ -27,78 +27,112 @@ func (bp *Buffer)LineStart(off Point) Point {
 }
 
 /* Forward scan for start of logical line segment (corresponds to screen line)  containing 'finish' */
-point_t segstart(buffer_t *bp, point_t start, point_t finish)
-{
-	char_t *p;
-	int c = 0;
-	point_t scan = start;
+func SegStart(bp *Buffer, start Point, finish Point) Point {
+	var p *rune
+	c := 0
+	scan := start
 
-	while (scan < finish) {
-		p = ptr(bp, scan);
+	for scan < finish {
+		//p = ptr(bp, scan);
+		p = bp.GetCurrentRune()
 		if (*p == '\n') {
-			c = 0;
-			start = scan + 1;
+			c = 0
+			start = scan + 1
 		} else if (COLS <= c) {
-			c = 0;
-			start = scan;
+			c = 0
+			start = scan
 		}
-		scan += utf8_size(*ptr(bp,scan));
-		c += *p == '\t' ? 8 - (c & 7) : 1;
+		//scan += utf8_size(*ptr(bp,scan));
+		scan += 1
+		//c += *p == '\t' ? 8 - (c & 7) : 1;
+		if *p == '\t' {
+			c += 8 - (c % 7)
+		} else {
+			c += 1
+		}
 	}
-	return (c < COLS ? start : finish);
+	// (c < COLS ? start : finish);
+	if c < COLS {
+		return start
+	}
+	return finish
 }
 
 /* Forward scan for start of logical line segment following 'finish' */
-point_t segnext(buffer_t *bp, point_t start, point_t finish)
-{
-	char_t *p;
-	int c = 0;
+func SegNext(bp *Buffer, start, finish Point) Point {
+	// char_t *p;
+	// int c = 0;
+	var p *rune
+	var pptr Point
+	c := 0
 
-	point_t scan = segstart(bp, start, finish);
-	for (;;) {
-		p = ptr(bp, scan);
-		if (bp.b_ebuf <= p || COLS <= c)
-			break;
-		scan += utf8_size(*ptr(bp,scan));
-		if (*p == '\n')
-			break;
-		c += *p == '\t' ? 8 - (c & 7) : 1;
+	scan := SegStart(bp, start, finish)
+	for {
+		//p = ptr(bp, scan);
+		p, pptr = bp.GetCurrentRune()
+		//if (bp.b_ebuf <= p || COLS <= c)
+		if COLS <= c {
+			break
+		}
+		//scan += utf8_size(*ptr(bp,scan));
+		scan += 1
+		if *p == '\n' {
+			break
+		}
+		//c += *p == '\t' ? 8 - (c & 7) : 1;
+		if *p == '\t' {
+			c += 8 - (c % 7)
+		} else {
+			c += 1
+		}
 	}
-	return (p < bp.b_ebuf ? scan : pos(bp, bp.b_ebuf));
+	//(p < bp.b_ebuf ? scan : );
+	if p < bp.EndOfBuffer() {
+		return scan
+	}
+	return Pos(bp, bp.EndOfBuffer())
 }
 
 /* Move up one screen line */
-point_t upup(buffer_t *bp, point_t off)
-{
-	point_t curr = lnstart(bp, off);
-	point_t seg = segstart(bp, curr, off);
-	if (curr < seg)
-		off = segstart(bp, curr, seg-1);
-	else
-		off = segstart(bp, lnstart(bp,curr-1), curr-1);
-	return (off);
+func UpUp(bp *Buffer, off Point) Point {
+	curr := bp.LineStart(off);
+	seg := SegStart(bp, curr, off);
+	if (curr < seg) {
+		off = SegStart(bp, curr, seg-1);
+	} else {
+		off = SegStart(bp, bp.LineStart(curr-1), curr-1)
+	}
+	return off
 }
 
 /* Move down one screen line */
-point_t dndn(buffer_t *bp, point_t off)
-{
-	return (segnext(bp, lnstart(bp,off), off));
+func (bp *Buffer) DownDown(off Point) Point {
+	return (SegNext(bp, bp.LineStart(off), off));
 }
 
 /* Return the offset of a column on the specified line */
-point_t lncolumn(buffer_t *bp, point_t offset, int column)
-{
-	int c = 0;
-	char_t *p;
-	while ((p = ptr(bp, offset)) < bp.b_ebuf && *p != '\n' && c < column) {
-		c += *p == '\t' ? 8 - (c & 7) : 1;
-		offset += utf8_size(*ptr(bp,offset));
+func (bp *Buffer)OffsetForColumn(offset Point, column int) Point {
+	// char_t *p;
+	// int c = 0;
+	var p *rune
+	c := 0
+	Ptr := bp.Ptr(offset)
+	p = bp.GetCurrentRune(Ptr)
+	for Ptr < bp.b_ebuf && *p != '\n' && c < column {
+		//c += *p == '\t' ? 8 - (c & 7) : 1;
+		if *p == '\t' {
+			c += 8 - (c % 7)
+		} else {
+			c += 1
+		}
+		offset += 1
+		Ptr := bp.Ptr(offset)
+		p = bp.GetCurrentRune(Ptr)
 	}
-	return (offset);
+	return offset
 }
 
-void display(window_t *wp, int flag)
-{
+func (wp *Window)Display(flag byte) {
 	char_t *p;
 	int i, j, k, nch;
 	buffer_t *bp = wp.w_bufp;
@@ -106,14 +140,14 @@ void display(window_t *wp, int flag)
 	
 	/* find start of screen, handle scroll up off page or top of file  */
 	/* point is always within b_page and b_epage */
-	if (bp.b_point < bp.b_page)
-		bp.b_page = segstart(bp, lnstart(bp,bp.b_point), bp.b_point);
+	if (bp.Point < bp.b_page)
+		bp.b_page = SegStart(bp, bp.LineStart(bp.Point), bp.Point);
 
 	/* reframe when scrolled off bottom */
-	if (bp.b_reframe == 1 || (bp.b_epage <= bp.b_point && curbp.b_point != pos(curbp, curbp.b_ebuf))) {
+	if (bp.b_reframe == 1 || (bp.b_epage <= bp.Point && curbp.Point != pos(curbp, curbp.b_ebuf))) {
 		bp.b_reframe = 0;
 		/* Find end of screen plus one. */
-		bp.b_page = dndn(bp, bp.b_point);
+		bp.b_page = dndn(bp, bp.Point);
 		/* if we scoll to EOF we show 1 blank line at bottom of screen */
 		if (pos(bp, bp.b_ebuf) <= bp.b_page) {
 			bp.b_page = pos(bp, bp.b_ebuf);
@@ -126,16 +160,16 @@ void display(window_t *wp, int flag)
 			bp.b_page = upup(bp, bp.b_page);
 	}
 
-	move(wp.w_top, 0); /* start from top of window */
-	i = wp.w_top;
+	move(wp.TopPt, 0); /* start from top of window */
+	i = wp.TopPt;
 	j = 0;
 	bp.b_epage = bp.b_page;
 	set_parse_state(bp, bp.b_epage); /* are we in a multline comment ? */
 
 	/* paint screen from top of page until we hit maxline */ 
-	while (1) {
+	for {
 		/* reached point - store the cursor position */
-		if (bp.b_point == bp.b_epage) {
+		if (bp.Point == bp.b_epage) {
 			bp.b_row = i;
 			bp.b_col = j;
 		}
@@ -173,72 +207,83 @@ void display(window_t *wp, int flag)
 
 	/* replacement for clrtobot() to bottom of window */
 	for (k=i; k < wp.w_top + wp.w_rows; k++) {
-		move(k, j); /* clear from very last char not start of line */
-		clrtoeol();
-		j = 0; /* thereafter start of line */
+		move(k, j) /* clear from very last char not start of line */
+		clrtoeol()
+		j = 0 /* thereafter start of line */
 	}
 
-	b2w(wp); /* save buffer stuff on window */
-	modeline(wp);
+	//b2w(wp); /* save buffer stuff on window */
+	PushBuffer2Window(wp)
+	modeline(wp)
 	if (wp == CurrentWin && flag) {
-		dispmsg();
-		move(bp.b_row, bp.b_col); /* set cursor */
-		refresh();
+		DisplayMsg()
+		move(bp.CursorRow, bp.CursorCol) /* set cursor */
+		refresh()
 	}
-	wp.w_update = false;
+	wp.Updated = false
 }
 
-void display_utf8(buffer_t *bp, char_t c, int n)
-{
-	char sbuf[6];
-	int i = 0;
+func DisplayUTF8(bp *Buffer, sbuf string) {
+	// char sbuf[6];
+	// int i = 0;
 
-	for (i=0; i<n; i++)
-		sbuf[i] = *ptr(bp, bp.b_epage + i);
-	sbuf[n] = '\0';
+	// for (i=0; i<n; i++)
+	// 	sbuf[i] = *ptr(bp, bp.b_epage + i);
+	// sbuf[n] = '\0';
 	addstr(sbuf);
 }
 
-void modeline(window_t *wp)
-{
-	int i;
-	char lch, mch, och;
+func ModeLine(wp *Window) {
+	i := 0
+	var lch, mch, och rune
 	
-	standout();
-	move(wp.w_top + wp.w_rows, 0);
-	lch = (wp == CurrentWin ? '=' : '-');
-	mch = ((wp.w_bufp.b_flags & B_MODIFIED) ? '*' : lch);
-	och = ((wp.w_bufp.b_flags & B_OVERWRITE) ? 'O' : lch);
+	//standout();
+	move(wp.TopPt + wp.Rows, 0)
+	// lch = (wp == CurrentWin ? '=' : '-')
+	if wp == CurrentWin {
+		lch = '='
+	} else {
+		lch = '-'
+	}
+	// mch = ((wp.Buffer.Flags & B_MODIFIED) ? '*' : lch);
+	mch = lch
+	if (wp.Buffer.Flags & B_MODIFIED) != 0 {
+		mch = '*'
+	}
+	// och = ((wp.Buffer.Flags & B_OVERWRITE) ? 'O' : lch);
+	och = lch
+	if wp.Buffer.Flags & B_OVERWRITE != 0 {
+		och = 'O'
+	}
 
-	sprintf(temp, "%c%c%c Atto: %c%c %s",  lch,och,mch,lch,lch, get_buffer_name(wp.w_bufp));
-	addstr(temp);
+	fmt.Sprintf(temp, "%c%c%c Atto: %c%c %s",  lch,och,mch,lch,lch, GetBufferName(wp.Buffer));
+	addstr(temp) // term
 
-	for (i = strlen(temp) + 1; i <= COLS; i++)
-		addch(lch);
-	standend();
+	for i = len(temp) + 1; i <= COLS; i++ {
+		addch(lch) // term
+	}
+	//standend();
 }
 
-void dispmsg()
-{
-	move(MSGLINE, 0);
+func DisplayMsg() {
+	move(MSGLINE, 0); // (Lines-1)
 	if (msgflag) {
 		addstr(msgline);
 		msgflag = false;
 	}
-	clrtoeol();
+	clrtoeol() // term ClearToEndOfLine
 }
 
-void display_prompt_and_response(char *prompt, char *response)
-{
-	mvaddstr(MSGLINE, 0, prompt);
+func DisplayPromptAndResponse(prompt string, response string) {
+	mvaddstr(MSGLINE, 0, prompt) // term
 	/* if we have a value print it and go to end of it */
-	if (response[0] != '\0')
-		addstr(response);
-	clrtoeol();
+	if response != "" {
+		addstr(response) // term
+	}
+	clrtoeol() // term ClearToEndOfLine
 }
 
-void UpdateDisplay()
-{   
+func UpdateDisplay() {   
 	//window_t *wp;
 	//buffer_t *bp;
 
@@ -264,16 +309,16 @@ void UpdateDisplay()
 	}
 
 	/* now display our window and buffer */
-	w2b(CurrentWin)
-	dispmsg()
+	SyncBuffer(CurrentWin)
+	DisplayMsg()
 	move(CurrentWin.CurRow, CurrentWin.CurCol) /* set cursor for CurrentWin */
 	refresh()
 	bp.PrevSize = bp.TextSize  /* now safe to save previous size for next time */
 }
 
-void SyncBuffer(w *Window) { //sync w2b win to buff
+func SyncBuffer(w *Window) { //sync w2b win to buff
 	b := w.Buffer
-	// w.w_bufp.b_point = w.w_point;
+	// w.w_bufp.Point = w.w_point;
 	b.Point = w.Point
 	// w.w_bufp.b_page = w.w_page;
 	b.PageStart = w.WinStart
@@ -285,10 +330,10 @@ void SyncBuffer(w *Window) { //sync w2b win to buff
 	b.CursorCol = w.CurCol
 	
 	/* fixup pointers in other windows of the same buffer, if size of edit text changed */
-	// if (w.w_bufp.b_point > w.w_bufp.b_cpoint) {
+	// if (w.w_bufp.Point > w.w_bufp.b_cpoint) {
 		if b.Point > b.OrigPoint {
 			sizeDelta := b.TextSize - b.PrevSize
-	// 	w.w_bufp.b_point += (w.w_bufp.b_size - w.w_bufp.b_psize);
+	// 	w.w_bufp.Point += (w.w_bufp.b_size - w.w_bufp.b_psize);
 		b.Point += sizeDelta
 	// 	w.w_bufp.b_page += (w.w_bufp.b_size - w.w_bufp.b_psize);
 		b.PageStart += sizeDelta
@@ -297,10 +342,9 @@ void SyncBuffer(w *Window) { //sync w2b win to buff
 	 }
 }
 
-func PushBuffer2Window(window_t *w)
-{
+func PushBuffer2Window(window_t *w) { // b2w
 	b := w.Buffer
-	// w.w_point = w.w_bufp.b_point;
+	// w.w_point = w.w_bufp.Point;
 	w.Point = b.Point
 	// w.w_page = w.w_bufp.b_page;
 	w.WinStart = b.PageStart

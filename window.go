@@ -19,7 +19,7 @@ type Window struct {
 	Mark     Point  // w_mark
 	WinStart Point  // w_page
 	WinEnd   Point  // w_epage
-	TopPt    Point  /* w_top Origin 0 top row of window */
+	TopPt    Point  /* w_top Origin 0 top row of window  on screen */
 	Rows     Point  /* w_rows no. of rows of text in window */
 	CurRow   int    /* w_row cursor row */
 	CurCol   int    /* w_col cursor col */
@@ -73,7 +73,7 @@ func (wp *Window) SplitWindow() {
 	wp.Rows = ntrl
 
 	/* insert it in the list */
-	wp2 = curwp.Next
+	wp2 = Curwp.Next
 	Curwp.Next = wp
 	wp.Next = wp2
 	redraw() /* mark the lot for update */

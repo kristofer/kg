@@ -19,55 +19,6 @@ package kg
 
 //int mkstemp(char *);
 
-const (
-	VERSION          = "Atto 1.20, Public Domain, Mar 2018, by Hugh Barney,  No warranty."
-	PROG_NAME        = "atto"
-	B_MODIFIED       = 0x01 /* modified buffer */
-	B_OVERWRITE      = 0x02 /* overwite mode */
-	MSGLINE          = (LINES - 1)
-	NOMARK           = -1
-	CHUNK            = 8096
-	K_BUFFER_LENGTH  = 256
-	TEMPBUF          = 512
-	STRBUF_L         = 256
-	STRBUF_M         = 64
-	STRBUF_S         = 16
-	MIN_GAP_EXPAND   = 512
-	TEMPFILE         = "/tmp/feXXXXXX"
-	F_NONE           = 0
-	F_CLEAR          = 1
-	ID_DEFAULT       = 1
-	ID_SYMBOL        = 2
-	ID_MODELINE      = 3
-	ID_DIGITS        = 4
-	ID_LINE_COMMENT  = 5
-	ID_BLOCK_COMMENT = 6
-	ID_DOUBLE_STRING = 7
-	ID_SINGLE_STRING = 8
-)
-
-// typedef unsigned char char_t;
-//type Char character
-
-// typedef long point_t;
-type Point int64
-
-// typedef struct keymap_t {
-// 	char *key_desc;                 /* name of bound function */
-// 	char *key_bytes;		/* the string of bytes when this key is pressed */
-// 	void (*func)(void);
-// } keymap_t;
-type Keymapt struct {
-	KeyDesc  string
-	KeyBytes string
-	Do       *func() // function to call for Keymap-ping
-}
-
-var Curbp *Buffer  /* current buffer */
-var Bheadp *Buffer /* head of list of buffers */
-var Curwp *Window
-var Wheadp *Window
-
 /*
  * Some compilers define size_t as a unsigned 16 bit number while
  * Point and off_t might be defined as a signed 32 bit number.
@@ -77,22 +28,6 @@ var Wheadp *Window
  */
 
 //MAX_SIZE_T      ((unsigned long) (size_t) ~0)
-
-var (
-	// done int                /* Quit flag. */
-	Done       bool   /* Quit flag. */
-	Msgflag    bool   /* True if msgline should be displayed. */
-	Nscrap     Point  /* Length of scrap buffer. */
-	Scrap      string /* Allocated scrap buffer. */
-	Input      ch
-	Msgline    string /* Message line input/output buffer. */
-	Temp       string /* Temporary buffer. */
-	Searchtext string
-	Replace    string
-	Key_map    *Keymapt /* Command key mappings. */
-	Keymap     []Keymapt
-	Key_return *Keymapt /* Command key return */
-)
 
 /*
  * routines to still port..

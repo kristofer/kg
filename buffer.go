@@ -1,5 +1,7 @@
 package kg
 
+import "strings"
+
 /*
 * Buffer
  */
@@ -47,14 +49,24 @@ func BufferInit(bp *Buffer) {
 	bp.Filename = ""
 }
 
+func (bp *Buffer) GetCurrentRune() (*rune, Point) {
+	return &(bp.Buffer[Point]), Point
+}
+func (bp *Buffer) GetCurrentRune(arb Point) (*rune, Point) {
+	return &(bp.Buffer[arb]), arb
+}
+func (bp *Buffer) EndOfBuffer() Point {
+	return Point{(bp.TextSize - 1)}
+}
+
 /* Find a buffer by filename or create if requested */
-func find_buffer(fname string, cflag bool) *Buffer {
+func FindBuffer(fname string, cflag bool) *Buffer {
 	var bp *Buffer
 	var sb *Buffer
 
 	bp = Bheadp
 	for bp != nil {
-		if string.Compare(fname, bp.filename) == 0 || string.Compare(fname, bp.Buffername) == 0 {
+		if strings.Compare(fname, bp.Filename) == 0 || strings.Compare(fname, bp.Buffername) == 0 {
 			return bp
 		}
 		bp = bp.Next

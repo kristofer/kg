@@ -6,6 +6,33 @@ import (
 
 /* main.c, Atto Emacs, Public Domain, Hugh Barney, 2016, Derived from: Anthony's Editor January 93 */
 
+const (
+	VERSION          = "kg 1.0, Public Domain, November 2018, Kristofer Younger,  No warranty."
+	PROG_NAME        = "kg"
+	B_MODIFIED       = 0x01 /* modified buffer */
+	B_OVERWRITE      = 0x02 /* overwite mode */
+	MSGLINE          = (LINES - 1)
+	NOMARK           = -1
+	CHUNK            = 8096
+	K_BUFFER_LENGTH  = 256
+	TEMPBUF          = 512
+	STRBUF_L         = 256
+	STRBUF_M         = 64
+	STRBUF_S         = 16
+	MIN_GAP_EXPAND   = 512
+	TEMPFILE         = "/tmp/feXXXXXX"
+	F_NONE           = 0
+	F_CLEAR          = 1
+	ID_DEFAULT       = 1
+	ID_SYMBOL        = 2
+	ID_MODELINE      = 3
+	ID_DIGITS        = 4
+	ID_LINE_COMMENT  = 5
+	ID_BLOCK_COMMENT = 6
+	ID_DOUBLE_STRING = 7
+	ID_SINGLE_STRING = 8
+)
+
 //#include "header.h"
 
 // int done;
@@ -25,6 +52,44 @@ import (
 // buffer_t *bheadp;			/* head of list of buffers */
 // window_t *curwp;
 // window_t *wheadp;
+
+var (
+	// done int                /* Quit flag. */
+	Done       bool   /* Quit flag. */
+	Msgflag    bool   /* True if msgline should be displayed. */
+	Nscrap     Point  /* Length of scrap buffer. */
+	Scrap      string /* Allocated scrap buffer. */
+	Input      ch     // RUNE?????
+	Msgline    string /* Message line input/output buffer. */
+	Temp       string /* Temporary buffer. */
+	Searchtext string
+	Replace    string
+	Key_map    *Keymapt /* Command key mappings. */
+	Keymap     []Keymapt
+	Key_return *Keymapt /* Command key return */
+	//
+	Curbp  *Buffer /* current buffer */
+	Bheadp *Buffer /* head of list of buffers */
+	Curwp  *Window
+	Wheadp *Window
+)
+
+// typedef unsigned char char_t;
+//type Char character
+
+// typedef long point_t;
+type Point int64
+
+// typedef struct keymap_t {
+// 	char *key_desc;                 /* name of bound function */
+// 	char *key_bytes;		/* the string of bytes when this key is pressed */
+// 	void (*func)(void);
+// } keymap_t;
+type Keymapt struct {
+	KeyDesc  string
+	KeyBytes string
+	Do       *func() // function to call for Keymap-ping
+}
 
 // StartEditor is the old C main function
 func StartEditor(argv []string, argc int) {
