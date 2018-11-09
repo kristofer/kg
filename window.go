@@ -11,14 +11,29 @@ import (
 //int win_cnt = 0;
 var winCount = 0
 
-func new_window() *Window {
+type Window struct {
+	Next     *Window /* Next window */
+	Buffer   *Buffer /* Buffer displayed in window */
+	CP       Point
+	Mark     Point
+	w_page   Point
+	w_epage  Point
+	TopPt    Point /* Origin 0 top row of window */
+	w_rows   Point /* no. of rows of text in window */
+	w_row    int   /* cursor row */
+	w_col    int   /* cursor col */
+	w_update bool
+	w_name   string //[STRBUF_S];
+} //window_t;
+
+func NewWindow() *Window {
 	wp := new(Window) //(window_t *)malloc(sizeof(window_t));
 
 	//assert(wp != NULL); /* call fatal instead XXX */
-	wp.w_next = nil
-	wp.w_bufp = nil
-	wp.w_point = 0
-	wp.w_mark = NOMARK
+	wp.Next = nil
+	wp.Buffer = nil
+	wp.CP = 0
+	wp.Mark = NOMARK
 	wp.w_top = 0
 	wp.w_rows = 0
 	wp.w_update = FALSE
@@ -31,7 +46,7 @@ func new_window() *Window {
 func one_window(wp *Window) {
 	wp.w_top = 0
 	wp.w_rows = LINES - 2
-	wp.w_next = nil
+	wp.Next = nil
 }
 
 func split_window() {
@@ -45,7 +60,7 @@ func split_window() {
 	}
 
 	wp = new_window()
-	associate_b2w(curwp.w_bufp, wp)
+	associate_b2w(curwp.Buffer, wp)
 	b2w(wp) /* inherit buffer settings */
 
 	ntru = (curwp.w_rows - 1) / 2    /* Upper size */
@@ -57,21 +72,21 @@ func split_window() {
 	wp.w_rows = ntrl
 
 	/* insert it in the list */
-	wp2 = curwp.w_next
-	Curwp.w_next = wp
-	wp.w_next = wp2
+	wp2 = curwp.Next
+	Curwp.Next = wp
+	wp.Next = wp2
 	redraw() /* mark the lot for update */
 }
 
 func next_window() {
 	Curwp.w_update = true /* make sure modeline gets updated */
-	//Curwp = (Curwp.w_next == nil ? Wheadp : Curwp.w_next)
-	if Curwp.w_next == nil {
+	//Curwp = (Curwp.Next == nil ? Wheadp : Curwp.Next)
+	if Curwp.Next == nil {
 		Curwp = Wheadp
 	} else {
-		Curwp = Curwp.w_next
+		Curwp = Curwp.Next
 	}
-	Curbp = Curwp.w_bufp
+	Curbp = Curwp.Buffer
 
 	if Curbp.b_cnt > 1 {
 		w2b(Curwp) /* push win vars to buffer */
@@ -79,7 +94,7 @@ func next_window() {
 }
 
 func delete_other_windows() {
-	if Wheadp.w_next == nil {
+	if Wheadp.Next == nil {
 		msg("Only 1 window")
 		return
 	}
@@ -92,7 +107,7 @@ func free_other_windows(winp *Window) {
 	wp = Wheadp
 	next = wp
 	for next != nil {
-		next = wp.w_next /* get next before a call to free() makes wp undefined */
+		next = wp.Next /* get next before a call to free() makes wp undefined */
 		if wp != winp {
 			disassociate_b(wp) /* this window no longer references its buffer */
 			//free(wp);
@@ -109,15 +124,15 @@ func associate_b2w(bp *Buffer, wp *Window) {
 	//assert(bp != NULL);
 	//assert(wp != NULL);
 	if bp != nil && wp != nil {
-		wp.w_bufp = bp
+		wp.Buffer = bp
 		bp.b_cnt++
 	}
 }
 
 func disassociate_b(wp *Window) {
 	// assert(wp != NULL);
-	// assert(wp->w_bufp != NULL);
+	// assert(wp->Buffer != NULL);
 	if wp != nil && wp.w_buf != nil {
-		wp.w_bufp.b_cnt--
+		wp.Buffer.b_cnt--
 	}
 }

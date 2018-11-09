@@ -63,21 +63,6 @@ type Keymapt struct {
 	Do       *func() // function to call for Keymap-ping
 }
 
-type Window struct {
-	w_next   *Window /* Next window */
-	w_bufp   *Buffer /* Buffer displayed in window */
-	w_point  Point
-	w_mark   Point
-	w_page   Point
-	w_epage  Point
-	w_top    char /* Origin 0 top row of window */
-	w_rows   char /* no. of rows of text in window */
-	w_row    int  /* cursor row */
-	w_col    int  /* cursor col */
-	w_update bool
-	w_name   string //[STRBUF_S];
-} //window_t;
-
 var Curbp *Buffer  /* current buffer */
 var Bheadp *Buffer /* head of list of buffers */
 var Curwp *Window
