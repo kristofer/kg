@@ -8,8 +8,6 @@ import (
  * GapBuffer
  */
 
-//type int int
-
 type GapBuffer struct {
 	data    []rune
 	preLen  int
@@ -44,6 +42,10 @@ func (r *GapBuffer) BufferLen() int {
 	return r.preLen + r.postLen
 }
 
+func (r *GapBuffer) Len() int {
+	return len(r.data)
+}
+
 func (r *GapBuffer) gapStart() int {
 	return r.preLen
 }
@@ -56,21 +58,72 @@ func (r *GapBuffer) postStart() int {
 	return len(r.data) - r.postLen
 }
 
+// Insert adds the string, growing the gap if needed.
 func (r *GapBuffer) Insert(s string) {
 	if r.gapLen() < len(s) {
-		newData := make([]rune, len(r.data)*2)
-
-		copy(newData, r.data[:r.preLen])
-		copy(newData[r.postStart()+len(r.data):],
-			r.data[r.postStart():])
-
-		r.data = newData
+		newGap := len(s) + 32
+		_ = r.GrowGap(newGap)
 	}
 
 	copy(r.data[r.gapStart():], []rune(s))
 	r.preLen += len(s)
+	//fmt.Println("G", len(r.data)-r.postLen-r.preLen, "S", r.preLen, "E", r.postLen)
 }
 
+// GrowGap makes the gap bigger by n
+// not sure why I need this.
+func (r *GapBuffer) GrowGap(n int) bool {
+	newData := make([]rune, len(r.data)+n)
+
+	copy(newData, r.data[:r.preLen])
+
+	copy(newData[r.postStart()+n:],
+		r.data[r.postStart():])
+
+	r.data = newData
+	return true
+}
+
+// MoveGap moves the gap forward by offset runes
+func (r *GapBuffer) MoveGap(offset int) int {
+	if r.postLen == 0 {
+		return 0
+	}
+	i := 0
+	for i < offset {
+		r.data[r.preLen] = r.data[len(r.data)-r.postLen]
+		r.preLen++
+		r.postLen--
+		i++
+	}
+
+	return i
+}
+
+// IntForLine return point for line ln
+func (r *GapBuffer) IntForLine(ln int) int {
+	ep := len(r.data) - 1
+	sp := 0
+	var z rune
+	for p := 0; p < ep; p++ {
+		if p == r.preLen {
+			p = r.postStart()
+		}
+		z = r.data[p]
+		if z == '\n' {
+			ln--
+			if ln == 0 {
+				return sp
+			}
+			if (p + 1) < ep {
+				sp = p + 1
+			}
+		}
+	}
+	return ep
+}
+
+// Delete remove a rune forward
 func (r *GapBuffer) Delete() {
 	if r.postLen == 0 {
 		return
@@ -79,6 +132,7 @@ func (r *GapBuffer) Delete() {
 	r.postLen--
 }
 
+// Backspace remove a rune backward
 func (r *GapBuffer) Backspace() {
 	if r.preLen == 0 {
 		return
@@ -87,10 +141,12 @@ func (r *GapBuffer) Backspace() {
 	r.preLen--
 }
 
+// Cursor return point
 func (r *GapBuffer) Cursor() int {
 	return r.preLen
 }
 
+// PrintCursor print cursor point
 func (r *GapBuffer) PrintCursor() {
 	fmt.Println("C: ", r.Cursor())
 }

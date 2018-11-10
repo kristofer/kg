@@ -253,7 +253,7 @@ func (bp *Buffer) Ptr(offset int) int {
 	return 0
 }
 
-/* Given a inter into the buffer, convert it to a buffer offset */
+/* Given a pointer into the buffer, convert it to a buffer offset */
 //int_t pos(bp *Buffer, register char_t *cp)
 func (bp *Buffer) Pos(cp int) int {
 	// assert(bp->b_buf <= cp && cp <= bp->b_ebuf);

@@ -33,7 +33,7 @@ func TestGapBuffer(t *testing.T) {
 	//gb.Backspace()
 	//gb.debugPrint()
 
-	for i := 0; i < 11; i++ {
+	for i := 0; i < 4; i++ {
 		//gb.Delete()
 		//gb.debugPrint()
 		gb.Insert(u)
@@ -52,6 +52,36 @@ func TestGapBuffer(t *testing.T) {
 	}
 	//gb.debugPrint()
 
-	fmt.Printf("%v\n", gb.GetText())
+	fmt.Printf("%v %d %d\n", gb.GetText(), gb.BufferLen(), gb.Len())
+	fmt.Println(1, gb.IntForLine(1))
+	fmt.Println(2, gb.IntForLine(2))
+	fmt.Println(3, gb.IntForLine(3))
+	fmt.Println(4, gb.IntForLine(4))
 
+}
+
+func printIdxForLine(ln int) {
+	fmt.Println()
+}
+
+func TestBufferGrow(t *testing.T) {
+
+	// if total != 10 {
+	// 	t.Errorf("Sum was incorrect, got: %d, want: %d.", total, 10)
+	// }
+
+	gb := NewGapBuffer()
+	s := "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. "
+	r := "[Ut enim ad minima]"
+	//u := "[veniam, quis nostrum exercitationem]"
+	//w := "Οὐχὶ ταὐτὰ παρίσταταί \nμοι γιγνώσκειν, ὦ ἄνδρες\n"
+	gb.PrintCursor()
+	gb.SetText(s)
+	for i := 0; i < 11; i++ {
+		gb.CursorNext()
+	}
+	gb.PrintCursor()
+	gb.Insert(r)
+	gb.PrintCursor()
+	fmt.Printf("|%v|\n", gb.GetText())
 }
