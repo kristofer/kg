@@ -14,13 +14,13 @@ var winCount = 0
 type Window struct {
 	Next   *Window /* w_next Next window */
 	Buffer *Buffer /* w_bufp Buffer displayed in window */
-	Point  Point   // w_point
+	Point  int     // w_point
 	//
-	Mark     Point  // w_mark
-	WinStart Point  // w_page
-	WinEnd   Point  // w_epage
-	TopPt    Point  /* w_top Origin 0 top row of window  on screen */
-	Rows     Point  /* w_rows no. of rows of text in window */
+	Mark     int    // w_mark
+	WinStart int    // w_page
+	WinEnd   int    // w_epage
+	TopPt    int    /* w_top Origin 0 top row of window  on screen */
+	Rows     int    /* w_rows no. of rows of text in window */
 	CurRow   int    /* w_row cursor row */
 	CurCol   int    /* w_col cursor col */
 	Updated  bool   // int w_update

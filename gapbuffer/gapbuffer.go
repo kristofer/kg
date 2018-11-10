@@ -1,4 +1,4 @@
-package kg
+package gapbuffer
 
 import (
 	"fmt"
@@ -16,9 +16,13 @@ type GapBuffer struct {
 	postLen int
 }
 
-// Create a new Buffer
+// NewGapBuffer - Create a new Buffer
 func NewGapBuffer() *GapBuffer {
 	return &GapBuffer{}
+}
+
+func (r *GapBuffer) RuneAt(pt int) *rune {
+	return &(r.data[pt])
 }
 
 func (r *GapBuffer) SetText(s string) {
@@ -83,6 +87,14 @@ func (r *GapBuffer) Backspace() {
 	r.preLen--
 }
 
+func (r *GapBuffer) Cursor() int {
+	return r.preLen
+}
+
+func (r *GapBuffer) PrintCursor() {
+	fmt.Println("C: ", r.Cursor())
+}
+
 func (r *GapBuffer) CursorNext() {
 	if r.postLen == 0 {
 		return
@@ -104,9 +116,10 @@ func (r *GapBuffer) CursorPrevious() {
 }
 
 func (r *GapBuffer) debugPrint() {
+	fmt.Printf("*********\n")
 	for i := 0; i < len(r.data); i++ {
 		if i >= r.gapStart() && i < r.gapStart()+r.gapLen() {
-			fmt.Printf(" ")
+			fmt.Printf("@")
 		} else if i < r.preLen {
 			fmt.Printf("%c", r.data[i])
 		} else {

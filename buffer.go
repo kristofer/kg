@@ -50,7 +50,7 @@ func BufferInit(bp *Buffer) {
 }
 
 func (bp *Buffer) GetCurrentRune() (*rune, int) {
-	return &(bp.Buffer[Point]), Point
+	return bp.Buffer.GetCurrentRune(), bp.Point
 }
 func (bp *Buffer) GetCurrentRune(arb int) (*rune, int) {
 	return &(bp.Buffer[arb]), arb
