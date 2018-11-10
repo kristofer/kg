@@ -19,9 +19,9 @@ func NewGapBuffer() *GapBuffer {
 	return &GapBuffer{}
 }
 
-func (r *GapBuffer) RuneAt(pt int) *rune {
-	return &(r.data[pt])
-}
+// func (r *GapBuffer) RuneAt(pt int) *rune {
+// 	return &(r.data[pt])
+// }
 
 func (r *GapBuffer) SetText(s string) {
 	r.data = []rune(s)
@@ -86,31 +86,40 @@ func (r *GapBuffer) GrowGap(n int) bool {
 
 // MoveGap moves the gap forward by offset runes
 func (r *GapBuffer) MoveGap(offset int) int {
-	if r.postLen == 0 {
-		return 0
+
+	if offset > 0 {
+		if r.postLen == 0 {
+			return 0
+		}
+		for i := 0; i < offset; i++ {
+			r.data[r.preLen] = r.data[len(r.data)-r.postLen]
+			r.preLen++
+			r.postLen--
+		}
 	}
-	i := 0
-	for i < offset {
-		r.data[r.preLen] = r.data[len(r.data)-r.postLen]
-		r.preLen++
-		r.postLen--
-		i++
+	if offset < 0 {
+		if r.preLen == 0 {
+			return 0
+		}
+		for i := offset; i < 0; i++ {
+			r.data[r.postStart()-1] = r.data[r.preLen-1]
+			r.preLen--
+			r.postLen++
+		}
 	}
 
-	return i
+	return offset
 }
 
 // IntForLine return point for line ln
 func (r *GapBuffer) IntForLine(ln int) int {
 	ep := len(r.data) - 1
 	sp := 0
-	var z rune
 	for p := 0; p < ep; p++ {
 		if p == r.preLen {
 			p = r.postStart()
 		}
-		z = r.data[p]
-		if z == '\n' {
+		if r.data[p] == '\n' {
 			ln--
 			if ln == 0 {
 				return sp
@@ -151,6 +160,7 @@ func (r *GapBuffer) PrintCursor() {
 	fmt.Println("C: ", r.Cursor())
 }
 
+// CursorNext move point left one
 func (r *GapBuffer) CursorNext() {
 	if r.postLen == 0 {
 		return
@@ -161,6 +171,7 @@ func (r *GapBuffer) CursorNext() {
 	r.postLen--
 }
 
+// CursorPrevious move point right one
 func (r *GapBuffer) CursorPrevious() {
 	if r.preLen == 0 {
 		return
@@ -169,6 +180,30 @@ func (r *GapBuffer) CursorPrevious() {
 	r.data[r.postStart()-1] = r.data[r.preLen-1]
 	r.preLen--
 	r.postLen++
+}
+
+/* GetLineStats scan buffer and fill in curline and lastline */
+func (r *GapBuffer) GetLineStats() (curline int, lastline int) {
+	ep := len(r.data) - 1
+	line := 0
+	curline = -1
+	for p := 0; p < ep; p++ {
+		if p == r.preLen {
+			p = r.postStart()
+		}
+		if r.data[p] == '\n' {
+			line++
+			lastline = line
+		}
+		if curline == -1 && p == r.preLen {
+			if r.data[p] == '\n' {
+				curline = line
+			} else {
+				curline = line + 1
+			}
+		}
+	}
+	return curline, lastline
 }
 
 func (r *GapBuffer) debugPrint() {

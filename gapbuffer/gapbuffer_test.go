@@ -57,7 +57,13 @@ func TestGapBuffer(t *testing.T) {
 	fmt.Println(2, gb.IntForLine(2))
 	fmt.Println(3, gb.IntForLine(3))
 	fmt.Println(4, gb.IntForLine(4))
-
+	j := gb.Cursor()
+	fmt.Println("Cur: ", j)
+	gb.MoveGap(-10)
+	j = gb.Cursor()
+	fmt.Println("Cur: ", j)
+	l1, l2 := gb.GetLineStats()
+	fmt.Println("Lines", l1, l2)
 }
 
 func printIdxForLine(ln int) {
