@@ -17,17 +17,17 @@ func TestBuffer(t *testing.T) {
 	r := "[Ut enim ad minima]\n"
 	u := "[veniam, quis nostrum exercitationem]"
 	w := "Οὐχὶ ταὐτὰ παρίσταταί \nμοι γιγνώσκειν, ὦ ἄνδρες\n"
-	gb.PrintCursor()
+	gb.PrintPoint()
 	gb.SetText(s)
-	gb.PrintCursor()
+	gb.PrintPoint()
 	//gb.debugPrint()
 
 	for i := 0; i < 11; i++ {
-		gb.CursorNext()
+		gb.PointNext()
 	}
-	gb.PrintCursor()
+	gb.PrintPoint()
 	gb.Insert(r)
-	gb.PrintCursor()
+	gb.PrintPoint()
 
 	//gb.debugPrint()
 	//gb.Backspace()
@@ -48,7 +48,7 @@ func TestBuffer(t *testing.T) {
 	// gb.debugPrint()
 	for i := 0; i < 10; i++ {
 		gb.Insert(strconv.Itoa(i))
-		gb.PrintCursor()
+		gb.PrintPoint()
 	}
 	//gb.debugPrint()
 
@@ -57,10 +57,10 @@ func TestBuffer(t *testing.T) {
 	fmt.Println(2, gb.IntForLine(2))
 	fmt.Println(3, gb.IntForLine(3))
 	fmt.Println(4, gb.IntForLine(4))
-	j := gb.Cursor()
+	j := gb.Point()
 	fmt.Println("Cur: ", j)
 	gb.MoveGap(-10)
-	j = gb.Cursor()
+	j = gb.Point()
 	fmt.Println("Cur: ", j)
 	l1, l2 := gb.GetLineStats()
 	fmt.Println("Lines", l1, l2)
@@ -81,13 +81,13 @@ func TestBufferGrow(t *testing.T) {
 	r := "[Ut enim ad minima]"
 	//u := "[veniam, quis nostrum exercitationem]"
 	//w := "Οὐχὶ ταὐτὰ παρίσταταί \nμοι γιγνώσκειν, ὦ ἄνδρες\n"
-	gb.PrintCursor()
+	gb.PrintPoint()
 	gb.SetText(s)
 	for i := 0; i < 11; i++ {
-		gb.CursorNext()
+		gb.PointNext()
 	}
-	gb.PrintCursor()
+	gb.PrintPoint()
 	gb.Insert(r)
-	gb.PrintCursor()
+	gb.PrintPoint()
 	fmt.Printf("|%v|\n", gb.GetText())
 }

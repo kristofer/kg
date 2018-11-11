@@ -49,37 +49,38 @@ func (wp *Window) OneWindow() {
 }
 
 func (wp *Window) SplitWindow() {
+	var editor = wp.Editor
 	//var wp *Window
 	var wp2 *Window
 	ntru, ntrl := 0, 0
 
-	if Curwp.Rows < 3 {
-		msg("Cannot split a %d line window", Curwp.Rows)
+	if editor.CurrentWindow.Rows < 3 {
+		editor.msg("Cannot split a %d line window", editor.CurrentWindow.Rows)
 		return
 	}
 
-	wp = NewWindow()
-	bp.AssociateBuffer(curwp.Buffer)
-	b2w(wp) /* inherit buffer settings */
+	wp = NewWindow(editor)
+	wp.AssociateBuffer(editor.CurrentWindow.Buffer)
+	//b2w(wp) /* inherit buffer settings */
 
-	ntru = (curwp.Rows - 1) / 2    /* Upper size */
-	ntrl = (curwp.Rows - 1) - ntru /* Lower size */
+	ntru = (editor.CurrentWindow.Rows - 1) / 2    /* Upper size */
+	ntrl = (editor.CurrentWindow.Rows - 1) - ntru /* Lower size */
 
 	/* Old is upper window */
-	Curwp.Rows = ntru
-	wp.TopPt = Curwp.TopPt + ntru + 1
+	editor.CurrentWindow.Rows = ntru
+	wp.TopPt = editor.CurrentWindow.TopPt + ntru + 1
 	wp.Rows = ntrl
 
 	/* insert it in the list */
-	wp2 = Curwp.Next
-	Curwp.Next = wp
+	wp2 = editor.CurrentWindow.Next
+	editor.CurrentWindow.Next = wp
 	wp.Next = wp2
-	redraw() /* mark the lot for update */
+	//redraw() /* mark the lot for update */
 }
 
 // NextWindow
 func (wp *Window) NextWindow() {
-	var editor = winp.Editor
+	var editor = wp.Editor
 	editor.CurrentWindow.Updated = true /* make sure modeline gets updated */
 	//Curwp = (Curwp.Next == nil ? Wheadp : Curwp.Next)
 	if editor.CurrentWindow.Next == nil {
@@ -96,8 +97,8 @@ func (wp *Window) NextWindow() {
 
 // DeleteOtherWindows
 func (wp *Window) DeleteOtherWindows() {
-	if Wheadp.Next == nil {
-		msg("Only 1 window")
+	if wp.Next == nil {
+		wp.Editor.msg("Only 1 window")
 		return
 	}
 	wp.FreeOtherWindows()

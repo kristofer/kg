@@ -75,7 +75,7 @@ func (e *Editor) StartEditor(argv []string, argc int) {
 		e.CurrentBuffer.Filename = argv[1]
 		//e.CurrentBuffer->b_fname[NAME_MAX] = '\0'; /* force truncation */
 	} else {
-		e.CurrentBuffer = e.FindBuffer("*scratch*", true)
+		e.CurrentBuffer = FindBuffer("*scratch*", true)
 		//strncpy(e.CurrentBuffer->b_bname, "*scratch*", STRBUF_S);
 		e.CurrentBuffer.Buffername = "*scratch*"
 	}
@@ -154,7 +154,7 @@ loop:
 	return
 }
 
-func msg(e *Editor, args ...string) {
+func (e *Editor) msg(args ...interface{}) {
 	e.Msgline = fmt.Sprintf("%#v", args)
 	e.Msgflag = true
 	return
