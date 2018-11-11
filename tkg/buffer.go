@@ -58,6 +58,21 @@ func (r *Buffer) GetText() string {
 	return string(ret)
 }
 
+func (r *Buffer) GetTextForLines(l1, l2 int) string {
+	pt1 := r.IntForLine(l1)
+	pt2 := r.IntForLine(l2)
+	fmt.Println(pt1, pt2)
+	ret := make([]rune, pt2-pt1)
+
+	for i, j := pt1, 0; i < len(ret); i, j = i+1, j+1 {
+		if i == r.preLen {
+			i = r.postStart()
+		}
+		ret[j] = r.data[i]
+	}
+	return string(ret)
+}
+
 func (r *Buffer) BufferLen() int {
 	return r.preLen + r.postLen
 }

@@ -6,13 +6,16 @@ import (
 	termbox "github.com/nsf/termbox-go"
 )
 
+var LINES = 1
+var COLS = 10
+var MSGLINE = (LINES - 1)
+
 const (
-	VERSION          = "kg 1.0, Public Domain, November 2018, Kristofer Younger,  No warranty."
-	PROG_NAME        = "kg"
-	B_MODIFIED       = 0x01 /* modified buffer */
-	B_OVERWRITE      = 0x02 /* overwite mode */
-	LINES            = 24
-	MSGLINE          = (LINES - 1)
+	VERSION     = "kg 1.0, Public Domain, November 2018, Kristofer Younger,  No warranty."
+	PROG_NAME   = "kg"
+	B_MODIFIED  = 0x01 /* modified buffer */
+	B_OVERWRITE = 0x02 /* overwite mode */
+	//LINES            = 24
 	NOMARK           = -1
 	CHUNK            = 8096
 	K_BUFFER_LENGTH  = 256
@@ -62,6 +65,8 @@ type Editor struct {
 	Keymap     []Keymapt
 	Key_return *Keymapt /* Command key return */
 	//
+	Lines int
+	Cols  int
 }
 
 // StartEditor is the old C main function
@@ -95,10 +100,13 @@ func (e *Editor) StartEditor(argv []string, argc int) {
 	}
 	defer termbox.Close()
 
+	e.Lines, e.Cols = termbox.Size()
+
 	termbox.SetInputMode(termbox.InputEsc | termbox.InputMouse)
 
 	termbox.Clear(termbox.ColorDefault, termbox.ColorDefault)
 	//draw_keyboard()
+	e.Display()
 	termbox.Flush()
 	inputmode := 0
 	ctrlxpressed := false
@@ -106,6 +114,7 @@ loop:
 	for {
 		switch ev := termbox.PollEvent(); ev.Type {
 		case termbox.EventKey:
+			//log.Println("[", e.Lines, e.Cols, ev, "event", ctrlxpressed)
 			if ev.Key == termbox.KeyCtrlS && ctrlxpressed {
 				termbox.Sync()
 			}
@@ -133,17 +142,25 @@ loop:
 
 			termbox.Clear(termbox.ColorDefault, termbox.ColorDefault)
 			//draw_keyboard()
+			e.msg("Key: %v", ev.Ch)
+			e.Display()
 			//dispatch_press(&ev)
 			//pretty_print_press(&ev)
 			termbox.Flush()
 		case termbox.EventResize:
 			termbox.Clear(termbox.ColorDefault, termbox.ColorDefault)
+			e.Cols, e.Lines = termbox.Size()
+			e.msg("Resize: h %d,w %d", e.Lines, e.Cols)
 			//draw_keyboard()
+			e.Display()
 			//pretty_print_resize(&ev)
 			termbox.Flush()
 		case termbox.EventMouse:
 			termbox.Clear(termbox.ColorDefault, termbox.ColorDefault)
+			//log.Println("[", e.Lines, e.Cols, ev, "event", ctrlxpressed)
+			e.msg("Mouse: %d,%d [%d %d]", ev.MouseX, ev.MouseY, e.Cols, e.Lines)
 			//draw_keyboard()
+			e.Display()
 			//pretty_print_mouse(&ev)
 			termbox.Flush()
 		case termbox.EventError:
@@ -154,8 +171,30 @@ loop:
 	return
 }
 
-func (e *Editor) msg(args ...interface{}) {
-	e.Msgline = fmt.Sprintf("%#v", args)
+func (e *Editor) msg(fm string, args ...interface{}) {
+	e.Msgline = fmt.Sprintf(fm, args...)
 	e.Msgflag = true
 	return
+}
+func (e *Editor) drawstring(x, y int, fg, bg termbox.Attribute, msg string) {
+	//log.Println(msg)
+	for _, c := range msg {
+		termbox.SetCell(x, y, c, fg, bg)
+		x++
+	}
+}
+
+func (e *Editor) DisplayMsg() {
+	e.Cols, e.Lines = termbox.Size()
+	if e.Msgflag {
+		e.drawstring(0, e.Lines-1, termbox.ColorWhite, termbox.ColorBlack, e.Msgline)
+	}
+	// clear to end of line?
+}
+
+func (e *Editor) Display() {
+	termbox.Clear(termbox.ColorDefault, termbox.ColorDefault)
+
+	e.DisplayMsg()
+	//termbox.Sync()
 }

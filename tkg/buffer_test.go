@@ -91,3 +91,15 @@ func TestBufferGrow(t *testing.T) {
 	gb.PrintPoint()
 	fmt.Printf("|%v|\n", gb.GetText())
 }
+
+func TestTextLines(t *testing.T) {
+	gb := NewBuffer()
+	s := "Lorem ipsum dolor sit amet,\nconsectetur adipiscing elit,\nsed do eiusmod tempor incididunt ut\nlabore et dolore magna aliqua. "
+	gb.SetText(s)
+	fmt.Printf("%v\n", gb.GetText())
+	fmt.Println("--- [1, 3)")
+	fmt.Printf("%v\n", gb.GetTextForLines(1, 3))
+	fmt.Println("--- [2, 3)")
+	fmt.Printf("%v\n", gb.GetTextForLines(2, 5))
+
+}
