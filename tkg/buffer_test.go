@@ -1,4 +1,4 @@
-package gapbuffer
+package tkg
 
 import (
 	"fmt"
@@ -6,13 +6,13 @@ import (
 	"testing"
 )
 
-func TestGapBuffer(t *testing.T) {
+func TestBuffer(t *testing.T) {
 
 	// if total != 10 {
 	// 	t.Errorf("Sum was incorrect, got: %d, want: %d.", total, 10)
 	// }
 
-	gb := NewGapBuffer()
+	gb := NewBuffer()
 	s := "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. "
 	r := "[Ut enim ad minima]\n"
 	u := "[veniam, quis nostrum exercitationem]"
@@ -76,7 +76,7 @@ func TestBufferGrow(t *testing.T) {
 	// 	t.Errorf("Sum was incorrect, got: %d, want: %d.", total, 10)
 	// }
 
-	gb := NewGapBuffer()
+	gb := NewBuffer()
 	s := "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. "
 	r := "[Ut enim ad minima]"
 	//u := "[veniam, quis nostrum exercitationem]"

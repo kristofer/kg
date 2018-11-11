@@ -1,16 +1,12 @@
-package kg
+package tkg
 
 import (
 	"fmt"
 )
 
-/* window.c, Atto Emacs, Hugh Barney, Public Domain, 2015 */
-
-//#include "header.h"
-
-//int win_cnt = 0; Global
 var winCount = 0
 
+// Window main type
 type Window struct {
 	Next   *Window /* w_next Next window */
 	Buffer *Buffer /* w_bufp Buffer displayed in window */
@@ -28,7 +24,7 @@ type Window struct {
 } //window_t;
 
 func NewWindow() *Window {
-	wp := new(Window) //(window_t *)malloc(sizeof(window_t));
+	wp := &Window{} // new(Window) //(window_t *)malloc(sizeof(window_t));
 
 	//assert(wp != NULL); /* call fatal instead XXX */
 	wp.Next = nil
@@ -37,11 +33,11 @@ func NewWindow() *Window {
 	wp.Mark = NOMARK
 	wp.TopPt = 0
 	wp.Rows = 0
-	wp.Updated = FALSE
+	wp.Updated = false
 	//sprintf(wp->Name, "W%d", ++win_cnt);
 	winCount++
 	wp.Name = fmt.Sprintf("W%d", winCount)
-	return &wp
+	return wp
 }
 
 func (wp *Window) OneWindow() {
