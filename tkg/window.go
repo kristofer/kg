@@ -8,6 +8,7 @@ var winCount = 0
 
 // Window main type
 type Window struct {
+	Editor *Editor
 	Next   *Window /* w_next Next window */
 	Buffer *Buffer /* w_bufp Buffer displayed in window */
 	Point  int     // w_point
@@ -23,10 +24,11 @@ type Window struct {
 	Name     string // w_name[STRBUF_S];
 } //window_t;
 
-func NewWindow() *Window {
+func NewWindow(e *Editor) *Window {
 	wp := &Window{} // new(Window) //(window_t *)malloc(sizeof(window_t));
 
 	//assert(wp != NULL); /* call fatal instead XXX */
+	wp.Editor = e
 	wp.Next = nil
 	wp.Buffer = nil
 	wp.Point = 0
@@ -75,57 +77,61 @@ func (wp *Window) SplitWindow() {
 	redraw() /* mark the lot for update */
 }
 
+// NextWindow
 func (wp *Window) NextWindow() {
-	Curwp.Updated = true /* make sure modeline gets updated */
+	var editor = winp.Editor
+	editor.CurrentWindow.Updated = true /* make sure modeline gets updated */
 	//Curwp = (Curwp.Next == nil ? Wheadp : Curwp.Next)
-	if Curwp.Next == nil {
-		Curwp = Wheadp
+	if editor.CurrentWindow.Next == nil {
+		editor.CurrentWindow = editor.RootWindow
 	} else {
-		Curwp = Curwp.Next
+		editor.CurrentWindow = editor.CurrentWindow.Next
 	}
-	Curbp = Curwp.Buffer
+	editor.CurrentBuffer = editor.CurrentWindow.Buffer
 
-	if Curbp.WinCount > 1 {
-		w2b(Curwp) /* push win vars to buffer */
+	if editor.CurrentBuffer.WinCount > 1 {
+		//w2b(Curwp) /* push win vars to buffer */
 	}
 }
 
+// DeleteOtherWindows
 func (wp *Window) DeleteOtherWindows() {
 	if Wheadp.Next == nil {
 		msg("Only 1 window")
 		return
 	}
-	FreeOtherWindows(wp)
+	wp.FreeOtherWindows()
 }
 
+// FreeOtherWindows
 func (winp *Window) FreeOtherWindows() {
+	var editor = winp.Editor
 	var wp *Window
 	var next *Window
-	wp = Wheadp
+	wp = editor.RootWindow
 	next = wp
 	for next != nil {
 		next = wp.Next /* get next before a call to free() makes wp undefined */
 		if wp != winp {
-			DisassociateBuffer(wp) /* this window no longer references its buffer */
-			//free(wp);
+			wp.DisassociateBuffer() /* this window no longer references its buffer */
 		}
 		wp = next
 	}
 
-	Wheadp = winp
-	Curwp = winp
-	OneWindow(winp)
+	editor.RootWindow = winp
+	editor.CurrentWindow = winp
+	winp.OneWindow()
 }
 
-func (bp *Buffer) AssociateBuffer(wp *Window) {
-	//assert(bp != NULL);
-	//assert(wp != NULL);
+// AssociateBuffer
+func (wp *Window) AssociateBuffer(bp *Buffer) {
 	if bp != nil && wp != nil {
 		wp.Buffer = bp
-		bp.b_cnt++
+		bp.WinCount++
 	}
 }
 
+// DisassociateBuffer
 func (wp *Window) DisassociateBuffer() {
 	// assert(wp != NULL);
 	// assert(wp->Buffer != NULL);

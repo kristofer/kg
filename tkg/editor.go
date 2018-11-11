@@ -2,6 +2,8 @@ package tkg
 
 import (
 	"fmt"
+
+	termbox "github.com/nsf/termbox-go"
 )
 
 const (
@@ -32,23 +34,7 @@ const (
 	ID_SINGLE_STRING = 8
 )
 
-var (
-	// done int                /* Quit flag. */
-	Done       bool   /* Quit flag. */
-	Msgflag    bool   /* True if msgline should be displayed. */
-	Nscrap     Point  /* Length of scrap buffer. */
-	Scrap      string /* Allocated scrap buffer. */
-	Input      ch     // RUNE?????
-	Msgline    string /* Message line input/output buffer. */
-	Temp       string /* Temporary buffer. */
-	Searchtext string
-	Replace    string
-	Key_map    *Keymapt /* Command key mappings. */
-	Keymap     []Keymapt
-	Key_return *Keymapt /* Command key return */
-	//
-
-)
+var ()
 
 type Keymapt struct {
 	KeyDesc  string
@@ -61,82 +47,115 @@ type Editor struct {
 	RootBuffer    *Buffer /* head of list of buffers */
 	CurrentWindow *Window
 	RootWindow    *Window
+	// status vars
+	// done int                /* Quit flag. */
+	Done       bool   /* Quit flag. */
+	Msgflag    bool   /* True if msgline should be displayed. */
+	Nscrap     int    /* Length of scrap buffer. */
+	Scrap      string /* Allocated scrap buffer. */
+	Input      rune   // RUNE?????
+	Msgline    string /* Message line input/output buffer. */
+	Temp       string /* Temporary buffer. */
+	Searchtext string
+	Replace    string
+	Key_map    *Keymapt /* Command key mappings. */
+	Keymap     []Keymapt
+	Key_return *Keymapt /* Command key return */
+	//
 }
 
 // StartEditor is the old C main function
 func (e *Editor) StartEditor(argv []string, argc int) {
 
-	// Still need for Termbox...
-
-	// setlocale(LC_ALL, "") ; /* required for 3,4 byte UTF8 chars */
-	// if initscr() == nil {
-	// 	panic("%s: Failed to initialize the screen.\n")
-	// }
-	//raw();
-	//noecho();
-	//idlok(stdscr, TRUE);
-
-	// start_color();
-	// init_pair(ID_DEFAULT, COLOR_CYAN, COLOR_BLACK);          /* alpha */
-	// init_pair(ID_SYMBOL, COLOR_WHITE, COLOR_BLACK);          /* non alpha, non digit */
-	// init_pair(ID_MODELINE, COLOR_BLACK, COLOR_WHITE);        /* modeline */
-	// init_pair(ID_DIGITS, COLOR_YELLOW, COLOR_BLACK);         /* digits */
-	// init_pair(ID_BLOCK_COMMENT, COLOR_GREEN, COLOR_BLACK);   /* block comments */
-	// init_pair(ID_LINE_COMMENT, COLOR_GREEN, COLOR_BLACK);    /* line comments */
-	// init_pair(ID_SINGLE_STRING, COLOR_YELLOW, COLOR_BLACK);  /* single quoted strings */
-	// init_pair(ID_DOUBLE_STRING, COLOR_YELLOW, COLOR_BLACK);  /* double quoted strings */
-
 	if argc > 1 {
 		e.CurrentBuffer = FindBuffer(argv[1], true)
-		insert_file(argv[1], false)
+		e.InsertFile(argv[1], false)
 		/* Save filename irregardless of load() success. */
 		//strncpy(e.CurrentBuffer->b_fname, argv[1], NAME_MAX);
 		e.CurrentBuffer.Filename = argv[1]
 		//e.CurrentBuffer->b_fname[NAME_MAX] = '\0'; /* force truncation */
 	} else {
-		e.CurrentBuffer = FindBuffer("*scratch*", true)
+		e.CurrentBuffer = e.FindBuffer("*scratch*", true)
 		//strncpy(e.CurrentBuffer->b_bname, "*scratch*", STRBUF_S);
 		e.CurrentBuffer.Buffername = "*scratch*"
 	}
-	e.CurrentWindow = NewWindow()
+	e.CurrentWindow = NewWindow(e)
 	e.RootWindow = e.CurrentWindow
-	OneWindow(e.CurrentWindow)
-	AssociateBuffer(e.CurrentBuffer, e.CurrentWindow)
+	e.CurrentWindow.OneWindow()
+	e.CurrentWindow.AssociateBuffer(e.CurrentBuffer)
 
 	if !(e.CurrentBuffer.GrowGap(CHUNK)) {
 		panic("%s: Failed to allocate required memory.\n")
 	}
-	Key_map = Keymap
+	//e.Key_map = e.Keymap
 
-	// Main Event loop on key strokes.
-	// for Done != true {
-	// 	//update_display()
-	// 	Input = get_key(Key_map, &key_return)
+	err := termbox.Init()
+	if err != nil {
+		panic(err)
+	}
+	defer termbox.Close()
 
-	// 	if key_return != nil {
-	// 		key_return.Do()
-	// 	} else {
-	// 		/* allow TAB and NEWLINE, otherwise any Control Char is 'Not bound' */
-	// 		if unicode.isControl(Input) || Input == '\n' || Input == '\t' {
-	// 			insert()
-	// 		} else {
-	// 			flushinp() /* discard without writing in buffer */
-	// 			msg("Not bound")
-	// 		}
-	// 	}
-	// }
+	termbox.SetInputMode(termbox.InputEsc | termbox.InputMouse)
 
-	//if (scrap != NULL) free(scrap);
-	//Scrap = ""
-	//move(LINES-1, 0)
-	//refresh();
-	//noraw();
-	//endwin();
-	return 0
+	termbox.Clear(termbox.ColorDefault, termbox.ColorDefault)
+	//draw_keyboard()
+	termbox.Flush()
+	inputmode := 0
+	ctrlxpressed := false
+loop:
+	for {
+		switch ev := termbox.PollEvent(); ev.Type {
+		case termbox.EventKey:
+			if ev.Key == termbox.KeyCtrlS && ctrlxpressed {
+				termbox.Sync()
+			}
+			if ev.Key == termbox.KeyCtrlQ && ctrlxpressed {
+				break loop
+			}
+			if ev.Key == termbox.KeyCtrlC && ctrlxpressed {
+				chmap := []termbox.InputMode{
+					termbox.InputEsc | termbox.InputMouse,
+					termbox.InputAlt | termbox.InputMouse,
+					termbox.InputEsc,
+					termbox.InputAlt,
+				}
+				inputmode++
+				if inputmode >= len(chmap) {
+					inputmode = 0
+				}
+				termbox.SetInputMode(chmap[inputmode])
+			}
+			if ev.Key == termbox.KeyCtrlX {
+				ctrlxpressed = true
+			} else {
+				ctrlxpressed = false
+			}
+
+			termbox.Clear(termbox.ColorDefault, termbox.ColorDefault)
+			//draw_keyboard()
+			//dispatch_press(&ev)
+			//pretty_print_press(&ev)
+			termbox.Flush()
+		case termbox.EventResize:
+			termbox.Clear(termbox.ColorDefault, termbox.ColorDefault)
+			//draw_keyboard()
+			//pretty_print_resize(&ev)
+			termbox.Flush()
+		case termbox.EventMouse:
+			termbox.Clear(termbox.ColorDefault, termbox.ColorDefault)
+			//draw_keyboard()
+			//pretty_print_mouse(&ev)
+			termbox.Flush()
+		case termbox.EventError:
+			panic(ev.Err)
+		}
+	}
+
+	return
 }
 
-func msg(args ...string) {
-	Msgline = fmt.Sprintf("%#v", args)
-	Msgflag = true
+func msg(e *Editor, args ...string) {
+	e.Msgline = fmt.Sprintf("%#v", args)
+	e.Msgflag = true
 	return
 }

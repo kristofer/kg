@@ -287,6 +287,7 @@ func FindBuffer(fname string, cflag bool) *Buffer {
 // DeleteBuffer unlink from the list of buffers, free associated memory,
 // assumes buffer has been saved if modified
 func DeleteBuffer(bp *Buffer) bool {
+	//editor := bp.CurrentWindow.Editor
 	var sb *Buffer
 
 	/* we must have switched to a different buffer first */
@@ -316,16 +317,17 @@ func DeleteBuffer(bp *Buffer) bool {
 }
 
 // NextBuffer returns next buffer after current
-func NextBuffer(CurrentWindow *interface{}) {
-	if CurrentBuffer != nil && RootBuffer != nil {
-		DisassociateBuffer(CurrentWindow)
+func NextBuffer(CurrentWindow *Window) {
+	editor := CurrentWindow.Editor
+	if editor.CurrentBuffer != nil && editor.RootBuffer != nil {
+		CurrentWindow.DisassociateBuffer()
 		if CurrentBuffer.Next != nil {
 			CurrentBuffer = CurrentBuffer.Next
 
 		} else {
 			CurrentBuffer = RootBuffer
 		}
-		AssociateBuffer(CurrentBuffer, CurrentWindow)
+		CurrentWindow.AssociateBuffer(CurrentBuffer)
 	}
 }
 
