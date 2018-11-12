@@ -2,7 +2,6 @@ package tkg
 
 import (
 	"fmt"
-	"log"
 
 	termbox "github.com/nsf/termbox-go"
 )
@@ -145,9 +144,9 @@ loop:
 
 			termbox.Clear(termbox.ColorDefault, termbox.ColorDefault)
 			e.msg("Key: %v", ev.Ch)
+			e.CurrentBuffer.Insert(string(ev.Ch))
 			e.UpdateDisplay()
 			//dispatch_press(&ev)
-			e.CurrentBuffer.Insert(string(ev.Ch))
 			// TODO: handle key press
 			//pretty_print_press(&ev)
 			termbox.Flush()
@@ -204,26 +203,31 @@ func (e *Editor) Display(wp *Window, flag bool) {
 	// token_type := ID_DEFAULT
 
 	// /* find start of screen, handle scroll up off page or top of file  */
-	// /* int is always within b_page and b_epage */
-	// if (bp.int < bp.b_page)
-	// 	bp.b_page = SegStart(bp, bp.LineStart(bp.int), bp.int)
+	// /* Point is always within b_page and b_epage */
+	if bp.Point() < bp.PageStart {
+		bp.PageStart = e.SegStart(e.LineStart(bp.Point()), bp.Point())
+	}
 
 	// /* reframe when scrolled off bottom */
-	// if (bp.b_reframe == 1 || (bp.b_epage <= bp.int && curbp.int != pos(curbp, curbp.b_ebuf))) {
-	// 	bp.b_reframe = 0;
-	// 	/* Find end of screen plus one. */
-	// 	bp.b_page = dndn(bp, bp.int);
-	// 	/* if we scoll to EOF we show 1 blank line at bottom of screen */
-	// 	if (pos(bp, bp.b_ebuf) <= bp.b_page) {
-	// 		bp.b_page = pos(bp, bp.b_ebuf);
-	// 		i = wp.w_rows - 1;
-	// 	} else {
-	// 		i = wp.w_rows - 0;
-	// 	}
-	// 	/* Scan backwards the required number of lines. */
-	// 	while (0 < i--)
-	// 		bp.b_page = upup(bp, bp.b_page);
-	// }
+	if bp.Reframe == 1 || (bp.PageEnd <= bp.Point() && e.CurrentBuffer.Point() != e.CurrentBuffer.PageEnd) {
+		bp.Reframe = 0
+		i := 0
+		/* Find end of screen plus one. */
+		bp.PageStart = e.DownDown(bp.Point())
+		/* if we scoll to EOF we show 1 blank line at bottom of screen */
+		if bp.BufferLen() <= bp.PageStart {
+			bp.PageStart = bp.BufferLen()
+			i = wp.Rows - 1
+		} else {
+			i = wp.Rows - 0
+		}
+		/* Scan backwards the required number of lines. */
+		for 0 < i {
+			bp.PageStart = e.UpUp(bp.PageStart)
+			i--
+		}
+
+	}
 
 	// move(wp.TopPt, 0); /* start from top of window */
 	r = wp.TopPt
@@ -245,7 +249,7 @@ func (e *Editor) Display(wp *Window, flag bool) {
 			break
 		}
 		rch = bp.RuneAt(idx)
-		log.Println(rch, c, r)
+		//log.Println(rch, c, r)
 		if rch != '\r' {
 			termbox.SetCell(c, r, rch, e.FGColor, termbox.ColorDefault)
 			c++
@@ -282,7 +286,7 @@ func (e *Editor) Display(wp *Window, flag bool) {
 	e.ModeLine(wp)
 	e.DisplayMsg()
 	termbox.SetCursor(bp.PointCol, bp.PointRow)
-	termbox.Sync()
+	//termbox.Sync()
 	wp.Updated = false
 }
 
@@ -356,4 +360,134 @@ func (e *Editor) ModeLine(wp *Window) {
 		termbox.SetCell(i, y, lch, e.FGColor, e.BGColor)
 	}
 	//standend();
+}
+
+func (e *Editor) DisplayPromptAndResponse(prompt string, response string) {
+	e.drawstring(0, e.Lines-1, e.FGColor, termbox.ColorDefault, prompt)
+	/* if we have a value print it and go to end of it */
+	if response != "" {
+		e.drawstring(len(prompt), e.Lines-1, e.FGColor, termbox.ColorDefault, response)
+	}
+
+}
+
+/* Reverse scan for start of logical line containing offset */
+func (e *Editor) LineStart(off int) int {
+	off--
+	//p := bp.Ptr(off)
+	p := e.CurrentBuffer.RuneAt(off)
+	for off >= 0 && p != '\n' {
+		off--
+		p = e.CurrentBuffer.RuneAt(off)
+	}
+	if p > 0 {
+		off = +1
+		return off
+	}
+	return 0
+}
+
+/* Forward scan for start of logical line segment (corresponds to screen line)  containing 'finish' */
+func (e *Editor) SegStart(start int, finish int) int {
+	bp := e.CurrentBuffer
+	var p rune
+	c := 0
+	scan := start
+
+	for scan < finish {
+		//p = ptr(bp, scan);
+		p = bp.RuneAt(scan)
+		if p == '\n' {
+			c = 0
+			start = scan + 1
+		} else {
+			if e.Cols <= c {
+				c = 0
+				start = scan
+			}
+		}
+		scan++
+		//c += *p == '\t' ? 8 - (c & 7) : 1;
+		if p == '\t' {
+			c += 4 //8 - (c % 7)
+		} else {
+			c++
+		}
+	}
+	// (c < COLS ? start : finish);
+	if c < e.Cols {
+		return start
+	}
+	return finish
+}
+
+/* Forward scan for start of logical line segment following 'finish' */
+func (e *Editor) SegNext(start, finish int) int {
+	// char_t *p;
+	// int c = 0;
+	bp := e.CurrentBuffer
+	var p rune
+	//var pptr int
+	c := 0
+
+	scan := e.SegStart(start, finish)
+	for {
+		//p = ptr(bp, scan);
+		//p, pptr = bp.GetCurrentRune()
+		p = bp.RuneAt(scan)
+		//if (bp.b_ebuf <= p || COLS <= c)
+		if e.Cols <= c {
+			break
+		}
+		//scan += utf8_size(*ptr(bp,scan));
+		scan++
+		if p == '\n' {
+			break
+		}
+		//c += *p == '\t' ? 8 - (c & 7) : 1;
+		if p == '\t' {
+			c += 4 //8 - (c % 7)
+		} else {
+			c++
+		}
+	}
+	//(p < bp.b_ebuf ? scan : );
+	if scan < bp.BufferLen() {
+		return scan
+	}
+	return bp.BufferLen()
+}
+
+/* Move up one screen line */
+func (e *Editor) UpUp(off int) int {
+	curr := e.LineStart(off)
+	seg := e.SegStart(curr, off)
+	if curr < seg {
+		off = e.SegStart(curr, seg-1)
+	} else {
+		off = e.SegStart(e.LineStart(curr-1), curr-1)
+	}
+	return off
+}
+
+/* Move down one screen line */
+func (e *Editor) DownDown(off int) int {
+	return (e.SegNext(e.LineStart(off), off))
+}
+
+/* Return the offset of a column on the specified line */
+func (e *Editor) OffsetForColumn(offset int, column int) int {
+	var p rune
+	c := 0
+	p = e.CurrentBuffer.RuneAt(offset)
+	for offset < e.CurrentBuffer.PageEnd && p != '\n' && c < column {
+		if p == '\t' {
+			c += 4 //8 - (c % 7)
+		} else {
+			c++
+		}
+		offset++
+		p = e.CurrentBuffer.RuneAt(offset)
+	}
+	return offset
 }

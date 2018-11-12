@@ -71,6 +71,12 @@ func (r *Buffer) GetTextForLines(l1, l2 int) string {
 
 func (r *Buffer) RuneAt(p int) rune {
 	//fmt.Println(p, r.preLen, r.postLen, r.postStart())
+	if p < 0 {
+		return '\u2318'
+	}
+	if p > len(r.data) {
+		return '\u2318'
+	}
 	if p <= r.preLen && r.preLen != 0 {
 		return r.data[p]
 	}
