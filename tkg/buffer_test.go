@@ -103,3 +103,20 @@ func TestTextLines(t *testing.T) {
 	fmt.Printf("%v\n", gb.GetTextForLines(2, 5))
 
 }
+
+func TestRuneAt(t *testing.T) {
+	gb := NewBuffer()
+	s := "Lorem ipsum dolor sit amet,\nconsectetur adipiscing elit,\nsed do eiusmod tempor incididunt ut\nlabore et dolore magna aliqua. "
+	gb.SetText(s)
+
+	k := 0
+	// fmt.Printf("%c\n", gb.RuneAt(k))
+	// fmt.Printf("%c\n", gb.RuneAt(k+1))
+	// fmt.Printf("%c\n", gb.RuneAt(k+2))
+	for k < gb.BufferLen() {
+		fmt.Printf("%c", gb.RuneAt(k))
+		k++
+	}
+	fmt.Println("|-")
+
+}

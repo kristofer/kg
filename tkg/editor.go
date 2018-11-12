@@ -2,13 +2,14 @@ package tkg
 
 import (
 	"fmt"
+	"log"
 
 	termbox "github.com/nsf/termbox-go"
 )
 
-var LINES = 1
-var COLS = 10
-var MSGLINE = (LINES - 1)
+// var LINES = 1
+// var COLS = 10
+// var MSGLINE = (LINES - 1)
 
 const (
 	VERSION     = "kg 1.0, Public Domain, November 2018, Kristofer Younger,  No warranty."
@@ -65,12 +66,16 @@ type Editor struct {
 	Keymap     []Keymapt
 	Key_return *Keymapt /* Command key return */
 	//
-	Lines int
-	Cols  int
+	Lines   int
+	Cols    int
+	FGColor termbox.Attribute
+	BGColor termbox.Attribute
 }
 
 // StartEditor is the old C main function
 func (e *Editor) StartEditor(argv []string, argc int) {
+	e.FGColor = termbox.ColorDefault
+	e.BGColor = termbox.ColorWhite
 	err := termbox.Init()
 	if err != nil {
 		panic(err)
@@ -87,6 +92,9 @@ func (e *Editor) StartEditor(argv []string, argc int) {
 		e.msg("NO file to open, creating scratch buffer")
 		e.CurrentBuffer = FindBuffer("*scratch*", true)
 		e.CurrentBuffer.Buffername = "*scratch*"
+		s := "Lorem ipsum dolor sit amet,\nconsectetur adipiscing elit,\nsed do eiusmod tempor incididunt ut\nlabore et dolore magna aliqua. "
+
+		e.CurrentBuffer.SetText(s)
 	}
 	e.CurrentWindow = NewWindow(e)
 	e.RootWindow = e.CurrentWindow
@@ -139,6 +147,7 @@ loop:
 			e.msg("Key: %v", ev.Ch)
 			e.UpdateDisplay()
 			//dispatch_press(&ev)
+			e.CurrentBuffer.Insert(string(ev.Ch))
 			// TODO: handle key press
 			//pretty_print_press(&ev)
 			termbox.Flush()
@@ -180,16 +189,101 @@ func (e *Editor) drawstring(x, y int, fg, bg termbox.Attribute, msg string) {
 func (e *Editor) DisplayMsg() {
 	e.Cols, e.Lines = termbox.Size()
 	if e.Msgflag {
-		e.drawstring(0, e.Lines-1, termbox.ColorWhite, termbox.ColorBlack, e.Msgline)
+		e.drawstring(0, e.Lines-1, e.FGColor, termbox.ColorDefault, e.Msgline)
 	}
 }
 
 func (e *Editor) Display(wp *Window, flag bool) {
 	termbox.Clear(termbox.ColorDefault, termbox.ColorDefault)
 
+	r, c := 0, 0
+	idx := 0
+	var rch rune
+	bp := wp.Buffer
+
+	// token_type := ID_DEFAULT
+
+	// /* find start of screen, handle scroll up off page or top of file  */
+	// /* int is always within b_page and b_epage */
+	// if (bp.int < bp.b_page)
+	// 	bp.b_page = SegStart(bp, bp.LineStart(bp.int), bp.int)
+
+	// /* reframe when scrolled off bottom */
+	// if (bp.b_reframe == 1 || (bp.b_epage <= bp.int && curbp.int != pos(curbp, curbp.b_ebuf))) {
+	// 	bp.b_reframe = 0;
+	// 	/* Find end of screen plus one. */
+	// 	bp.b_page = dndn(bp, bp.int);
+	// 	/* if we scoll to EOF we show 1 blank line at bottom of screen */
+	// 	if (pos(bp, bp.b_ebuf) <= bp.b_page) {
+	// 		bp.b_page = pos(bp, bp.b_ebuf);
+	// 		i = wp.w_rows - 1;
+	// 	} else {
+	// 		i = wp.w_rows - 0;
+	// 	}
+	// 	/* Scan backwards the required number of lines. */
+	// 	while (0 < i--)
+	// 		bp.b_page = upup(bp, bp.b_page);
+	// }
+
+	// move(wp.TopPt, 0); /* start from top of window */
+	r = wp.TopPt
+	c = 0
+	// // bp.b_epage = bp.b_page;
+	bp.PageEnd = bp.PageStart
+	// // set_parse_state(bp, bp.b_epage); /* are we in a multline comment ? */
+
+	// // /* paint screen from top of page until we hit maxline */
+	for {
+		// 	/* reached Point - store the Point position */
+		if bp.Point() == bp.PageEnd {
+			bp.PointRow = r
+			bp.PointCol = c
+		}
+		// 	p = ptr(bp, bp.b_epage);
+		// 	nch = 1;
+		if r > wp.TopPt+wp.Rows || idx >= bp.BufferLen() { /* maxline */
+			break
+		}
+		rch = bp.RuneAt(idx)
+		log.Println(rch, c, r)
+		if rch != '\r' {
+			termbox.SetCell(c, r, rch, e.FGColor, termbox.ColorDefault)
+			c++
+			// } else if (isprint(*p) || *p == '\t' || *p == '\n') {
+			// 	j += rch == '\t' ? 8-(j&7) : 1;
+			// 	//token_type = parse_text(bp, bp.b_epage);
+			// 	//attron(COLOR_PAIR(token_type));
+			// 	//addch(*p);
+			// } else {
+			// 	const char *ctrl = unctrl(*p);
+			// 	j += (int) strlen(ctrl);
+			// 	addstr(ctrl);
+		}
+
+		if rch == '\n' || e.Cols <= c {
+			c -= e.Cols
+			if c < 0 {
+				c = 0
+			}
+			r++
+		}
+		idx++
+		// 	bp.b_epage = bp.b_epage + nch;
+	}
+
+	// /* replacement for clrtobot() to bottom of window */
+	// for (k=i; k < wp.w_top + wp.w_rows; k++) {
+	// 	move(k, j) /* clear from very last char not start of line */
+	// 	clrtoeol()
+	// 	j = 0 /* thereafter start of line */
+	// }
+
+	PushBuffer2Window(wp)
 	e.ModeLine(wp)
 	e.DisplayMsg()
+	termbox.SetCursor(bp.PointCol, bp.PointRow)
 	termbox.Sync()
+	wp.Updated = false
 }
 
 func (e *Editor) UpdateDisplay() {
@@ -254,12 +348,12 @@ func (e *Editor) ModeLine(wp *Window) {
 	y := wp.TopPt + wp.Rows
 	//e.msg("win x %d y %d ", x, y)
 	for _, c := range temp {
-		termbox.SetCell(x, y, c, termbox.ColorWhite, termbox.ColorBlack)
+		termbox.SetCell(x, y, c, e.FGColor, e.BGColor)
 		x++
 	} //addstr(temp) // term
 
 	for i := len(temp); i <= e.Cols; i++ {
-		termbox.SetCell(i, y, lch, termbox.ColorWhite, termbox.ColorBlack)
+		termbox.SetCell(i, y, lch, e.FGColor, e.BGColor)
 	}
 	//standend();
 }

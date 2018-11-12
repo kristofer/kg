@@ -39,10 +39,6 @@ func NewBuffer() *Buffer {
 	return &Buffer{}
 }
 
-// func (r *Buffer) RuneAt(pt int) *rune {
-// 	return &(r.data[pt])
-// }
-
 func (r *Buffer) SetText(s string) {
 	r.data = []rune(s)
 	r.preLen = 0
@@ -73,6 +69,16 @@ func (r *Buffer) GetTextForLines(l1, l2 int) string {
 	return string(ret)
 }
 
+func (r *Buffer) RuneAt(p int) rune {
+	//fmt.Println(p, r.preLen, r.postLen, r.postStart())
+	if p <= r.preLen && r.preLen != 0 {
+		return r.data[p]
+	}
+	if p >= r.postLen || p <= len(r.data) {
+		return r.data[r.postStart()+(p-r.preLen)]
+	}
+	return '\u2318'
+}
 func (r *Buffer) BufferLen() int {
 	return r.preLen + r.postLen
 }
@@ -188,6 +194,9 @@ func (r *Buffer) Backspace() {
 // Point return point
 func (r *Buffer) Point() int {
 	return r.preLen
+}
+func (r *Buffer) RuneForPoint() rune {
+	return r.data[r.preLen]
 }
 
 func (r *Buffer) SetPoint(np int) {

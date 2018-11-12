@@ -235,7 +235,7 @@ func DisplayUTF8(bp *Buffer, sbuf string) {
 	// for (i=0; i<n; i++)
 	// 	sbuf[i] = *ptr(bp, bp.b_epage + i);
 	// sbuf[n] = '\0';
-	addstr(sbuf)
+	//addstr(sbuf)
 }
 
 func ModeLine(wp *Window) {
