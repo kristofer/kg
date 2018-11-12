@@ -71,17 +71,21 @@ type Editor struct {
 
 // StartEditor is the old C main function
 func (e *Editor) StartEditor(argv []string, argc int) {
+	err := termbox.Init()
+	if err != nil {
+		panic(err)
+	}
+	defer termbox.Close()
+	e.Cols, e.Lines = termbox.Size()
 
 	if argc > 1 {
 		e.CurrentBuffer = FindBuffer(argv[1], true)
 		e.InsertFile(argv[1], false)
 		/* Save filename irregardless of load() success. */
-		//strncpy(e.CurrentBuffer->b_fname, argv[1], NAME_MAX);
 		e.CurrentBuffer.Filename = argv[1]
-		//e.CurrentBuffer->b_fname[NAME_MAX] = '\0'; /* force truncation */
 	} else {
+		e.msg("NO file to open, creating scratch buffer")
 		e.CurrentBuffer = FindBuffer("*scratch*", true)
-		//strncpy(e.CurrentBuffer->b_bname, "*scratch*", STRBUF_S);
 		e.CurrentBuffer.Buffername = "*scratch*"
 	}
 	e.CurrentWindow = NewWindow(e)
@@ -94,19 +98,10 @@ func (e *Editor) StartEditor(argv []string, argc int) {
 	}
 	//e.Key_map = e.Keymap
 
-	err := termbox.Init()
-	if err != nil {
-		panic(err)
-	}
-	defer termbox.Close()
-
-	e.Lines, e.Cols = termbox.Size()
-
 	termbox.SetInputMode(termbox.InputEsc | termbox.InputMouse)
 
 	termbox.Clear(termbox.ColorDefault, termbox.ColorDefault)
-	//draw_keyboard()
-	e.Display()
+	e.UpdateDisplay()
 	termbox.Flush()
 	inputmode := 0
 	ctrlxpressed := false
@@ -141,27 +136,25 @@ loop:
 			}
 
 			termbox.Clear(termbox.ColorDefault, termbox.ColorDefault)
-			//draw_keyboard()
 			e.msg("Key: %v", ev.Ch)
-			e.Display()
+			e.UpdateDisplay()
 			//dispatch_press(&ev)
+			// TODO: handle key press
 			//pretty_print_press(&ev)
 			termbox.Flush()
 		case termbox.EventResize:
 			termbox.Clear(termbox.ColorDefault, termbox.ColorDefault)
 			e.Cols, e.Lines = termbox.Size()
 			e.msg("Resize: h %d,w %d", e.Lines, e.Cols)
-			//draw_keyboard()
-			e.Display()
-			//pretty_print_resize(&ev)
+			e.CurrentWindow.WindowResize()
+			e.UpdateDisplay()
 			termbox.Flush()
 		case termbox.EventMouse:
 			termbox.Clear(termbox.ColorDefault, termbox.ColorDefault)
 			//log.Println("[", e.Lines, e.Cols, ev, "event", ctrlxpressed)
 			e.msg("Mouse: %d,%d [%d %d]", ev.MouseX, ev.MouseY, e.Cols, e.Lines)
-			//draw_keyboard()
-			e.Display()
-			//pretty_print_mouse(&ev)
+			// TODO: need to set the Point to mouse click location.
+			e.UpdateDisplay()
 			termbox.Flush()
 		case termbox.EventError:
 			panic(ev.Err)
@@ -189,12 +182,84 @@ func (e *Editor) DisplayMsg() {
 	if e.Msgflag {
 		e.drawstring(0, e.Lines-1, termbox.ColorWhite, termbox.ColorBlack, e.Msgline)
 	}
-	// clear to end of line?
 }
 
-func (e *Editor) Display() {
+func (e *Editor) Display(wp *Window, flag bool) {
 	termbox.Clear(termbox.ColorDefault, termbox.ColorDefault)
 
+	e.ModeLine(wp)
 	e.DisplayMsg()
-	//termbox.Sync()
+	termbox.Sync()
+}
+
+func (e *Editor) UpdateDisplay() {
+	bp := e.CurrentWindow.Buffer
+	bp.OrigPoint = bp.Point() /* OrigPoint only ever set here */
+
+	/* only one window */
+	if e.RootWindow.Next == nil {
+		e.Display(e.CurrentWindow, true)
+		//refresh()
+		bp.PrevSize = bp.TextSize
+		return
+	}
+
+	e.Display(e.CurrentWindow, false) /* this is key, we must call our win first to get accurate page and epage etc */
+
+	/* never CurrentWin,  but same buffer in different window or update flag set*/
+	for wp := e.RootWindow; wp != nil; wp = wp.Next {
+		if wp != e.CurrentWindow && (wp.Buffer == bp || wp.Updated) {
+			SyncBuffer(wp)
+			e.Display(wp, false)
+		}
+	}
+
+	/* now display our window and buffer */
+	SyncBuffer(e.CurrentWindow)
+	//e.DisplayMsg()
+	termbox.SetCursor(e.CurrentWindow.CurRow, e.CurrentWindow.CurCol) /* set cursor for CurrentWin */
+	//refresh()
+	bp.PrevSize = bp.TextSize /* now safe to save previous size for next time */
+}
+
+func (e *Editor) ModeLine(wp *Window) {
+	//i := 0
+	var lch, mch, och rune
+	e.Cols, e.Lines = termbox.Size()
+
+	//standout();
+	//move(wp.TopPt+wp.Rows, 0)
+	// lch = (wp == CurrentWin ? '=' : '-')
+	if wp == e.CurrentWindow {
+		lch = '='
+	} else {
+		lch = '-'
+	}
+	// mch = ((wp.Buffer.Flags & B_MODIFIED) ? '*' : lch);
+	mch = lch
+	if wp.Buffer.modified {
+		mch = '*'
+	}
+	// och = ((wp.Buffer.Flags & B_OVERWRITE) ? 'O' : lch);
+	och = lch
+	// if wp.Buffer.Flags&B_OVERWRITE != 0 {
+	// 	och = 'O'
+	// }
+
+	temp := fmt.Sprintf("%c%c%c kg: %c%c %s (h %d, w%d) 0 y %d", lch, och, mch, lch, lch,
+		GetBufferName(wp.Buffer), e.Lines, e.Cols, wp.TopPt+wp.Rows)
+	fmt.Println(temp)
+	//e.drawstring(0, e.Lines-1, termbox.ColorWhite, termbox.ColorBlack, temp)
+	x := 0
+	y := wp.TopPt + wp.Rows
+	//e.msg("win x %d y %d ", x, y)
+	for _, c := range temp {
+		termbox.SetCell(x, y, c, termbox.ColorWhite, termbox.ColorBlack)
+		x++
+	} //addstr(temp) // term
+
+	for i := len(temp); i <= e.Cols; i++ {
+		termbox.SetCell(i, y, lch, termbox.ColorWhite, termbox.ColorBlack)
+	}
+	//standend();
 }

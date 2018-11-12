@@ -190,6 +190,10 @@ func (r *Buffer) Point() int {
 	return r.preLen
 }
 
+func (r *Buffer) SetPoint(np int) {
+
+}
+
 // PrintPoint print Point point
 func (r *Buffer) PrintPoint() {
 	fmt.Println("C: ", r.Point())

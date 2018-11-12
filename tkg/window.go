@@ -44,8 +44,12 @@ func NewWindow(e *Editor) *Window {
 
 func (wp *Window) OneWindow() {
 	wp.TopPt = 0
-	wp.Rows = LINES - 2
+	wp.Rows = wp.Editor.Lines - 2
 	wp.Next = nil
+}
+
+func (wp *Window) WindowResize() {
+	wp.Editor.CurrentWindow.OneWindow()
 }
 
 func (wp *Window) SplitWindow() {
@@ -140,4 +144,40 @@ func (wp *Window) DisassociateBuffer() {
 		wp.Buffer.WinCount--
 		wp.Buffer = nil
 	}
+}
+
+func SyncBuffer(w *Window) { //sync w2b win to buff
+	b := w.Buffer
+	// w.w_bufp.int = w.w_int;
+	b.SetPoint(w.Point)
+	// w.w_bufp.b_page = w.w_page;
+	b.PageStart = w.WinStart
+	// w.w_bufp.b_epage = w.w_epage;
+	b.PageEnd = w.WinEnd
+	// w.w_bufp.b_row = w.w_row;
+	b.PointRow = w.CurRow
+	// w.w_bufp.b_col = w.w_col;
+	b.PointCol = w.CurCol
+
+	/* fixup Pointers in other windows of the same buffer, if size of edit text changed */
+	// if (w.w_bufp.int > w.w_bufp.b_cint) {
+	if b.Point() > b.OrigPoint {
+		sizeDelta := b.TextSize - b.PrevSize
+		// 	w.w_bufp.int += (w.w_bufp.b_size - w.w_bufp.b_psize);
+		b.MoveGap(sizeDelta)
+		// 	w.w_bufp.b_page += (w.w_bufp.b_size - w.w_bufp.b_psize);
+		b.PageStart += sizeDelta
+		// 	w.w_bufp.b_epage += (w.w_bufp.b_size - w.w_bufp.b_psize);
+		b.PageEnd += sizeDelta
+	}
+}
+
+func PushBuffer2Window(w *Window) { // b2w
+	b := w.Buffer
+	w.Point = b.Point()
+	w.WinStart = b.PageStart
+	w.WinEnd = b.PageEnd
+	w.CurRow = b.PointRow
+	w.CurCol = b.PointRow
+	b.TextSize = b.BufferLen()
 }

@@ -135,98 +135,98 @@ func (bp *Buffer) OffsetForColumn(offset int, column int) int {
 	return offset
 }
 
-func (wp *Window) Display(flag byte) {
-	//char_t *p;
-	// i, j, k, nch := 0;
+//func (wp *Window) Display(flag byte) {
+//char_t *p;
+// i, j, k, nch := 0;
 
-	// bp := wp.Buffer
+// bp := wp.Buffer
 
-	// token_type := ID_DEFAULT
+// token_type := ID_DEFAULT
 
-	// /* find start of screen, handle scroll up off page or top of file  */
-	// /* int is always within b_page and b_epage */
-	// if (bp.int < bp.b_page)
-	// 	bp.b_page = SegStart(bp, bp.LineStart(bp.int), bp.int)
+// /* find start of screen, handle scroll up off page or top of file  */
+// /* int is always within b_page and b_epage */
+// if (bp.int < bp.b_page)
+// 	bp.b_page = SegStart(bp, bp.LineStart(bp.int), bp.int)
 
-	// /* reframe when scrolled off bottom */
-	// if (bp.b_reframe == 1 || (bp.b_epage <= bp.int && curbp.int != pos(curbp, curbp.b_ebuf))) {
-	// 	bp.b_reframe = 0;
-	// 	/* Find end of screen plus one. */
-	// 	bp.b_page = dndn(bp, bp.int);
-	// 	/* if we scoll to EOF we show 1 blank line at bottom of screen */
-	// 	if (pos(bp, bp.b_ebuf) <= bp.b_page) {
-	// 		bp.b_page = pos(bp, bp.b_ebuf);
-	// 		i = wp.w_rows - 1;
-	// 	} else {
-	// 		i = wp.w_rows - 0;
-	// 	}
-	// 	/* Scan backwards the required number of lines. */
-	// 	while (0 < i--)
-	// 		bp.b_page = upup(bp, bp.b_page);
-	// }
+// /* reframe when scrolled off bottom */
+// if (bp.b_reframe == 1 || (bp.b_epage <= bp.int && curbp.int != pos(curbp, curbp.b_ebuf))) {
+// 	bp.b_reframe = 0;
+// 	/* Find end of screen plus one. */
+// 	bp.b_page = dndn(bp, bp.int);
+// 	/* if we scoll to EOF we show 1 blank line at bottom of screen */
+// 	if (pos(bp, bp.b_ebuf) <= bp.b_page) {
+// 		bp.b_page = pos(bp, bp.b_ebuf);
+// 		i = wp.w_rows - 1;
+// 	} else {
+// 		i = wp.w_rows - 0;
+// 	}
+// 	/* Scan backwards the required number of lines. */
+// 	while (0 < i--)
+// 		bp.b_page = upup(bp, bp.b_page);
+// }
 
-	// move(wp.TopPt, 0); /* start from top of window */
-	// i = wp.TopPt;
-	// j = 0;
-	// bp.b_epage = bp.b_page;
-	// set_parse_state(bp, bp.b_epage); /* are we in a multline comment ? */
+// move(wp.TopPt, 0); /* start from top of window */
+// i = wp.TopPt;
+// j = 0;
+// bp.b_epage = bp.b_page;
+// set_parse_state(bp, bp.b_epage); /* are we in a multline comment ? */
 
-	// /* paint screen from top of page until we hit maxline */
-	// for {
-	// 	/* reached int - store the cursor position */
-	// 	if (bp.int == bp.b_epage) {
-	// 		bp.b_row = i;
-	// 		bp.b_col = j;
-	// 	}
-	// 	p = ptr(bp, bp.b_epage);
-	// 	nch = 1;
-	// 	if (wp.w_top + wp.w_rows <= i || bp.b_ebuf <= p) /* maxline */
-	// 		break;
-	// 	if (*p != '\r') {
-	// 		nch = utf8_size(*p);
-	// 		if ( nch > 1) {
-	// 			wchar_t c;
-	// 			/* reset if invalid multi-byte character */
-	// 			if (mbtowc(&c, (char*)p, 6) < 0) mbtowc(nil, nil, 0);
-	// 			j += wcwidth(c) < 0 ? 1 : wcwidth(c);
-	// 			display_utf8(bp, *p, nch);
-	// 		} else if (isprint(*p) || *p == '\t' || *p == '\n') {
-	// 			j += *p == '\t' ? 8-(j&7) : 1;
-	// 			token_type = parse_text(bp, bp.b_epage);
-	// 			attron(COLOR_PAIR(token_type));
-	// 			addch(*p);
-	// 		} else {
-	// 			const char *ctrl = unctrl(*p);
-	// 			j += (int) strlen(ctrl);
-	// 			addstr(ctrl);
-	// 		}
-	// 	}
-	// 	if (*p == '\n' || COLS <= j) {
-	// 		j -= COLS;
-	// 		if (j < 0)
-	// 			j = 0;
-	// 		++i;
-	// 	}
-	// 	bp.b_epage = bp.b_epage + nch;
-	// }
+// /* paint screen from top of page until we hit maxline */
+// for {
+// 	/* reached int - store the cursor position */
+// 	if (bp.int == bp.b_epage) {
+// 		bp.b_row = i;
+// 		bp.b_col = j;
+// 	}
+// 	p = ptr(bp, bp.b_epage);
+// 	nch = 1;
+// 	if (wp.w_top + wp.w_rows <= i || bp.b_ebuf <= p) /* maxline */
+// 		break;
+// 	if (*p != '\r') {
+// 		nch = utf8_size(*p);
+// 		if ( nch > 1) {
+// 			wchar_t c;
+// 			/* reset if invalid multi-byte character */
+// 			if (mbtowc(&c, (char*)p, 6) < 0) mbtowc(nil, nil, 0);
+// 			j += wcwidth(c) < 0 ? 1 : wcwidth(c);
+// 			display_utf8(bp, *p, nch);
+// 		} else if (isprint(*p) || *p == '\t' || *p == '\n') {
+// 			j += *p == '\t' ? 8-(j&7) : 1;
+// 			token_type = parse_text(bp, bp.b_epage);
+// 			attron(COLOR_PAIR(token_type));
+// 			addch(*p);
+// 		} else {
+// 			const char *ctrl = unctrl(*p);
+// 			j += (int) strlen(ctrl);
+// 			addstr(ctrl);
+// 		}
+// 	}
+// 	if (*p == '\n' || COLS <= j) {
+// 		j -= COLS;
+// 		if (j < 0)
+// 			j = 0;
+// 		++i;
+// 	}
+// 	bp.b_epage = bp.b_epage + nch;
+// }
 
-	// /* replacement for clrtobot() to bottom of window */
-	// for (k=i; k < wp.w_top + wp.w_rows; k++) {
-	// 	move(k, j) /* clear from very last char not start of line */
-	// 	clrtoeol()
-	// 	j = 0 /* thereafter start of line */
-	// }
+// /* replacement for clrtobot() to bottom of window */
+// for (k=i; k < wp.w_top + wp.w_rows; k++) {
+// 	move(k, j) /* clear from very last char not start of line */
+// 	clrtoeol()
+// 	j = 0 /* thereafter start of line */
+// }
 
-	// //b2w(wp); /* save buffer stuff on window */
-	// PushBuffer2Window(wp)
-	// modeline(wp)
-	// if (wp == CurrentWin && flag) {
-	// 	DisplayMsg()
-	// 	move(bp.CursorRow, bp.CursorCol) /* set cursor */
-	// 	refresh()
-	// }
-	// wp.Updated = false
-}
+// //b2w(wp); /* save buffer stuff on window */
+// PushBuffer2Window(wp)
+// modeline(wp)
+// if (wp == CurrentWin && flag) {
+// 	DisplayMsg()
+// 	move(bp.CursorRow, bp.CursorCol) /* set cursor */
+// 	refresh()
+// }
+// wp.Updated = false
+//}
 
 func DisplayUTF8(bp *Buffer, sbuf string) {
 	// char sbuf[6];
@@ -286,79 +286,4 @@ func DisplayPromptAndResponse(prompt string, response string) {
 		addstr(response) // term
 	}
 	clrtoeol() // term ClearToEndOfLine
-}
-
-func UpdateDisplay() {
-	//window_t *wp;
-	//buffer_t *bp;
-
-	bp := CurrentWin.Buffer
-	bp.Origint = bp.int /* cint only ever set here */
-
-	/* only one window */
-	if Wheadp.Next == nil {
-		display(CurrentWin, true)
-		refresh()
-		bp.PrevSize = bp.TextSize
-		return
-	}
-
-	display(CurrentWin, false) /* this is key, we must call our win first to get accurate page and epage etc */
-
-	/* never CurrentWin,  but same buffer in different window or update flag set*/
-	for wp := wheadp; wp != nil; wp = wp.Next {
-		if wp != CurrentWin && (wp.Buffer == bp || wp.Updated) {
-			wSyncBuffer2b(wp)
-			display(wp, false)
-		}
-	}
-
-	/* now display our window and buffer */
-	SyncBuffer(CurrentWin)
-	DisplayMsg()
-	move(CurrentWin.CurRow, CurrentWin.CurCol) /* set cursor for CurrentWin */
-	refresh()
-	bp.PrevSize = bp.TextSize /* now safe to save previous size for next time */
-}
-
-func SyncBuffer(w *Window) { //sync w2b win to buff
-	b := w.Buffer
-	// w.w_bufp.int = w.w_int;
-	b.int = w.int
-	// w.w_bufp.b_page = w.w_page;
-	b.PageStart = w.WinStart
-	// w.w_bufp.b_epage = w.w_epage;
-	b.PageEnd = w.WnEnd
-	// w.w_bufp.b_row = w.w_row;
-	b.CursorRow = w.CurRow
-	// w.w_bufp.b_col = w.w_col;
-	b.CursorCol = w.CurCol
-
-	/* fixup inters in other windows of the same buffer, if size of edit text changed */
-	// if (w.w_bufp.int > w.w_bufp.b_cint) {
-	if b.int > b.Origint {
-		sizeDelta := b.TextSize - b.PrevSize
-		// 	w.w_bufp.int += (w.w_bufp.b_size - w.w_bufp.b_psize);
-		b.int += sizeDelta
-		// 	w.w_bufp.b_page += (w.w_bufp.b_size - w.w_bufp.b_psize);
-		b.PageStart += sizeDelta
-		// 	w.w_bufp.b_epage += (w.w_bufp.b_size - w.w_bufp.b_psize);
-		b.PageEnd += sizeDelta
-	}
-}
-
-func PushBuffer2Window(window_t *w) { // b2w
-	b := w.Buffer
-	// w.w_int = w.w_bufp.int;
-	w.int = b.int
-	// w.w_page = w.w_bufp.b_page;
-	w.WinStart = b.PageStart
-	// w.w_epage = w.w_bufp.b_epage;
-	w.WinEnd = b.PageEnd
-	// w.w_row = w.w_bufp.b_row;
-	w.CurRow = b.CursorRow
-	// w.w_col = w.w_bufp.b_col;
-	w.CurRow = b.CursorRow
-	// w.w_bufp.b_size = (w.w_bufp.b_ebuf - w.w_bufp.b_buf) - (w.w_bufp.b_egap - w.w_bufp.b_gap);
-	b.TextSize = b.Buffer.BufferLen()
 }
