@@ -2,7 +2,6 @@ package tkg
 
 import (
 	"fmt"
-	"strings"
 )
 
 /*
@@ -19,7 +18,7 @@ type Buffer struct {
 	OrigPoint  int    /* b_cpoint the original current point, used for mutliple window displaying */
 	PageStart  int    /* b_page start of page */
 	PageEnd    int    /* b_epage end of page */
-	Reframe    int    /* b_reframe force a reframe of the display */
+	Reframe    bool   /* b_reframe force a reframe of the display */
 	WinCount   int    /* b_cnt count of windows referencing this buffer */
 	TextSize   int    /* b_size current size of text being edited (not including gap) */
 	PrevSize   int    /* b_psize previous size */
@@ -31,8 +30,12 @@ type Buffer struct {
 	modified   bool
 }
 
-var RootBuffer *Buffer = nil
-var CurrentBuffer *Buffer = nil
+// var RootBuffer *Buffer = nil
+// var CurrentBuffer *Buffer = nil
+
+func (r *Buffer) MarkModified() {
+	r.modified = true
+}
 
 // NewBuffer - Create a new Buffer
 func NewBuffer() *Buffer {
@@ -55,8 +58,8 @@ func (r *Buffer) GetText() string {
 }
 
 func (r *Buffer) GetTextForLines(l1, l2 int) string {
-	pt1 := r.IntForLine(l1)
-	pt2 := r.IntForLine(l2)
+	pt1 := r.PointForLine(l1)
+	pt2 := r.PointForLine(l2)
 	fmt.Println(pt1, pt2)
 	ret := make([]rune, pt2-pt1)
 
@@ -86,6 +89,10 @@ func (r *Buffer) RuneAt(p int) rune {
 	return '\u2318'
 }
 func (r *Buffer) BufferLen() int {
+	return r.preLen + r.postLen
+}
+
+func (r *Buffer) BufferEnd() int {
 	return r.preLen + r.postLen
 }
 
@@ -158,8 +165,8 @@ func (r *Buffer) MoveGap(offset int) int {
 	return offset
 }
 
-// IntForLine return point for line ln
-func (r *Buffer) IntForLine(ln int) int {
+// PointForLine return point for beginning of line ln
+func (r *Buffer) PointForLine(ln int) int {
 	ep := len(r.data) - 1
 	sp := 0
 	for p := 0; p < ep; p++ {
@@ -275,123 +282,45 @@ func (r *Buffer) debugPrint() {
 	fmt.Printf("\n")
 }
 
-/* Buffer lists manipulation */
-/* Find a buffer by filename or create if requested */
-func FindBuffer(fname string, cflag bool) *Buffer {
-	var bp *Buffer
-	var sb *Buffer
+// /* Buffer lists manipulation */
+// /* Find a buffer by filename or create if requested */
+// func FindBuffer(fname string, cflag bool) *Buffer {
+// 	var bp *Buffer
+// 	var sb *Buffer
 
-	bp = RootBuffer
-	for bp != nil {
-		if strings.Compare(fname, bp.Filename) == 0 || strings.Compare(fname, bp.Buffername) == 0 {
-			return bp
-		}
-		bp = bp.Next
-	}
+// 	bp = RootBuffer
+// 	for bp != nil {
+// 		if strings.Compare(fname, bp.Filename) == 0 || strings.Compare(fname, bp.Buffername) == 0 {
+// 			return bp
+// 		}
+// 		bp = bp.Next
+// 	}
 
-	if cflag != false {
-		// if ((bp = (buffer_t *) malloc (sizeof (buffer_t))) == nil)
-		// 	return (0);
-		bp = NewBuffer()
+// 	if cflag != false {
+// 		// if ((bp = (buffer_t *) malloc (sizeof (buffer_t))) == nil)
+// 		// 	return (0);
+// 		bp = NewBuffer()
 
-		//BufferInit(bp)
-		//assert(bp != nil);
+// 		//BufferInit(bp)
+// 		//assert(bp != nil);
 
-		/* find the place in the list to insert this buffer */
-		if RootBuffer == nil {
-			RootBuffer = bp
-		} else if strings.Compare(RootBuffer.Filename, fname) > 0 {
-			/* insert at the begining */
-			bp.Next = RootBuffer
-			RootBuffer = bp
-		} else {
-			for sb = RootBuffer; sb.Next != nil; sb = sb.Next {
-				if strings.Compare(sb.Next.Filename, fname) > 0 {
-					break
-				}
-			}
-			/* and insert it */
-			bp.Next = sb.Next
-			sb.Next = bp
-		}
-	}
-	return bp
-}
-
-// DeleteBuffer unlink from the list of buffers, free associated memory,
-// assumes buffer has been saved if modified
-func DeleteBuffer(bp *Buffer) bool {
-	//editor := bp.CurrentWindow.Editor
-	var sb *Buffer
-
-	/* we must have switched to a different buffer first */
-	//assert(bp != CurrentBuffer)
-	if bp != CurrentBuffer {
-		/* if buffer is the head buffer */
-		if bp == RootBuffer {
-			RootBuffer = bp.Next
-		} else {
-			/* find place where the bp buffer is next */
-			for sb = RootBuffer; sb.Next != bp && sb.Next != nil; sb = sb.Next {
-			}
-			if sb.Next == bp || sb.Next == nil {
-				sb.Next = bp.Next
-			}
-		}
-
-		/* now we can delete */
-		//free(bp.BufferStart);
-		//bp.BufferStart = nil
-		//free(bp);
-		bp = nil
-	} else {
-		return false
-	}
-	return true
-}
-
-// NextBuffer returns next buffer after current
-func NextBuffer(CurrentWindow *Window) {
-	editor := CurrentWindow.Editor
-	if editor.CurrentBuffer != nil && editor.RootBuffer != nil {
-		CurrentWindow.DisassociateBuffer()
-		if CurrentBuffer.Next != nil {
-			CurrentBuffer = CurrentBuffer.Next
-
-		} else {
-			CurrentBuffer = RootBuffer
-		}
-		CurrentWindow.AssociateBuffer(CurrentBuffer)
-	}
-}
-
-// GetBufferName returns buffer name
-func GetBufferName(bp *Buffer) string {
-	if bp.Filename != "" {
-		return bp.Filename
-	}
-	return bp.Buffername
-}
-
-// CountBuffers how many buffers in list
-func CountBuffers() int {
-	var bp *Buffer
-	i := 0
-
-	for bp = RootBuffer; bp != nil; bp = bp.Next {
-		i++
-	}
-	return i
-}
-
-// ModifiedBuffers true is any buffers modified
-func ModifiedBuffers() bool {
-	var bp *Buffer
-
-	for bp = RootBuffer; bp != nil; bp = bp.Next {
-		if bp.modified == true {
-			return true
-		}
-	}
-	return false
-}
+// 		/* find the place in the list to insert this buffer */
+// 		if RootBuffer == nil {
+// 			RootBuffer = bp
+// 		} else if strings.Compare(RootBuffer.Filename, fname) > 0 {
+// 			/* insert at the begining */
+// 			bp.Next = RootBuffer
+// 			RootBuffer = bp
+// 		} else {
+// 			for sb = RootBuffer; sb.Next != nil; sb = sb.Next {
+// 				if strings.Compare(sb.Next.Filename, fname) > 0 {
+// 					break
+// 				}
+// 			}
+// 			/* and insert it */
+// 			bp.Next = sb.Next
+// 			sb.Next = bp
+// 		}
+// 	}
+// 	return bp
+// }

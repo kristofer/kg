@@ -52,82 +52,6 @@ func (wp *Window) WindowResize() {
 	wp.Editor.CurrentWindow.OneWindow()
 }
 
-func (wp *Window) SplitWindow() {
-	var editor = wp.Editor
-	//var wp *Window
-	var wp2 *Window
-	ntru, ntrl := 0, 0
-
-	if editor.CurrentWindow.Rows < 3 {
-		editor.msg("Cannot split a %d line window", editor.CurrentWindow.Rows)
-		return
-	}
-
-	wp = NewWindow(editor)
-	wp.AssociateBuffer(editor.CurrentWindow.Buffer)
-	//b2w(wp) /* inherit buffer settings */
-
-	ntru = (editor.CurrentWindow.Rows - 1) / 2    /* Upper size */
-	ntrl = (editor.CurrentWindow.Rows - 1) - ntru /* Lower size */
-
-	/* Old is upper window */
-	editor.CurrentWindow.Rows = ntru
-	wp.TopPt = editor.CurrentWindow.TopPt + ntru + 1
-	wp.Rows = ntrl
-
-	/* insert it in the list */
-	wp2 = editor.CurrentWindow.Next
-	editor.CurrentWindow.Next = wp
-	wp.Next = wp2
-	//redraw() /* mark the lot for update */
-}
-
-// NextWindow
-func (wp *Window) NextWindow() {
-	var editor = wp.Editor
-	editor.CurrentWindow.Updated = true /* make sure modeline gets updated */
-	//Curwp = (Curwp.Next == nil ? Wheadp : Curwp.Next)
-	if editor.CurrentWindow.Next == nil {
-		editor.CurrentWindow = editor.RootWindow
-	} else {
-		editor.CurrentWindow = editor.CurrentWindow.Next
-	}
-	editor.CurrentBuffer = editor.CurrentWindow.Buffer
-
-	if editor.CurrentBuffer.WinCount > 1 {
-		//w2b(Curwp) /* push win vars to buffer */
-	}
-}
-
-// DeleteOtherWindows
-func (wp *Window) DeleteOtherWindows() {
-	if wp.Next == nil {
-		wp.Editor.msg("Only 1 window")
-		return
-	}
-	wp.FreeOtherWindows()
-}
-
-// FreeOtherWindows
-func (winp *Window) FreeOtherWindows() {
-	var editor = winp.Editor
-	var wp *Window
-	var next *Window
-	wp = editor.RootWindow
-	next = wp
-	for next != nil {
-		next = wp.Next /* get next before a call to free() makes wp undefined */
-		if wp != winp {
-			wp.DisassociateBuffer() /* this window no longer references its buffer */
-		}
-		wp = next
-	}
-
-	editor.RootWindow = winp
-	editor.CurrentWindow = winp
-	winp.OneWindow()
-}
-
 // AssociateBuffer
 func (wp *Window) AssociateBuffer(bp *Buffer) {
 	if bp != nil && wp != nil {
@@ -146,6 +70,7 @@ func (wp *Window) DisassociateBuffer() {
 	}
 }
 
+// SyncBuffer
 func SyncBuffer(w *Window) { //sync w2b win to buff
 	b := w.Buffer
 	b.SetPoint(w.Point)
@@ -163,6 +88,7 @@ func SyncBuffer(w *Window) { //sync w2b win to buff
 	}
 }
 
+// PushBuffer2Window
 func PushBuffer2Window(w *Window) { // b2w
 	b := w.Buffer
 	w.Point = b.Point()

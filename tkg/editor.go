@@ -2,6 +2,7 @@ package tkg
 
 import (
 	"fmt"
+	"strings"
 	"unicode"
 
 	termbox "github.com/nsf/termbox-go"
@@ -38,15 +39,14 @@ const (
 	ID_SINGLE_STRING = 8
 )
 
-var ()
-
 type Keymapt struct {
 	KeyDesc  string
 	KeyBytes string
-	Do       *func() // function to call for Keymap-ping
+	Do       func(*Editor) // function to call for Keymap-ping
 }
 
 type Editor struct {
+	EventChan     chan termbox.Event
 	CurrentBuffer *Buffer /* current buffer */
 	RootBuffer    *Buffer /* head of list of buffers */
 	CurrentWindow *Window
@@ -84,13 +84,13 @@ func (e *Editor) StartEditor(argv []string, argc int) {
 	e.Cols, e.Lines = termbox.Size()
 
 	if argc > 1 {
-		e.CurrentBuffer = FindBuffer(argv[1], true)
+		e.CurrentBuffer = e.FindBuffer(argv[1], true)
 		e.InsertFile(argv[1], false)
 		/* Save filename irregardless of load() success. */
 		e.CurrentBuffer.Filename = argv[1]
 	} else {
 		e.msg("NO file to open, creating scratch buffer")
-		e.CurrentBuffer = FindBuffer("*scratch*", true)
+		e.CurrentBuffer = e.FindBuffer("*scratch*", true)
 		e.CurrentBuffer.Buffername = "*scratch*"
 		s := "Lorem ipsum dolor sit amet,\nconsectetur adipiscing elit,\nsed do eiusmod tempor incididunt ut\nlabore et dolore magna aliqua. "
 
@@ -107,70 +107,187 @@ func (e *Editor) StartEditor(argv []string, argc int) {
 	//e.Key_map = e.Keymap
 
 	termbox.SetInputMode(termbox.InputEsc | termbox.InputMouse)
+	//termbox.SetInputMode(termbox.InputAlt)
 
 	termbox.Clear(termbox.ColorDefault, termbox.ColorDefault)
 	e.UpdateDisplay()
 	termbox.Flush()
-	inputmode := 0
-	ctrlxpressed := false
-loop:
-	for {
-		switch ev := termbox.PollEvent(); ev.Type {
-		case termbox.EventKey:
-			//log.Println("[", e.Lines, e.Cols, ev, "event", ctrlxpressed)
-			if ev.Key == termbox.KeyCtrlS && ctrlxpressed {
-				termbox.Sync()
-			}
-			if ev.Key == termbox.KeyCtrlQ && ctrlxpressed {
-				break loop
-			}
-			if ev.Key == termbox.KeyCtrlC && ctrlxpressed {
-				chmap := []termbox.InputMode{
-					termbox.InputEsc | termbox.InputMouse,
-					termbox.InputAlt | termbox.InputMouse,
-					termbox.InputEsc,
-					termbox.InputAlt,
-				}
-				inputmode++
-				if inputmode >= len(chmap) {
-					inputmode = 0
-				}
-				termbox.SetInputMode(chmap[inputmode])
-			}
-			if ev.Key == termbox.KeyCtrlX {
-				ctrlxpressed = true
-			} else {
-				ctrlxpressed = false
-			}
+	//inputmode := 0
+	//ctrlxpressed := false
+	// loop:
+	// 	for {
+	// 		switch ev := termbox.PollEvent(); ev.Type {
+	// 		case termbox.EventKey:
+	// 			//log.Println("[", e.Lines, e.Cols, ev, "event", ctrlxpressed)
+	// 			if ev.Key == termbox.KeyCtrlS && ctrlxpressed {
+	// 				termbox.Sync()
+	// 			}
+	// 			if ev.Key == termbox.KeyCtrlQ && ctrlxpressed {
+	// 				break loop
+	// 			}
+	// 			if ev.Key == termbox.KeyCtrlC && ctrlxpressed {
+	// 				chmap := []termbox.InputMode{
+	// 					termbox.InputEsc | termbox.InputMouse,
+	// 					termbox.InputAlt | termbox.InputMouse,
+	// 					termbox.InputEsc,
+	// 					termbox.InputAlt,
+	// 				}
+	// 				inputmode++
+	// 				if inputmode >= len(chmap) {
+	// 					inputmode = 0
+	// 				}
+	// 				termbox.SetInputMode(chmap[inputmode])
+	// 			}
+	// 			if ev.Key == termbox.KeyCtrlX {
+	// 				ctrlxpressed = true
+	// 			} else {
+	// 				ctrlxpressed = false
+	// 			}
 
-			termbox.Clear(termbox.ColorDefault, termbox.ColorDefault)
-			e.msg("Key: %v", ev.Ch)
-			e.CurrentBuffer.Insert(string(ev.Ch))
+	// 			termbox.Clear(termbox.ColorDefault, termbox.ColorDefault)
+	// 			e.msg("Key: %v", ev.Ch)
+	// 			e.CurrentBuffer.Insert(string(ev.Ch))
+	// 			e.UpdateDisplay()
+	// 			//dispatch_press(&ev)
+	// 			// TODO: handle key press
+	// 			//pretty_print_press(&ev)
+	// 			termbox.Flush()
+
+	// 		}
+	// 	}
+
+	e.EventChan = make(chan termbox.Event, 20)
+	go func() {
+		for {
+			e.EventChan <- termbox.PollEvent()
+		}
+	}()
+	for {
+		select {
+		case ev := <-e.EventChan:
+			ok := e.HandleEvent(&ev)
+			if !ok {
+				return
+			}
+			//e.consume_more_events()
+			e.ConsumeMoreEvents()
 			e.UpdateDisplay()
-			//dispatch_press(&ev)
-			// TODO: handle key press
-			//pretty_print_press(&ev)
 			termbox.Flush()
-		case termbox.EventResize:
-			termbox.Clear(termbox.ColorDefault, termbox.ColorDefault)
-			e.Cols, e.Lines = termbox.Size()
-			e.msg("Resize: h %d,w %d", e.Lines, e.Cols)
-			e.CurrentWindow.WindowResize()
-			e.UpdateDisplay()
-			termbox.Flush()
-		case termbox.EventMouse:
-			termbox.Clear(termbox.ColorDefault, termbox.ColorDefault)
-			//log.Println("[", e.Lines, e.Cols, ev, "event", ctrlxpressed)
-			e.msg("Mouse: %d,%d [%d %d]", ev.MouseX, ev.MouseY, e.Cols, e.Lines)
-			// TODO: need to set the Point to mouse click location.
-			e.UpdateDisplay()
-			termbox.Flush()
-		case termbox.EventError:
-			panic(ev.Err)
 		}
 	}
-
 	return
+
+}
+
+// HandleEvent
+func (e *Editor) HandleEvent(ev *termbox.Event) bool {
+	switch ev.Type {
+	case termbox.EventKey:
+		// if g.recording {
+		// 	g.keymacros = append(g.keymacros, create_key_event(ev))
+		// }
+		//g.set_status("") // reset status on every key event
+		e.OnSysKey(ev)
+		// if e.overlay != nil {
+		// 	//e.overlay.on_key(ev)
+		// } else {
+		e.OnKey(ev)
+		//		}
+
+		if e.Done {
+			return false
+		}
+	case termbox.EventResize:
+		termbox.Clear(termbox.ColorDefault, termbox.ColorDefault)
+		// g.resize()
+		// if g.overlay != nil {
+		// 	g.overlay.on_resize(ev)
+		// }
+		e.Cols, e.Lines = termbox.Size()
+		e.msg("Resize: h %d,w %d", e.Lines, e.Cols)
+		e.CurrentWindow.WindowResize()
+		e.UpdateDisplay()
+	case termbox.EventMouse:
+		termbox.Clear(termbox.ColorDefault, termbox.ColorDefault)
+		//log.Println("[", e.Lines, e.Cols, ev, "event", ctrlxpressed)
+		e.msg("Mouse: %d,%d [%d %d]", ev.MouseX, ev.MouseY, e.Cols, e.Lines)
+		// TODO: need to set the Point to mouse click location.
+		e.UpdateDisplay()
+		termbox.Flush()
+	case termbox.EventError:
+		panic(ev.Err)
+	}
+
+	// just dump the current view location from the view to the buffer
+	// after each event, it's cheap and does what it needs to be done
+	//v := g.active.leaf
+	//v.buf.loc = v.view_location
+	return true
+}
+
+// ConsumeMoreEvents handles
+func (e *Editor) ConsumeMoreEvents() bool {
+	for {
+		select {
+		case ev := <-e.EventChan:
+			ok := e.HandleEvent(&ev)
+			if !ok {
+				return false
+			}
+		default:
+			return true
+		}
+	}
+	panic("unreachable")
+}
+
+// OnSysKey on Ctrl key pressed
+func (e *Editor) OnSysKey(ev *termbox.Event) {
+	switch ev.Key {
+	case termbox.KeyCtrlG:
+		//v := g.active.leaf
+		//v.ac = nil
+		//g.set_overlay_mode(nil)
+		//g.set_status("Quit")
+		e.msg("Quit")
+		e.Msgflag = true
+	case termbox.KeyCtrlZ:
+		//suspend(e)
+	}
+}
+
+// OnAltKey on Alt key pressed
+func (e *Editor) OnAltKey(ev *termbox.Event) bool {
+	// switch ev.Ch {
+	// case 'g':
+	// 	g.set_overlay_mode(init_line_edit_mode(g, g.goto_line_lemp()))
+	// 	return true
+	// case '/':
+	// 	g.set_overlay_mode(init_autocomplete_mode(g))
+	// 	return true
+	// case 'q':
+	// 	g.set_overlay_mode(init_fill_region_mode(g))
+	// 	return true
+	// }
+	return false
+}
+
+// OnKey some key
+func (e *Editor) OnKey(ev *termbox.Event) {
+	v := e
+	switch ev.Key {
+	case termbox.KeyCtrlX:
+		//g.set_overlay_mode(init_extended_mode(g))
+	// case termbox.KeyCtrlS:
+	// 	g.set_overlay_mode(init_isearch_mode(g, false))
+	// case termbox.KeyCtrlR:
+	// 	g.set_overlay_mode(init_isearch_mode(g, true))
+	default:
+		if ev.Mod&termbox.ModAlt != 0 && e.OnAltKey(ev) {
+			break
+		}
+		v.OnKey(ev)
+	}
 }
 
 func (e *Editor) msg(fm string, args ...interface{}) {
@@ -210,8 +327,8 @@ func (e *Editor) Display(wp *Window, flag bool) {
 	}
 
 	// /* reframe when scrolled off bottom */
-	if bp.Reframe == 1 || (bp.PageEnd <= bp.Point() && e.CurrentBuffer.Point() != e.CurrentBuffer.PageEnd) {
-		bp.Reframe = 0
+	if bp.Reframe == true || (bp.PageEnd <= bp.Point() && e.CurrentBuffer.Point() != e.CurrentBuffer.PageEnd) {
+		bp.Reframe = true
 		i := 0
 		/* Find end of screen plus one. */
 		bp.PageStart = e.DownDown(bp.Point())
@@ -349,7 +466,7 @@ func (e *Editor) ModeLine(wp *Window) {
 	// }
 
 	temp := fmt.Sprintf("%c%c%c kg: %c%c %s (h %d, w%d) 0 y %d", lch, och, mch, lch, lch,
-		GetBufferName(wp.Buffer), e.Lines, e.Cols, wp.TopPt+wp.Rows)
+		e.GetBufferName(wp.Buffer), e.Lines, e.Cols, wp.TopPt+wp.Rows)
 	fmt.Println(temp)
 	//e.drawstring(0, e.Lines-1, termbox.ColorWhite, termbox.ColorBlack, temp)
 	x := 0
@@ -479,7 +596,7 @@ func (e *Editor) DownDown(off int) int {
 	return (e.SegNext(e.LineStart(off), off))
 }
 
-/* Return the offset of a column on the specified line */
+// OffsetForColumn ln column - Return the offset of a column on the specified line
 func (e *Editor) OffsetForColumn(offset int, column int) int {
 	var p rune
 	c := 0
@@ -494,4 +611,202 @@ func (e *Editor) OffsetForColumn(offset int, column int) int {
 		p = e.CurrentBuffer.RuneAt(offset)
 	}
 	return offset
+}
+
+// DeleteBuffer unlink from the list of buffers, free associated memory,
+// assumes buffer has been saved if modified
+func (e *Editor) DeleteBuffer(bp *Buffer) bool {
+	//editor := bp.CurrentWindow.Editor
+	var sb *Buffer
+
+	/* we must have switched to a different buffer first */
+	//assert(bp != CurrentBuffer)
+	if bp != e.CurrentBuffer {
+		/* if buffer is the head buffer */
+		if bp == e.RootBuffer {
+			e.RootBuffer = bp.Next
+		} else {
+			/* find place where the bp buffer is next */
+			for sb = e.RootBuffer; sb.Next != bp && sb.Next != nil; sb = sb.Next {
+			}
+			if sb.Next == bp || sb.Next == nil {
+				sb.Next = bp.Next
+			}
+		}
+
+		/* now we can delete */
+		//free(bp.BufferStart);
+		//bp.BufferStart = nil
+		//free(bp);
+		bp = nil
+	} else {
+		return false
+	}
+	return true
+}
+
+// NextBuffer returns next buffer after current
+func (e *Editor) NextBuffer() {
+	if e.CurrentBuffer != nil && e.RootBuffer != nil {
+		e.CurrentWindow.DisassociateBuffer()
+		if e.CurrentBuffer.Next != nil {
+			e.CurrentBuffer = e.CurrentBuffer.Next
+
+		} else {
+			e.CurrentBuffer = e.RootBuffer
+		}
+		e.CurrentWindow.AssociateBuffer(e.CurrentBuffer)
+	}
+}
+
+// GetBufferName returns buffer name
+func (e *Editor) GetBufferName(bp *Buffer) string {
+	if bp.Filename != "" {
+		return bp.Filename
+	}
+	return bp.Buffername
+}
+
+// CountBuffers how many buffers in list
+func (e *Editor) CountBuffers() int {
+	var bp *Buffer
+	i := 0
+
+	for bp = e.RootBuffer; bp != nil; bp = bp.Next {
+		i++
+	}
+	return i
+}
+
+// ModifiedBuffers true is any buffers modified
+func (e *Editor) ModifiedBuffers() bool {
+	var bp *Buffer
+
+	for bp = e.RootBuffer; bp != nil; bp = bp.Next {
+		if bp.modified == true {
+			return true
+		}
+	}
+	return false
+}
+
+/* Buffer lists manipulation */
+/* Find a buffer by filename or create if requested */
+func (e *Editor) FindBuffer(fname string, cflag bool) *Buffer {
+	var bp *Buffer
+	var sb *Buffer
+
+	bp = e.RootBuffer
+	for bp != nil {
+		if strings.Compare(fname, bp.Filename) == 0 || strings.Compare(fname, bp.Buffername) == 0 {
+			return bp
+		}
+		bp = bp.Next
+	}
+
+	if cflag != false {
+		// if ((bp = (buffer_t *) malloc (sizeof (buffer_t))) == nil)
+		// 	return (0);
+		bp = NewBuffer()
+
+		//BufferInit(bp)
+		//assert(bp != nil);
+
+		/* find the place in the list to insert this buffer */
+		if e.RootBuffer == nil {
+			e.RootBuffer = bp
+		} else if strings.Compare(e.RootBuffer.Filename, fname) > 0 {
+			/* insert at the begining */
+			bp.Next = e.RootBuffer
+			e.RootBuffer = bp
+		} else {
+			for sb = e.RootBuffer; sb.Next != nil; sb = sb.Next {
+				if strings.Compare(sb.Next.Filename, fname) > 0 {
+					break
+				}
+			}
+			/* and insert it */
+			bp.Next = sb.Next
+			sb.Next = bp
+		}
+	}
+	return bp
+}
+
+func (e *Editor) SplitWindow() {
+	var editor = e
+	var wp *Window
+	var wp2 *Window
+	ntru, ntrl := 0, 0
+
+	if editor.CurrentWindow.Rows < 3 {
+		editor.msg("Cannot split a %d line window", editor.CurrentWindow.Rows)
+		return
+	}
+
+	wp = NewWindow(editor)
+	wp.AssociateBuffer(editor.CurrentWindow.Buffer)
+	//b2w(wp) /* inherit buffer settings */
+
+	ntru = (editor.CurrentWindow.Rows - 1) / 2    /* Upper size */
+	ntrl = (editor.CurrentWindow.Rows - 1) - ntru /* Lower size */
+
+	/* Old is upper window */
+	editor.CurrentWindow.Rows = ntru
+	wp.TopPt = editor.CurrentWindow.TopPt + ntru + 1
+	wp.Rows = ntrl
+
+	/* insert it in the list */
+	wp2 = editor.CurrentWindow.Next
+	editor.CurrentWindow.Next = wp
+	wp.Next = wp2
+	//redraw() /* mark the lot for update */
+}
+
+// NextWindow
+func (e *Editor) NextWindow() {
+	var editor = e
+	editor.CurrentWindow.Updated = true /* make sure modeline gets updated */
+	//Curwp = (Curwp.Next == nil ? Wheadp : Curwp.Next)
+	if editor.CurrentWindow.Next == nil {
+		editor.CurrentWindow = editor.RootWindow
+	} else {
+		editor.CurrentWindow = editor.CurrentWindow.Next
+	}
+	editor.CurrentBuffer = editor.CurrentWindow.Buffer
+
+	if editor.CurrentBuffer.WinCount > 1 {
+		//w2b(Curwp) /* push win vars to buffer */
+	}
+}
+
+// DeleteOtherWindows
+func (e *Editor) DeleteOtherWindows() {
+	wp := e.RootWindow
+	if wp.Next == nil {
+		wp.Editor.msg("Only 1 window")
+		return
+	}
+	e.FreeOtherWindows()
+}
+
+// FreeOtherWindows
+func (e *Editor) FreeOtherWindows() {
+	var editor = e
+	var winp *Window
+	var wp *Window
+	var next *Window
+	wp = e.RootWindow
+	next = wp
+	for next != nil {
+		next = wp.Next /* get next before a call to free() makes wp undefined */
+		if wp != winp {
+			wp.DisassociateBuffer() /* this window no longer references its buffer */
+		}
+		wp = next
+	}
+
+	editor.RootWindow = winp
+	editor.CurrentWindow = winp
+	winp.OneWindow()
 }
