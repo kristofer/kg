@@ -77,9 +77,9 @@ func (r *Buffer) RuneAt(p int) rune {
 	if p < 0 {
 		return '\u2318'
 	}
-	if p > len(r.data) {
-		return '\u2318'
-	}
+	// if p > len(r.data) {
+	// 	return '\u2318'
+	// }
 	if p <= r.preLen && r.preLen != 0 {
 		return r.data[p]
 	}
@@ -87,6 +87,16 @@ func (r *Buffer) RuneAt(p int) rune {
 		return r.data[r.postStart()+(p-r.preLen)]
 	}
 	return '\u2318'
+}
+
+func (r *Buffer) AddRune(ch rune) {
+	if r.gapLen() == 0 {
+		_ = r.GrowGap(32)
+	}
+
+	//copy(r.data[r.gapStart():], []rune(s))
+	r.data[r.preLen] = ch
+	r.preLen++
 }
 func (r *Buffer) BufferLen() int {
 	return r.preLen + r.postLen

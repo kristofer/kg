@@ -2,6 +2,8 @@ package tkg
 
 import (
 	"fmt"
+
+	termbox "github.com/nsf/termbox-go"
 )
 
 var winCount = 0
@@ -50,6 +52,11 @@ func (wp *Window) OneWindow() {
 
 func (wp *Window) WindowResize() {
 	wp.Editor.CurrentWindow.OneWindow()
+}
+
+// OnKey handles the insertion of non-control/editor keys
+func (wp *Window) OnKey(ev *termbox.Event) {
+	wp.Buffer.AddRune(ev.Ch)
 }
 
 // AssociateBuffer

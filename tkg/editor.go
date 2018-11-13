@@ -253,6 +253,8 @@ func (e *Editor) OnSysKey(ev *termbox.Event) {
 		e.Msgflag = true
 	case termbox.KeyCtrlZ:
 		//suspend(e)
+	case termbox.KeyCtrlQ:
+		e.Done = true
 	}
 }
 
@@ -274,7 +276,6 @@ func (e *Editor) OnAltKey(ev *termbox.Event) bool {
 
 // OnKey some key
 func (e *Editor) OnKey(ev *termbox.Event) {
-	v := e
 	switch ev.Key {
 	case termbox.KeyCtrlX:
 		//g.set_overlay_mode(init_extended_mode(g))
@@ -286,7 +287,7 @@ func (e *Editor) OnKey(ev *termbox.Event) {
 		if ev.Mod&termbox.ModAlt != 0 && e.OnAltKey(ev) {
 			break
 		}
-		v.OnKey(ev)
+		e.CurrentWindow.OnKey(ev)
 	}
 }
 
@@ -467,7 +468,7 @@ func (e *Editor) ModeLine(wp *Window) {
 
 	temp := fmt.Sprintf("%c%c%c kg: %c%c %s (h %d, w%d) 0 y %d", lch, och, mch, lch, lch,
 		e.GetBufferName(wp.Buffer), e.Lines, e.Cols, wp.TopPt+wp.Rows)
-	fmt.Println(temp)
+	//fmt.Println(temp)
 	//e.drawstring(0, e.Lines-1, termbox.ColorWhite, termbox.ColorBlack, temp)
 	x := 0
 	y := wp.TopPt + wp.Rows
