@@ -1,4 +1,4 @@
-package kg
+package tkg
 
 /* search.c, Atto Emacs, Public Domain, Hugh Barney, 2016, Derived from: Anthony's Editor January 93 */
 

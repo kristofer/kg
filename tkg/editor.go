@@ -2,6 +2,7 @@ package tkg
 
 import (
 	"fmt"
+	"unicode"
 
 	termbox "github.com/nsf/termbox-go"
 )
@@ -251,17 +252,20 @@ func (e *Editor) Display(wp *Window, flag bool) {
 		rch = bp.RuneAt(idx)
 		//log.Println(rch, c, r)
 		if rch != '\r' {
-			termbox.SetCell(c, r, rch, e.FGColor, termbox.ColorDefault)
-			c++
-			// } else if (isprint(*p) || *p == '\t' || *p == '\n') {
-			// 	j += rch == '\t' ? 8-(j&7) : 1;
-			// 	//token_type = parse_text(bp, bp.b_epage);
-			// 	//attron(COLOR_PAIR(token_type));
-			// 	//addch(*p);
-			// } else {
-			// 	const char *ctrl = unctrl(*p);
-			// 	j += (int) strlen(ctrl);
-			// 	addstr(ctrl);
+			if unicode.IsPrint(rch) || rch == '\t' || rch == '\n' {
+				if rch == '\t' {
+					c += 4 //? 8-(j&7) : 1;
+				}
+				termbox.SetCell(c, r, rch, e.FGColor, termbox.ColorDefault)
+				c++
+
+			} else {
+				// const char *ctrl = unctrl(*p);
+				// j += (int) strlen(ctrl);
+				// addstr(ctrl); '\u2318'
+				termbox.SetCell(c, r, '\u2318', e.FGColor, termbox.ColorDefault)
+				c++
+			}
 		}
 
 		if rch == '\n' || e.Cols <= c {
