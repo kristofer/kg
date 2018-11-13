@@ -74,6 +74,9 @@ type Editor struct {
 
 // StartEditor is the old C main function
 func (e *Editor) StartEditor(argv []string, argc int) {
+	// log setup....
+	SetupLogFile()
+	//
 	e.FGColor = termbox.ColorDefault
 	e.BGColor = termbox.ColorWhite
 	err := termbox.Init()

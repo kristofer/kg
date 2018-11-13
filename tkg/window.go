@@ -2,6 +2,7 @@ package tkg
 
 import (
 	"fmt"
+	"log"
 
 	termbox "github.com/nsf/termbox-go"
 )
@@ -56,6 +57,7 @@ func (wp *Window) WindowResize() {
 
 // OnKey handles the insertion of non-control/editor keys
 func (wp *Window) OnKey(ev *termbox.Event) {
+	log.Printf("Win OnKey %#U Point is %d\n", ev.Ch, wp.Buffer.Point())
 	wp.Buffer.AddRune(ev.Ch)
 }
 
