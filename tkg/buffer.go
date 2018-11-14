@@ -2,6 +2,7 @@ package tkg
 
 import (
 	"fmt"
+	"log"
 )
 
 /*
@@ -73,9 +74,12 @@ func (r *Buffer) GetTextForLines(l1, l2 int) string {
 }
 
 func (r *Buffer) RuneAt(p int) rune {
-	//fmt.Println(p, r.preLen, r.postLen, r.postStart())
-	if p < 0 {
-		return '\u2318'
+	//log.Println("RuneAt", p, r.preLen, r.postLen, r.postStart())
+	// if p < 0 {
+	// 	return '\uFFFD' //'\u2318
+	// }
+	if p <= 0 {
+		return r.data[0]
 	}
 	// if p > len(r.data) {
 	// 	return '\u2318'
@@ -83,10 +87,15 @@ func (r *Buffer) RuneAt(p int) rune {
 	if p <= r.preLen && r.preLen != 0 {
 		return r.data[p]
 	}
-	if p >= r.postLen || p <= len(r.data) {
+	if p >= r.postLen || p <= len(r.data)-1 {
 		return r.data[r.postStart()+(p-r.preLen)]
 	}
-	return '\u2318'
+	if p < len(r.data) {
+		log.Println("RuneAt", p, r.data[p], r.preLen, r.postLen, r.postStart())
+	} else {
+		log.Println("RuneAt", p, '\uFFFD', r.preLen, r.postLen, r.postStart())
+	}
+	return '\uFFFD' //'\u2318'
 }
 
 func (r *Buffer) AddRune(ch rune) {
@@ -102,11 +111,7 @@ func (r *Buffer) BufferLen() int {
 	return r.preLen + r.postLen
 }
 
-func (r *Buffer) BufferEnd() int {
-	return r.preLen + r.postLen
-}
-
-func (r *Buffer) Len() int {
+func (r *Buffer) ActualLen() int {
 	return len(r.data)
 }
 
@@ -174,26 +179,87 @@ func (r *Buffer) MoveGap(offset int) int {
 
 	return offset
 }
+func (r *Buffer) LineStart(point int) int {
+	if point < 0 {
+		return 0
+	}
+	p := r.RuneAt(point)
+	for point >= 0 {
+		point--
+		p = r.RuneAt(point)
+		if p == '\n' {
+			point++
+			return point
+		}
+	}
+	if point <= 0 {
+		return 0
+	}
+	return point
+}
 
 // PointForLine return point for beginning of line ln
 func (r *Buffer) PointForLine(ln int) int {
+	if ln < 1 {
+		return 0
+	}
 	ep := len(r.data) - 1
 	sp := 0
-	for p := 0; p < ep; p++ {
-		if p == r.preLen {
-			p = r.postStart()
+	for pt := 0; pt < ep; pt++ {
+		if pt == r.preLen {
+			pt = r.postStart()
 		}
-		if r.data[p] == '\n' {
+		if r.data[pt] == '\n' {
 			ln--
 			if ln == 0 {
 				return sp
 			}
-			if (p + 1) < ep {
-				sp = p + 1
+			if (pt + 1) < ep {
+				sp = pt + 1
 			}
+		}
+		if (pt + 1) == ep {
+			return sp
 		}
 	}
 	return ep
+}
+
+func (r *Buffer) ColumnForPoint(point int) (column int) {
+	i := point
+	if r.data[i] == '\n' {
+		return point
+	}
+	for i > 0 {
+		if r.data[i] == '\n' {
+			return point - i
+		}
+		i--
+	}
+
+	return point - i + 1
+}
+
+func (r *Buffer) LineForPoint(point int) (line int) {
+	line = 1
+	pt := 0
+	for pt = 1; pt <= point; pt++ {
+		if r.data[pt-1] == '\n' {
+			line++
+		}
+	}
+	if pt == r.BufferLen() {
+		line--
+	}
+	return
+}
+
+// ColRowForPoint returns the cursor location for a pt in the buffer
+func (r *Buffer) XYForPoint(pt int) (x, y int) {
+	x, y = 0, 0
+	x = r.ColumnForPoint(pt)
+	y = r.LineForPoint(pt)
+	return
 }
 
 // Delete remove a rune forward
@@ -291,46 +357,3 @@ func (r *Buffer) debugPrint() {
 
 	fmt.Printf("\n")
 }
-
-// /* Buffer lists manipulation */
-// /* Find a buffer by filename or create if requested */
-// func FindBuffer(fname string, cflag bool) *Buffer {
-// 	var bp *Buffer
-// 	var sb *Buffer
-
-// 	bp = RootBuffer
-// 	for bp != nil {
-// 		if strings.Compare(fname, bp.Filename) == 0 || strings.Compare(fname, bp.Buffername) == 0 {
-// 			return bp
-// 		}
-// 		bp = bp.Next
-// 	}
-
-// 	if cflag != false {
-// 		// if ((bp = (buffer_t *) malloc (sizeof (buffer_t))) == nil)
-// 		// 	return (0);
-// 		bp = NewBuffer()
-
-// 		//BufferInit(bp)
-// 		//assert(bp != nil);
-
-// 		/* find the place in the list to insert this buffer */
-// 		if RootBuffer == nil {
-// 			RootBuffer = bp
-// 		} else if strings.Compare(RootBuffer.Filename, fname) > 0 {
-// 			/* insert at the begining */
-// 			bp.Next = RootBuffer
-// 			RootBuffer = bp
-// 		} else {
-// 			for sb = RootBuffer; sb.Next != nil; sb = sb.Next {
-// 				if strings.Compare(sb.Next.Filename, fname) > 0 {
-// 					break
-// 				}
-// 			}
-// 			/* and insert it */
-// 			bp.Next = sb.Next
-// 			sb.Next = bp
-// 		}
-// 	}
-// 	return bp
-// }

@@ -20,8 +20,8 @@ func (e *Editor) top() {
 	e.CurrentBuffer.SetPoint(0)
 }
 func (e *Editor) bottom() {
-	e.CurrentBuffer.SetPoint(e.CurrentBuffer.BufferEnd())
-	if e.CurrentBuffer.PageEnd < e.CurrentBuffer.BufferEnd() {
+	e.CurrentBuffer.SetPoint(e.CurrentBuffer.BufferLen())
+	if e.CurrentBuffer.PageEnd < e.CurrentBuffer.BufferLen() {
 		e.CurrentBuffer.Reframe = true
 	}
 }

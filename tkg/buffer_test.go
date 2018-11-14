@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"strconv"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestBuffer(t *testing.T) {
@@ -52,7 +54,7 @@ func TestBuffer(t *testing.T) {
 	}
 	//gb.debugPrint()
 
-	fmt.Printf("%v %d %d\n", gb.GetText(), gb.BufferLen(), gb.Len())
+	fmt.Printf("%v %d %d\n", gb.GetText(), gb.BufferLen(), gb.ActualLen())
 	fmt.Println(1, gb.PointForLine(1))
 	fmt.Println(2, gb.PointForLine(2))
 	fmt.Println(3, gb.PointForLine(3))
@@ -102,6 +104,72 @@ func TestTextLines(t *testing.T) {
 	fmt.Println("--- [2, 3)")
 	fmt.Printf("%v\n", gb.GetTextForLines(2, 5))
 
+}
+
+func TestLineStart(t *testing.T) {
+	gb := NewBuffer()
+	s := "Lorem\nlite\nsed ut\naliqua. "
+	gb.SetText(s)
+
+	assert.Equal(t, 0, gb.LineStart(0))
+	assert.Equal(t, 0, gb.LineStart(1))
+	assert.Equal(t, 0, gb.LineStart(4))
+	assert.Equal(t, 0, gb.LineStart(5))
+	assert.Equal(t, 6, gb.LineStart(6))
+	assert.Equal(t, 6, gb.LineStart(8))
+	assert.Equal(t, 6, gb.LineStart(10))
+	assert.Equal(t, 11, gb.LineStart(11))
+	assert.Equal(t, 11, gb.LineStart(13))
+}
+func TestPointForLine(t *testing.T) {
+	gb := NewBuffer()
+	s := "Lorem\nlite\nsed ut\naliqua. \nhhh"
+	//    01234 56789 1123456 789212345 67893
+	gb.SetText(s)
+
+	assert.Equal(t, 0, gb.PointForLine(0))
+	assert.Equal(t, 0, gb.PointForLine(1))
+	assert.Equal(t, 6, gb.PointForLine(2))
+	assert.Equal(t, 11, gb.PointForLine(3))
+	assert.Equal(t, 18, gb.PointForLine(4))
+	assert.Equal(t, 27, gb.PointForLine(5))
+	assert.Equal(t, 27, gb.PointForLine(6))
+	assert.Equal(t, 27, gb.PointForLine(100))
+}
+func TestColumnForPoint(t *testing.T) {
+	gb := NewBuffer()
+	s := "Lorem\nlite\nsed ut\naliqua. \nhhh"
+	//    01234 56789 1123456 789212345 67893
+	gb.SetText(s)
+
+	assert.Equal(t, 1, gb.ColumnForPoint(0))
+	assert.Equal(t, 2, gb.ColumnForPoint(1))
+	assert.Equal(t, 3, gb.ColumnForPoint(2))
+	assert.Equal(t, 5, gb.ColumnForPoint(5))
+	assert.Equal(t, 1, gb.ColumnForPoint(11))
+	assert.Equal(t, 3, gb.ColumnForPoint(13))
+	// assert.Equal(t, 27, gb.ColumnForPoint(5))
+	// assert.Equal(t, 27, gb.ColumnForPoint(6))
+	// assert.Equal(t, 27, gb.ColumnForPoint(100))
+}
+func TestLineForPoint(t *testing.T) {
+	gb := NewBuffer()
+	s := "Lorem\nlite\nsed ut\naliqua.-\nhhh"
+	//    01234 56789 1123456 789212345 67893
+	gb.SetText(s)
+
+	assert.Equal(t, 1, gb.LineForPoint(0))
+	assert.Equal(t, 1, gb.LineForPoint(1))
+	assert.Equal(t, 1, gb.LineForPoint(2))
+	assert.Equal(t, 1, gb.LineForPoint(5))
+	assert.Equal(t, 2, gb.LineForPoint(6))
+	assert.Equal(t, 3, gb.LineForPoint(11))
+	assert.Equal(t, 3, gb.LineForPoint(13))
+	assert.Equal(t, 4, gb.LineForPoint(20))
+	assert.Equal(t, 4, gb.LineForPoint(gb.BufferLen()-1))
+	// assert.Equal(t, 27, gb.ColumnForPoint(5))
+	// assert.Equal(t, 27, gb.ColumnForPoint(6))
+	// assert.Equal(t, 27, gb.ColumnForPoint(100))
 }
 
 func TestRuneAt(t *testing.T) {

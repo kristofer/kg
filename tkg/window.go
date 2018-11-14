@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 
-	termbox "github.com/nsf/termbox-go"
+	termbox "github.com/gdamore/tcell/termbox"
 )
 
 var winCount = 0

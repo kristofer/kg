@@ -2,10 +2,12 @@ package tkg
 
 import (
 	"fmt"
+	"log"
+	"os"
 	"strings"
 	"unicode"
 
-	termbox "github.com/nsf/termbox-go"
+	termbox "github.com/gdamore/tcell/termbox"
 )
 
 // var LINES = 1
@@ -62,9 +64,8 @@ type Editor struct {
 	Temp       string /* Temporary buffer. */
 	Searchtext string
 	Replace    string
-	Key_map    *Keymapt /* Command key mappings. */
 	Keymap     []Keymapt
-	Key_return *Keymapt /* Command key return */
+	KeysMapMap map[string]*Keymapt
 	//
 	Lines   int
 	Cols    int
@@ -75,11 +76,19 @@ type Editor struct {
 // StartEditor is the old C main function
 func (e *Editor) StartEditor(argv []string, argc int) {
 	// log setup....
-	SetupLogFile()
+	f, err := os.OpenFile("logfile", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+	if err != nil {
+		log.Fatalf("error opening file: %v", err)
+	}
+	defer f.Close()
+
+	log.SetOutput(f)
+	f.Truncate(0)
+	log.Println("Start of Log...")
 	//
 	e.FGColor = termbox.ColorDefault
 	e.BGColor = termbox.ColorWhite
-	err := termbox.Init()
+	err = termbox.Init()
 	if err != nil {
 		panic(err)
 	}
@@ -108,56 +117,17 @@ func (e *Editor) StartEditor(argv []string, argc int) {
 		panic("%s: Failed to allocate required memory.\n")
 	}
 	//e.Key_map = e.Keymap
-
-	termbox.SetInputMode(termbox.InputEsc | termbox.InputMouse)
+	e.Keymap = keymap
+	e.KeysMapMap = make(map[string]*Keymapt)
+	for _, k := range e.Keymap {
+		e.KeysMapMap[k.KeyBytes] = &k
+	}
+	termbox.SetInputMode(termbox.InputAlt | termbox.InputMouse)
 	//termbox.SetInputMode(termbox.InputAlt)
 
 	termbox.Clear(termbox.ColorDefault, termbox.ColorDefault)
 	e.UpdateDisplay()
 	termbox.Flush()
-	//inputmode := 0
-	//ctrlxpressed := false
-	// loop:
-	// 	for {
-	// 		switch ev := termbox.PollEvent(); ev.Type {
-	// 		case termbox.EventKey:
-	// 			//log.Println("[", e.Lines, e.Cols, ev, "event", ctrlxpressed)
-	// 			if ev.Key == termbox.KeyCtrlS && ctrlxpressed {
-	// 				termbox.Sync()
-	// 			}
-	// 			if ev.Key == termbox.KeyCtrlQ && ctrlxpressed {
-	// 				break loop
-	// 			}
-	// 			if ev.Key == termbox.KeyCtrlC && ctrlxpressed {
-	// 				chmap := []termbox.InputMode{
-	// 					termbox.InputEsc | termbox.InputMouse,
-	// 					termbox.InputAlt | termbox.InputMouse,
-	// 					termbox.InputEsc,
-	// 					termbox.InputAlt,
-	// 				}
-	// 				inputmode++
-	// 				if inputmode >= len(chmap) {
-	// 					inputmode = 0
-	// 				}
-	// 				termbox.SetInputMode(chmap[inputmode])
-	// 			}
-	// 			if ev.Key == termbox.KeyCtrlX {
-	// 				ctrlxpressed = true
-	// 			} else {
-	// 				ctrlxpressed = false
-	// 			}
-
-	// 			termbox.Clear(termbox.ColorDefault, termbox.ColorDefault)
-	// 			e.msg("Key: %v", ev.Ch)
-	// 			e.CurrentBuffer.Insert(string(ev.Ch))
-	// 			e.UpdateDisplay()
-	// 			//dispatch_press(&ev)
-	// 			// TODO: handle key press
-	// 			//pretty_print_press(&ev)
-	// 			termbox.Flush()
-
-	// 		}
-	// 	}
 
 	e.EventChan = make(chan termbox.Event, 20)
 	go func() {
@@ -186,20 +156,11 @@ func (e *Editor) StartEditor(argv []string, argc int) {
 func (e *Editor) HandleEvent(ev *termbox.Event) bool {
 	switch ev.Type {
 	case termbox.EventKey:
-		// if g.recording {
-		// 	g.keymacros = append(g.keymacros, create_key_event(ev))
-		// }
-		//g.set_status("") // reset status on every key event
 		e.OnSysKey(ev)
-		// if e.overlay != nil {
-		// 	//e.overlay.on_key(ev)
-		// } else {
-		e.OnKey(ev)
-		//		}
-
 		if e.Done {
 			return false
 		}
+		e.OnKey(ev)
 	case termbox.EventResize:
 		termbox.Clear(termbox.ColorDefault, termbox.ColorDefault)
 		// g.resize()
@@ -245,35 +206,59 @@ func (e *Editor) ConsumeMoreEvents() bool {
 }
 
 // OnSysKey on Ctrl key pressed
-func (e *Editor) OnSysKey(ev *termbox.Event) {
+func (e *Editor) OnSysKey(ev *termbox.Event) bool {
 	switch ev.Key {
-	case termbox.KeyCtrlG:
-		//v := g.active.leaf
-		//v.ac = nil
-		//g.set_overlay_mode(nil)
-		//g.set_status("Quit")
-		e.msg("Quit")
-		e.Msgflag = true
-	case termbox.KeyCtrlZ:
-		//suspend(e)
+	// case termbox.KeyCtrlG:
+	// 	//v := g.active.leaf
+	// 	//v.ac = nil
+	// 	//g.set_overlay_mode(nil)
+	// 	//g.set_status("Quit")
+	// 	e.msg("Quit")
+	// 	e.Msgflag = true
+	// case termbox.KeyCtrlZ:
+	// 	//suspend(e)
 	case termbox.KeyCtrlQ:
 		e.Done = true
+	}
+	lookfor := fmt.Sprintf("%#2x %U", ev.Key, ev.Key)
+	log.Println("OnSysKey is ", ev.Key, lookfor, e.KeysMapMap[lookfor])
+	log.Println("OnSysKey is ", ev.Key, lookfor, e.KeysMapMap["\x04"])
+	if k, ok := e.KeysMapMap[lookfor]; ok == true {
+		// perform
+		log.Printf("K %#v (%t)", k, ok)
+		e.PerformAction(k.Do)
+		return true
+	}
+	return false
+}
+
+func (e *Editor) PerformAction(fn func(*Editor)) {
+	if fn != nil {
+		fn(e)
 	}
 }
 
 // OnAltKey on Alt key pressed
 func (e *Editor) OnAltKey(ev *termbox.Event) bool {
-	// switch ev.Ch {
-	// case 'g':
-	// 	g.set_overlay_mode(init_line_edit_mode(g, g.goto_line_lemp()))
-	// 	return true
-	// case '/':
-	// 	g.set_overlay_mode(init_autocomplete_mode(g))
-	// 	return true
-	// case 'q':
-	// 	g.set_overlay_mode(init_fill_region_mode(g))
-	// 	return true
-	// }
+	switch ev.Ch {
+	case 'g':
+		//g.set_overlay_mode(init_line_edit_mode(g, g.goto_line_lemp()))
+		return true
+		e.msg("Alt G")
+		e.Msgflag = true
+		return true
+	case '/':
+		//g.set_overlay_mode(init_autocomplete_mode(g))
+		return true
+		e.msg("Alt /")
+		e.Msgflag = true
+		return true
+	case 'q':
+		//g.set_overlay_mode(init_fill_region_mode(g))
+		e.msg("Alt Q")
+		e.Msgflag = true
+		return true
+	}
 	return false
 }
 
@@ -308,7 +293,7 @@ func (e *Editor) drawstring(x, y int, fg, bg termbox.Attribute, msg string) {
 }
 
 func (e *Editor) DisplayMsg() {
-	e.Cols, e.Lines = termbox.Size()
+	//e.Cols, e.Lines = termbox.Size()
 	if e.Msgflag {
 		e.drawstring(0, e.Lines-1, e.FGColor, termbox.ColorDefault, e.Msgline)
 	}
@@ -384,7 +369,7 @@ func (e *Editor) Display(wp *Window, flag bool) {
 				// const char *ctrl = unctrl(*p);
 				// j += (int) strlen(ctrl);
 				// addstr(ctrl); '\u2318'
-				termbox.SetCell(c, r, '\u2318', e.FGColor, termbox.ColorDefault)
+				termbox.SetCell(c, r, '\uFFFD', e.FGColor, termbox.ColorDefault)
 				c++
 			}
 		}
@@ -410,7 +395,8 @@ func (e *Editor) Display(wp *Window, flag bool) {
 	PushBuffer2Window(wp)
 	e.ModeLine(wp)
 	e.DisplayMsg()
-	termbox.SetCursor(bp.PointCol, bp.PointRow)
+	bp.PointCol, bp.PointRow = bp.XYForPoint(bp.Point())
+	termbox.SetCursor(bp.PointCol-1, bp.PointRow-1)
 	//termbox.Sync()
 	wp.Updated = false
 }
@@ -440,7 +426,8 @@ func (e *Editor) UpdateDisplay() {
 	/* now display our window and buffer */
 	SyncBuffer(e.CurrentWindow)
 	//e.DisplayMsg()
-	termbox.SetCursor(e.CurrentWindow.CurRow, e.CurrentWindow.CurCol) /* set cursor for CurrentWin */
+	e.CurrentWindow.CurCol, e.CurrentWindow.CurRow = e.CurrentBuffer.XYForPoint(bp.Point())
+	termbox.SetCursor(e.CurrentWindow.CurRow-1, e.CurrentWindow.CurCol-1) /* set cursor for CurrentWin */
 	//refresh()
 	bp.PrevSize = bp.TextSize /* now safe to save previous size for next time */
 }
@@ -498,18 +485,7 @@ func (e *Editor) DisplayPromptAndResponse(prompt string, response string) {
 
 /* Reverse scan for start of logical line containing offset */
 func (e *Editor) LineStart(off int) int {
-	off--
-	//p := bp.Ptr(off)
-	p := e.CurrentBuffer.RuneAt(off)
-	for off >= 0 && p != '\n' {
-		off--
-		p = e.CurrentBuffer.RuneAt(off)
-	}
-	if p > 0 {
-		off = +1
-		return off
-	}
-	return 0
+	return e.CurrentBuffer.LineStart(off)
 }
 
 /* Forward scan for start of logical line segment (corresponds to screen line)  containing 'finish' */

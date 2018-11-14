@@ -7,7 +7,7 @@ var keymap = []Keymapt{
 	{"C-b backward-char        ", "\x02", (*Editor).left},
 	{"C-d delete               ", "\x04", (*Editor).delete},
 	{"C-e end-of-line          ", "\x05", (*Editor).lnend},
-	{"C-f foward-char          ", "\x06", (*Editor).right},
+	{"C-f foward-char          ", "U+0006", (*Editor).right},
 	{"C-h backspace            ", "\x08", (*Editor).backsp},
 	{"C-k kill-to-eol          ", "\x0B", (*Editor).killtoeol},
 	{"C-l refresh              ", "\x0C", (*Editor).redraw},
