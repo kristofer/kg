@@ -1,5 +1,7 @@
 package tkg
 
+import "log"
+
 //type editFunc ((*Editor)func())
 
 func (e *Editor) quit() { e.Done = true }
@@ -78,6 +80,7 @@ func (e *Editor) left() {
 	// int n = prev_utf8_char_size();
 	// while (0 < curbp->b_point && n-- > 0)
 	// 	--curbp->b_point;
+	log.Println("left, pointnext() called.")
 	e.CurrentBuffer.PointNext()
 }
 

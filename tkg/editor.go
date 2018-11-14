@@ -41,12 +41,6 @@ const (
 	ID_SINGLE_STRING = 8
 )
 
-type Keymapt struct {
-	KeyDesc  string
-	KeyBytes string
-	Do       func(*Editor) // function to call for Keymap-ping
-}
-
 type Editor struct {
 	EventChan     chan termbox.Event
 	CurrentBuffer *Buffer /* current buffer */
@@ -220,21 +214,29 @@ func (e *Editor) OnSysKey(ev *termbox.Event) bool {
 	case termbox.KeyCtrlQ:
 		e.Done = true
 	}
-	lookfor := fmt.Sprintf("%#2x %U", ev.Key, ev.Key)
-	log.Println("OnSysKey is ", ev.Key, lookfor, e.KeysMapMap[lookfor])
-	log.Println("OnSysKey is ", ev.Key, lookfor, e.KeysMapMap["\x04"])
-	if k, ok := e.KeysMapMap[lookfor]; ok == true {
-		// perform
-		log.Printf("K %#v (%t)", k, ok)
-		e.PerformAction(k.Do)
-		return true
+	lookfor := fmt.Sprintf("%c", ev.Key)
+	for i, j := range e.Keymap {
+		if strings.Compare(lookfor, j.KeyBytes) == 0 {
+			log.Println("OnSysKey FOUND ", lookfor, e.Keymap[i])
+			log.Printf("K %#v", j)
+			jj := e.Keymap[i].Do
+			e.PerformAction(e.(jj.Do))
+			return true
+		}
 	}
+	// if k, ok := e.KeysMapMap[lookfor]; ok == true {
+	// 	// perform
+	// 	log.Printf("K %#v (%t)", k, ok)
+	// 	e.PerformAction(k.Do)
+	// 	return true
+	// }
 	return false
 }
 
-func (e *Editor) PerformAction(fn func(*Editor)) {
+func PerformAction(fn func()) {
 	if fn != nil {
-		fn(e)
+		//log.Printf("%#v", fn)
+		fn()
 	}
 }
 

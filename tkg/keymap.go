@@ -1,5 +1,11 @@
 package tkg
 
+type Keymapt struct {
+	KeyDesc  string
+	KeyBytes string
+	Do       func(*Editor) // function to call for Keymap-ping
+}
+
 /* desc, keys, func */
 //keymap_t keymap[] = {
 var keymap = []Keymapt{
@@ -7,7 +13,7 @@ var keymap = []Keymapt{
 	{"C-b backward-char        ", "\x02", (*Editor).left},
 	{"C-d delete               ", "\x04", (*Editor).delete},
 	{"C-e end-of-line          ", "\x05", (*Editor).lnend},
-	{"C-f foward-char          ", "U+0006", (*Editor).right},
+	{"C-f foward-char          ", "\u0006", (*Editor).right},
 	{"C-h backspace            ", "\x08", (*Editor).backsp},
 	{"C-k kill-to-eol          ", "\x0B", (*Editor).killtoeol},
 	{"C-l refresh              ", "\x0C", (*Editor).redraw},

@@ -1,19 +1,25 @@
-2018/11/14 14:20:46 Start of Log...
-2018/11/14 14:20:53 OnSysKey is  6 0x6 U+0006 <nil>
-2018/11/14 14:20:53 OnSysKey is  6 0x6 U+0006 &{K_ERROR                    <nil>}
-2018/11/14 14:20:53 Win OnKey U+0000 Point is 0
-2018/11/14 14:20:53 OnSysKey is  6 0x6 U+0006 <nil>
-2018/11/14 14:20:53 OnSysKey is  6 0x6 U+0006 &{K_ERROR                    <nil>}
-2018/11/14 14:20:53 Win OnKey U+0000 Point is 1
-2018/11/14 14:20:53 OnSysKey is  6 0x6 U+0006 <nil>
-2018/11/14 14:20:53 OnSysKey is  6 0x6 U+0006 &{K_ERROR                    <nil>}
-2018/11/14 14:20:53 Win OnKey U+0000 Point is 2
-2018/11/14 14:20:53 OnSysKey is  6 0x6 U+0006 <nil>
-2018/11/14 14:20:53 OnSysKey is  6 0x6 U+0006 &{K_ERROR                    <nil>}
-2018/11/14 14:20:53 Win OnKey U+0000 Point is 3
-2018/11/14 14:20:53 OnSysKey is  6 0x6 U+0006 <nil>
-2018/11/14 14:20:53 OnSysKey is  6 0x6 U+0006 &{K_ERROR                    <nil>}
-2018/11/14 14:20:53 Win OnKey U+0000 Point is 4
-2018/11/14 14:20:53 OnSysKey is  6 0x6 U+0006 <nil>
-2018/11/14 14:20:53 OnSysKey is  6 0x6 U+0006 &{K_ERROR                    <nil>}
-2018/11/14 14:20:53 Win OnKey U+0000 Point is 5
+2018/11/14 16:14:51 Start of Log...
+2018/11/14 16:14:54 OnSysKey FOUND   {C-f foward-char            0x12c9940}
+2018/11/14 16:14:54 K tkg.Keymapt{KeyDesc:"C-f foward-char          ", KeyBytes:"\x06", Do:(func(*tkg.Editor))(0x12c9940)}
+2018/11/14 16:14:54 Win OnKey U+0000 Point is 0
+2018/11/14 16:14:54 OnSysKey FOUND   {C-f foward-char            0x12c9940}
+2018/11/14 16:14:54 K tkg.Keymapt{KeyDesc:"C-f foward-char          ", KeyBytes:"\x06", Do:(func(*tkg.Editor))(0x12c9940)}
+2018/11/14 16:14:54 Win OnKey U+0000 Point is 0
+2018/11/14 16:14:54 OnSysKey FOUND   {C-f foward-char            0x12c9940}
+2018/11/14 16:14:54 K tkg.Keymapt{KeyDesc:"C-f foward-char          ", KeyBytes:"\x06", Do:(func(*tkg.Editor))(0x12c9940)}
+2018/11/14 16:14:54 Win OnKey U+0000 Point is 0
+2018/11/14 16:14:54 OnSysKey FOUND   {C-f foward-char            0x12c9940}
+2018/11/14 16:14:54 K tkg.Keymapt{KeyDesc:"C-f foward-char          ", KeyBytes:"\x06", Do:(func(*tkg.Editor))(0x12c9940)}
+2018/11/14 16:14:54 Win OnKey U+0000 Point is 0
+2018/11/14 16:14:55 OnSysKey FOUND   {C-f foward-char            0x12c9940}
+2018/11/14 16:14:55 K tkg.Keymapt{KeyDesc:"C-f foward-char          ", KeyBytes:"\x06", Do:(func(*tkg.Editor))(0x12c9940)}
+2018/11/14 16:14:55 Win OnKey U+0000 Point is 0
+2018/11/14 16:14:55 OnSysKey FOUND   {C-f foward-char            0x12c9940}
+2018/11/14 16:14:55 K tkg.Keymapt{KeyDesc:"C-f foward-char          ", KeyBytes:"\x06", Do:(func(*tkg.Editor))(0x12c9940)}
+2018/11/14 16:14:55 Win OnKey U+0000 Point is 0
+2018/11/14 16:14:55 OnSysKey FOUND   {C-f foward-char            0x12c9940}
+2018/11/14 16:14:55 K tkg.Keymapt{KeyDesc:"C-f foward-char          ", KeyBytes:"\x06", Do:(func(*tkg.Editor))(0x12c9940)}
+2018/11/14 16:14:55 Win OnKey U+0000 Point is 0
+2018/11/14 16:14:55 OnSysKey FOUND   {C-f foward-char            0x12c9940}
+2018/11/14 16:14:55 K tkg.Keymapt{KeyDesc:"C-f foward-char          ", KeyBytes:"\x06", Do:(func(*tkg.Editor))(0x12c9940)}
+2018/11/14 16:14:55 Win OnKey U+0000 Point is 0
