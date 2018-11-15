@@ -1,26 +1,19 @@
 package tkg
 
-import "log"
-
 //type editFunc ((*Editor)func())
 
 func (e *Editor) quit() { e.Done = true }
 func (e *Editor) up() {
-	e.CurrentBuffer.SetPoint(e.OffsetForColumn(
-		e.UpUp(e.CurrentBuffer.Point()), e.CurrentBuffer.PointCol))
+	np := e.UpUp(e.CurrentBuffer.Point())
+	e.CurrentBuffer.SetPoint(
+		e.OffsetForColumn(
+			np, e.CurrentBuffer.PointCol))
 }
 func (e *Editor) down() {
-	// e.CurrentBuffer.SetPoint(e.OffsetForColumn(
-	//	e.DownDown(e.CurrentBuffer.Point()), e.CurrentBuffer.PointCol))
-	op := e.CurrentBuffer.Point()
-	x, y := e.CurrentBuffer.XYForPoint(op)
-	log.Println("Pt X Y", op, x, y)
-	y++
-	pt := e.CurrentBuffer.PointForLine(y)
-	log.Println("2ndPt X Y pt-op", pt, x, y, pt-op)
-	pt += x - 1
-	log.Println("3rdPt X Y pt-op", pt, x, y, pt-op)
-	e.CurrentBuffer.MoveGap(pt - op)
+	np := e.DownDown(e.CurrentBuffer.Point())
+	e.CurrentBuffer.SetPoint(
+		e.OffsetForColumn(
+			np, e.CurrentBuffer.PointCol))
 }
 func (e *Editor) lnbegin() {
 	e.CurrentBuffer.SetPoint(e.SegStart(
@@ -170,23 +163,11 @@ func (e *Editor) insert() {
 }
 
 func (e *Editor) backsp() {
-	// curbp->b_point = movegap(curbp, curbp->b_point);
-	// if (curbp->b_buf < curbp->b_gap) {
-	// 	curbp->b_gap -= prev_utf8_char_size();
-	// 	curbp->b_flags |= B_MODIFIED;
-	// }
-	// curbp->b_point = pos(curbp, curbp->b_egap);
 	e.CurrentBuffer.Backspace()
 	e.CurrentBuffer.MarkModified()
 }
 
 func (e *Editor) delete() {
-	// curbp->b_point = movegap(curbp, curbp->b_point);
-	// if (curbp->b_egap < curbp->b_ebuf) {
-	// 	curbp->b_egap += utf8_size(*curbp->b_egap);
-	// 	curbp->b_point = pos(curbp, curbp->b_egap);
-	// 	curbp->b_flags |= B_MODIFIED;
-	// }
 	e.CurrentBuffer.Delete()
 	e.CurrentBuffer.MarkModified()
 }

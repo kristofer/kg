@@ -61,7 +61,7 @@ func TestBuffer(t *testing.T) {
 	fmt.Println(4, gb.PointForLine(4))
 	j := gb.Point()
 	fmt.Println("Cur: ", j)
-	gb.MoveGap(-10)
+	//gb.MoveGap(-10)
 	j = gb.Point()
 	fmt.Println("Cur: ", j)
 	l1, l2 := gb.GetLineStats()
@@ -171,6 +171,30 @@ func TestLineForPoint(t *testing.T) {
 	// assert.Equal(t, 27, gb.ColumnForPoint(6))
 	// assert.Equal(t, 27, gb.ColumnForPoint(100))
 }
+func TestPointForXY(t *testing.T) {
+	gb := NewBuffer()
+	s := "Lorem\nlite\nsed ut\naliqua.-\nhhh"
+	//    01234 56789 1123456 789212345 67893
+	gb.SetText(s)
+
+	//assert.Equal(t, "1, 1)", fmt.Sprint("%d, %d", gb.TestXYForPoint(0))
+	assert.Equal(t, 0, gb.PointForXY(1, 1))
+	assert.Equal(t, 1, gb.PointForXY(2, 1))
+	assert.Equal(t, 3, gb.PointForXY(4, 1))
+	assert.Equal(t, 4, gb.PointForXY(5, 1))
+	assert.Equal(t, 4, gb.PointForXY(6, 1))
+	assert.Equal(t, 4, gb.PointForXY(7, 1))
+	assert.Equal(t, 4, gb.PointForXY(10, 1))
+	assert.Equal(t, 4, gb.PointForXY(32, 1))
+	assert.Equal(t, 6, gb.PointForXY(1, 2))
+	assert.Equal(t, 11, gb.PointForXY(1, 3))
+	assert.Equal(t, 13, gb.PointForXY(3, 3))
+	assert.Equal(t, 18, gb.PointForXY(1, 4))
+	assert.Equal(t, 19, gb.PointForXY(2, 4))
+	assert.Equal(t, 20, gb.PointForXY(3, 4))
+	assert.Equal(t, gb.BufferLen()-1, gb.PointForXY(6, 6))
+
+}
 
 func TestRuneAt(t *testing.T) {
 	gb := NewBuffer()
@@ -182,7 +206,8 @@ func TestRuneAt(t *testing.T) {
 	// fmt.Printf("%c\n", gb.RuneAt(k+1))
 	// fmt.Printf("%c\n", gb.RuneAt(k+2))
 	for k < gb.BufferLen() {
-		fmt.Printf("%c", gb.RuneAt(k))
+		rch, _ := gb.RuneAt(k)
+		fmt.Printf("%c", rch)
 		k++
 	}
 	fmt.Println("|-")

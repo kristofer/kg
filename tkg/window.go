@@ -4,7 +4,8 @@ import (
 	"fmt"
 	"log"
 
-	termbox "github.com/gdamore/tcell/termbox"
+	termbox "github.com/nsf/termbox-go"
+	//termbox "github.com/gdamore/tcell/termbox"
 )
 
 var winCount = 0
@@ -57,8 +58,9 @@ func (wp *Window) WindowResize() {
 
 // OnKey handles the insertion of non-control/editor keys
 func (wp *Window) OnKey(ev *termbox.Event) {
-	log.Printf("Win OnKey %#U Point is %d\n", ev.Ch, wp.Buffer.Point())
-	wp.Buffer.AddRune(ev.Ch)
+	ch := ev.Ch
+	log.Printf("Win OnKey %#U Point is %d\n", ch, wp.Buffer.Point())
+	wp.Buffer.AddRune(ch)
 }
 
 // AssociateBuffer
@@ -89,12 +91,12 @@ func SyncBuffer(w *Window) { //sync w2b win to buff
 	b.PointCol = w.CurCol
 
 	/* fixup Pointers in other windows of the same buffer, if size of edit text changed */
-	if b.Point() > b.OrigPoint {
-		sizeDelta := b.TextSize - b.PrevSize
-		b.MoveGap(sizeDelta)
-		b.PageStart += sizeDelta
-		b.PageEnd += sizeDelta
-	}
+	// if b.Point() > b.OrigPoint {
+	// 	sizeDelta := b.TextSize - b.PrevSize
+	// 	b.MoveGap(sizeDelta)
+	// 	b.PageStart += sizeDelta
+	// 	b.PageEnd += sizeDelta
+	// }
 }
 
 // PushBuffer2Window

@@ -1,6 +1,7 @@
 package tkg
 
 import (
+	"errors"
 	"fmt"
 	"log"
 )
@@ -73,44 +74,77 @@ func (r *Buffer) GetTextForLines(l1, l2 int) string {
 	return string(ret)
 }
 
-func (r *Buffer) RuneAt(p int) rune {
-	//log.Println("RuneAt", p, r.preLen, r.postLen, r.postStart())
-	// if p < 0 {
-	// 	return '\uFFFD' //'\u2318
-	// }
-	if p <= 0 {
-		return r.data[0]
+func (r *Buffer) RuneAt(p int) (rune, error) {
+	if p >= len(r.data) {
+		return 0, errors.New("Beyond data buffer in RuneAt")
 	}
-	// if p > len(r.data) {
-	// 	return '\u2318'
-	// }
-	if p <= r.preLen && r.preLen != 0 {
-		return r.data[p]
+	if p < 0 {
+		return '\u0000', errors.New("negative buffer pointer in RuneAt")
 	}
-	if p >= r.postLen || p <= len(r.data)-1 {
-		return r.data[r.postStart()+(p-r.preLen)]
+	if p <= r.preLen {
+		return r.data[p], nil
 	}
-	if p < len(r.data) {
+	if p > r.preLen && p < len(r.data) {
+		p -= r.preLen
+		npt := r.postStart() + p
+		if npt >= len(r.data) {
+			log.Println("pt len gap s e l", r.postStart()+p, len(r.data), r.gapStart(), r.postStart(), r.gapLen())
+			return 0, errors.New("Ran over end of data buffer in RuneAt")
+		}
+		return r.data[npt], nil
+	}
+	if p < len(r.data)-1 {
 		log.Println("RuneAt", p, r.data[p], r.preLen, r.postLen, r.postStart())
 	} else {
 		log.Println("RuneAt", p, '\uFFFD', r.preLen, r.postLen, r.postStart())
 	}
-	return '\uFFFD' //'\u2318'
+	return 0, errors.New("error at end of RuneAt") //'\u2318'
 }
 
+// AddRune add a run to the buffer
 func (r *Buffer) AddRune(ch rune) {
 	if r.gapLen() == 0 {
-		_ = r.GrowGap(32)
+		_ = r.GrowGap(CHUNK)
 	}
-
-	//copy(r.data[r.gapStart():], []rune(s))
 	r.data[r.preLen] = ch
 	r.preLen++
 }
+
+// Point return point
+func (r *Buffer) Point() int {
+	return r.preLen
+}
+
+// Return rune at Point
+// func (r *Buffer) RuneForPoint() rune {
+// 	return r.data[r.preLen]
+// }
+
+// SetPoint set thecurrent point to np
+func (r *Buffer) SetPoint(np int) {
+	// 	slade gap to end
+	copy(r.data[r.preLen:], r.data[r.gapStart():])
+	r.preLen += r.postLen
+	r.postLen = 0
+	// move gap left by np chars
+	for i := np; i < 0; i-- {
+		r.data[r.postStart()-1] = r.data[r.preLen-1]
+		r.preLen--
+		r.postLen++
+	}
+}
+
+// PrintPoint print Point point
+func (r *Buffer) PrintPoint() {
+	fmt.Println("C: ", r.Point())
+}
+
+// BufferLen length of buffer
 func (r *Buffer) BufferLen() int {
 	return r.preLen + r.postLen
 }
 
+// ActualLen length of buffer plus gap
 func (r *Buffer) ActualLen() int {
 	return len(r.data)
 }
@@ -125,6 +159,14 @@ func (r *Buffer) gapLen() int {
 
 func (r *Buffer) postStart() int {
 	return len(r.data) - r.postLen
+}
+
+// CollapseGap moves the gap to the end of the buffer for replacement
+func (r *Buffer) CollapseGap() {
+	copy(r.data[r.preLen:], r.data[r.gapStart():])
+	r.preLen += r.postLen
+	r.postLen = 0
+
 }
 
 // Insert adds the string, growing the gap if needed.
@@ -153,7 +195,7 @@ func (r *Buffer) GrowGap(n int) bool {
 	return true
 }
 
-// MoveGap moves the gap forward/backward by offset runes
+// MoveGap moves the gap to a Point
 func (r *Buffer) MoveGap(offset int) int {
 
 	if offset > 0 {
@@ -183,10 +225,16 @@ func (r *Buffer) LineStart(point int) int {
 	if point < 0 {
 		return 0
 	}
-	p := r.RuneAt(point)
-	for point >= 0 {
+	p, err := r.RuneAt(point)
+	if err != nil {
+		panic(err)
+	}
+	for point > 0 {
 		point--
-		p = r.RuneAt(point)
+		p, err = r.RuneAt(point)
+		if err != nil {
+			panic(err)
+		}
 		if p == '\n' {
 			point++
 			return point
@@ -254,12 +302,120 @@ func (r *Buffer) LineForPoint(point int) (line int) {
 	return
 }
 
-// ColRowForPoint returns the cursor location for a pt in the buffer
+// XYForPoint returns the cursor location for a pt in the buffer
 func (r *Buffer) XYForPoint(pt int) (x, y int) {
 	x, y = 0, 0
 	x = r.ColumnForPoint(pt)
 	y = r.LineForPoint(pt)
 	return
+}
+
+// PointForXY returns the Point location for X, Y in the buffer
+func (bp *Buffer) PointForXY(x, y int) (finalpt int) {
+	c := 1
+	r := 1
+	lch := bp.data[0] // last rune
+	lpt := 0
+	if (c == x) && (r == y) {
+		return 0
+	}
+	ep := len(bp.data) - 1
+	for pt := 1; pt < ep; pt++ {
+		if pt == bp.preLen { // jump over gap
+			pt = bp.postStart()
+		}
+		if lch == '\n' {
+			if (r-1 == y) && (c <= x) {
+				return lpt
+			}
+			r++
+			c = 1
+		} else {
+			c++
+		}
+		if (c == x) && (r == y) {
+			return pt
+		}
+		lch = bp.data[pt]
+		lpt = pt
+	}
+	return ep
+}
+
+// SegStart Forward scan for start of logical line segment
+// (corresponds to screen line)  containing 'finish'
+func (r *Buffer) SegStart(start, finish, limit int) int {
+	//var p rune
+	c := 0
+	scan := start
+
+	for scan < finish {
+		//p = ptr(bp, scan);
+		p, err := r.RuneAt(scan)
+		if err != nil {
+			panic(err)
+		}
+
+		if p == '\n' {
+			c = 0
+			start = scan + 1
+		} else {
+			if limit <= c {
+				c = 0
+				start = scan
+			}
+		}
+		scan++
+		//c += *p == '\t' ? 8 - (c & 7) : 1;
+		if p == '\t' {
+			c += 4 //8 - (c % 7)
+		} else {
+			c++
+		}
+	}
+	// (c < COLS ? start : finish);
+	if c < limit {
+		return start
+	}
+	return finish
+}
+
+/* SegNext Forward scan for start of logical line segment following 'finish' */
+func (r *Buffer) SegNext(start, finish, limit int) int {
+	// char_t *p;
+	// int c = 0;
+	//bp := e.CurrentBuffer
+	//var p rune
+	//var pptr int
+	c := 0
+
+	scan := r.SegStart(start, finish, limit)
+	for {
+		p, err := r.RuneAt(scan)
+		if err != nil {
+			panic(err)
+		}
+		//if (bp.b_ebuf <= p || COLS <= c)
+		if limit <= c {
+			break
+		}
+		//scan += utf8_size(*ptr(bp,scan));
+		scan++
+		if p == '\n' {
+			break
+		}
+		//c += *p == '\t' ? 8 - (c & 7) : 1;
+		if p == '\t' {
+			c += 4 //8 - (c % 7)
+		} else {
+			c++
+		}
+	}
+	//(p < bp.b_ebuf ? scan : );
+	if scan < r.BufferLen() {
+		return scan
+	}
+	return r.BufferLen()
 }
 
 // Delete remove a rune forward
@@ -278,23 +434,6 @@ func (r *Buffer) Backspace() {
 	}
 
 	r.preLen--
-}
-
-// Point return point
-func (r *Buffer) Point() int {
-	return r.preLen
-}
-func (r *Buffer) RuneForPoint() rune {
-	return r.data[r.preLen]
-}
-
-func (r *Buffer) SetPoint(np int) {
-
-}
-
-// PrintPoint print Point point
-func (r *Buffer) PrintPoint() {
-	fmt.Println("C: ", r.Point())
 }
 
 // PointNext move point left one

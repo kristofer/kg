@@ -7,7 +7,7 @@ import (
 	"strings"
 	"unicode"
 
-	termbox "github.com/gdamore/tcell/termbox"
+	termbox "github.com/nsf/termbox-go"
 )
 
 // var LINES = 1
@@ -169,8 +169,10 @@ func (e *Editor) HandleEvent(ev *termbox.Event) bool {
 		//log.Println("[", e.Lines, e.Cols, ev, "event", ctrlxpressed)
 		e.msg("Mouse: %d,%d [%d %d]", ev.MouseX, ev.MouseY, e.Cols, e.Lines)
 		// TODO: need to set the Point to mouse click location.
+		pt := e.CurrentBuffer.PointForXY(ev.MouseX, ev.MouseY)
+		e.CurrentBuffer.SetPoint(pt)
 		e.UpdateDisplay()
-		termbox.Flush()
+		//termbox.Flush()
 	case termbox.EventError:
 		panic(ev.Err)
 	}
@@ -299,7 +301,7 @@ func (e *Editor) Display(wp *Window, flag bool) {
 
 	r, c := 0, 0
 	idx := 0
-	var rch rune
+	//var rch rune
 	bp := wp.Buffer
 
 	// token_type := ID_DEFAULT
@@ -307,7 +309,7 @@ func (e *Editor) Display(wp *Window, flag bool) {
 	// /* find start of screen, handle scroll up off page or top of file  */
 	// /* Point is always within b_page and b_epage */
 	if bp.Point() < bp.PageStart {
-		bp.PageStart = e.SegStart(e.LineStart(bp.Point()), bp.Point())
+		bp.PageStart = bp.SegStart(bp.LineStart(bp.Point()), bp.Point())
 	}
 
 	// /* reframe when scrolled off bottom */
@@ -350,7 +352,11 @@ func (e *Editor) Display(wp *Window, flag bool) {
 		if r > wp.TopPt+wp.Rows || idx >= bp.BufferLen() { /* maxline */
 			break
 		}
-		rch = bp.RuneAt(idx)
+		rch, err := bp.RuneAt(idx)
+		if err != nil {
+			log.Println("Oops!", idx)
+			panic(err)
+		}
 		//log.Println(rch, c, r)
 		if rch != '\r' {
 			if unicode.IsPrint(rch) || rch == '\t' || rch == '\n' {
@@ -390,8 +396,7 @@ func (e *Editor) Display(wp *Window, flag bool) {
 	PushBuffer2Window(wp)
 	e.ModeLine(wp)
 	e.DisplayMsg()
-	bp.PointCol, bp.PointRow = bp.XYForPoint(bp.Point())
-	termbox.SetCursor(bp.PointCol-1, bp.PointRow-1)
+	e.SetTermCursor()
 	//termbox.Sync()
 	wp.Updated = false
 }
@@ -421,10 +426,14 @@ func (e *Editor) UpdateDisplay() {
 	/* now display our window and buffer */
 	SyncBuffer(e.CurrentWindow)
 	//e.DisplayMsg()
-	e.CurrentWindow.CurCol, e.CurrentWindow.CurRow = e.CurrentBuffer.XYForPoint(bp.Point())
-	termbox.SetCursor(e.CurrentWindow.CurRow-1, e.CurrentWindow.CurCol-1) /* set cursor for CurrentWin */
 	//refresh()
 	bp.PrevSize = bp.TextSize /* now safe to save previous size for next time */
+}
+
+func (e *Editor) SetTermCursor() {
+	e.CurrentWindow.CurCol, e.CurrentWindow.CurRow = e.CurrentBuffer.XYForPoint(e.CurrentBuffer.Point())
+	termbox.SetCursor(e.CurrentWindow.CurCol-1, e.CurrentWindow.CurRow-1) /* set cursor for CurrentWin */
+
 }
 
 func (e *Editor) ModeLine(wp *Window) {
@@ -478,115 +487,63 @@ func (e *Editor) DisplayPromptAndResponse(prompt string, response string) {
 
 }
 
-/* Reverse scan for start of logical line containing offset */
-func (e *Editor) LineStart(off int) int {
-	return e.CurrentBuffer.LineStart(off)
-}
+// /* Reverse scan for start of logical line containing offset */
+// func (e *Editor) LineStart(pt int) int {
+// 	return e.CurrentBuffer.LineStart(pt)
+// }
 
-/* Forward scan for start of logical line segment (corresponds to screen line)  containing 'finish' */
-func (e *Editor) SegStart(start int, finish int) int {
-	bp := e.CurrentBuffer
-	var p rune
-	c := 0
-	scan := start
+// /* Forward scan for start of logical line segment (corresponds to screen line)  containing 'finish' */
+// func (e *Editor) SegStart(start int, finish int) int {
+// 	return e.CurrentBuffer.SegStart(start, finish)
+// }
 
-	for scan < finish {
-		//p = ptr(bp, scan);
-		p = bp.RuneAt(scan)
-		if p == '\n' {
-			c = 0
-			start = scan + 1
-		} else {
-			if e.Cols <= c {
-				c = 0
-				start = scan
-			}
-		}
-		scan++
-		//c += *p == '\t' ? 8 - (c & 7) : 1;
-		if p == '\t' {
-			c += 4 //8 - (c % 7)
-		} else {
-			c++
-		}
-	}
-	// (c < COLS ? start : finish);
-	if c < e.Cols {
-		return start
-	}
-	return finish
-}
-
-/* Forward scan for start of logical line segment following 'finish' */
-func (e *Editor) SegNext(start, finish int) int {
-	// char_t *p;
-	// int c = 0;
-	bp := e.CurrentBuffer
-	var p rune
-	//var pptr int
-	c := 0
-
-	scan := e.SegStart(start, finish)
-	for {
-		//p = ptr(bp, scan);
-		//p, pptr = bp.GetCurrentRune()
-		p = bp.RuneAt(scan)
-		//if (bp.b_ebuf <= p || COLS <= c)
-		if e.Cols <= c {
-			break
-		}
-		//scan += utf8_size(*ptr(bp,scan));
-		scan++
-		if p == '\n' {
-			break
-		}
-		//c += *p == '\t' ? 8 - (c & 7) : 1;
-		if p == '\t' {
-			c += 4 //8 - (c % 7)
-		} else {
-			c++
-		}
-	}
-	//(p < bp.b_ebuf ? scan : );
-	if scan < bp.BufferLen() {
-		return scan
-	}
-	return bp.BufferLen()
-}
+// /* Forward scan for start of logical line segment following 'finish' */
+// func (e *Editor) SegNext(start, finish int) int {
+// 	return e.CurrentBuffer.SegNext(start, finish)
+// }
 
 /* Move up one screen line */
 func (e *Editor) UpUp(off int) int {
-	curr := e.LineStart(off)
-	seg := e.SegStart(curr, off)
+	bp := e.CurrentBuffer
+	curr := bp.LineStart(off)
+	seg := bp.SegStart(curr, off, e.Cols)
 	if curr < seg {
-		off = e.SegStart(curr, seg-1)
+		off = bp.SegStart(curr, seg-1, e.Cols)
 	} else {
-		off = e.SegStart(e.LineStart(curr-1), curr-1)
+		off = bp.SegStart(bp.LineStart(curr-1), curr-1, e.Cols)
 	}
 	return off
 }
 
 /* Move down one screen line */
-func (e *Editor) DownDown(off int) int {
-	return (e.SegNext(e.LineStart(off), off))
+func (e *Editor) DownDown(pt int) int {
+	bp := e.CurrentBuffer
+	return bp.SegNext(bp.LineStart(pt), pt, e.Cols)
 }
 
 // OffsetForColumn ln column - Return the offset of a column on the specified line
-func (e *Editor) OffsetForColumn(offset int, column int) int {
-	var p rune
-	c := 0
-	p = e.CurrentBuffer.RuneAt(offset)
-	for offset < e.CurrentBuffer.PageEnd && p != '\n' && c < column {
-		if p == '\t' {
-			c += 4 //8 - (c % 7)
-		} else {
-			c++
-		}
-		offset++
-		p = e.CurrentBuffer.RuneAt(offset)
-	}
-	return offset
-}
+// func (e *Editor) OffsetForColumn(offset int, column int) int {
+// 	//var p rune
+// 	c := 0
+// 	p, err := e.CurrentBuffer.RuneAt(offset)
+// 	if err != nil {
+// 		panic(err)
+// 	}
+// 	for offset < e.CurrentBuffer.PageEnd && p != '\n' && c < column {
+// 		if p == '\t' {
+// 			c += 4 //8 - (c % 7)
+// 		} else {
+// 			c++
+// 		}
+// 		offset++
+// 		p, err = e.CurrentBuffer.RuneAt(offset)
+// 		if err != nil {
+// 			panic(err)
+// 		}
+
+// 	}
+// 	return offset
+// }
 
 // DeleteBuffer unlink from the list of buffers, free associated memory,
 // assumes buffer has been saved if modified
