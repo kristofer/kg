@@ -309,12 +309,12 @@ func (e *Editor) Display(wp *Window, flag bool) {
 	// /* find start of screen, handle scroll up off page or top of file  */
 	// /* Point is always within b_page and b_epage */
 	if bp.Point() < bp.PageStart {
-		bp.PageStart = bp.SegStart(bp.LineStart(bp.Point()), bp.Point())
+		bp.PageStart = bp.SegStart(bp.LineStart(bp.Point()), bp.Point(), e.Cols)
 	}
 
 	// /* reframe when scrolled off bottom */
 	if bp.Reframe == true || (bp.PageEnd <= bp.Point() && e.CurrentBuffer.Point() != e.CurrentBuffer.PageEnd) {
-		bp.Reframe = true
+		bp.Reframe = false
 		i := 0
 		/* Find end of screen plus one. */
 		bp.PageStart = e.DownDown(bp.Point())
@@ -503,22 +503,29 @@ func (e *Editor) DisplayPromptAndResponse(prompt string, response string) {
 // }
 
 /* Move up one screen line */
-func (e *Editor) UpUp(off int) int {
+func (e *Editor) UpUp(pt int) int {
 	bp := e.CurrentBuffer
-	curr := bp.LineStart(off)
-	seg := bp.SegStart(curr, off, e.Cols)
-	if curr < seg {
-		off = bp.SegStart(curr, seg-1, e.Cols)
-	} else {
-		off = bp.SegStart(bp.LineStart(curr-1), curr-1, e.Cols)
+	// curr := bp.LineStart(pt)
+	// seg := bp.SegStart(curr, pt, e.Cols)
+	// if curr < seg {
+	// 	pt = bp.SegStart(curr, seg-1, e.Cols)
+	// } else {
+	// 	pt = bp.SegStart(bp.LineStart(curr-1), curr-1, e.Cols)
+	// }
+	x, y := bp.XYForPoint(pt)
+	if (y - 1) >= 1 {
+		pt = bp.PointForXY(x, y-1)
 	}
-	return off
+	return pt
 }
 
 /* Move down one screen line */
 func (e *Editor) DownDown(pt int) int {
 	bp := e.CurrentBuffer
-	return bp.SegNext(bp.LineStart(pt), pt, e.Cols)
+	//return bp.SegNext(bp.LineStart(pt), pt, e.Cols)
+	x, y := bp.XYForPoint(pt)
+	pt = bp.PointForXY(x, y+1)
+	return pt
 }
 
 // OffsetForColumn ln column - Return the offset of a column on the specified line

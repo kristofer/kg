@@ -246,6 +246,30 @@ func (r *Buffer) LineStart(point int) int {
 	return point
 }
 
+// LineEnd find the point at end of this line
+func (r *Buffer) LineEnd(point int) int {
+	if point < 0 {
+		return 0
+	}
+	ep := len(r.data)
+	for {
+		if point == r.preLen {
+			point = r.postStart()
+		}
+		if point >= ep {
+			return ep
+		}
+		p, err := r.RuneAt(point)
+		if err != nil {
+			panic(err)
+		}
+		if p == '\n' {
+			return point
+		}
+		point++
+	}
+}
+
 // PointForLine return point for beginning of line ln
 func (r *Buffer) PointForLine(ln int) int {
 	if ln < 1 {
@@ -321,7 +345,7 @@ func (bp *Buffer) PointForXY(x, y int) (finalpt int) {
 	}
 	ep := len(bp.data) - 1
 	for pt := 1; pt < ep; pt++ {
-		if pt == bp.preLen { // jump over gap
+		if pt == bp.preLen+1 { // jump over gap
 			pt = bp.postStart()
 		}
 		if lch == '\n' {
@@ -434,6 +458,20 @@ func (r *Buffer) Backspace() {
 	}
 
 	r.preLen--
+}
+
+// PointUp move point up one line
+func (r *Buffer) PointUp() {
+	c1 := r.ColumnForPoint(r.Point())
+	l1 := r.LineStart(r.Point())
+	l1--
+	l2 := r.LineStart(l1)
+	r.SetPoint(l2 + c1)
+}
+
+// PointDown move point down one line
+func (r *Buffer) PointDown() {
+
 }
 
 // PointNext move point left one

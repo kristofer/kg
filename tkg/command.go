@@ -4,20 +4,25 @@ package tkg
 
 func (e *Editor) quit() { e.Done = true }
 func (e *Editor) up() {
-	np := e.UpUp(e.CurrentBuffer.Point())
-	e.CurrentBuffer.SetPoint(
-		e.OffsetForColumn(
-			np, e.CurrentBuffer.PointCol))
+	//np := e.UpUp(e.CurrentBuffer.Point())
+	// e.CurrentBuffer.SetPoint(
+	// 	e.OffsetForColumn(
+	// 		np, e.CurrentBuffer.PointCol))
+	//e.CurrentBuffer.SetPoint(np)
+	e.CurrentBuffer.PointUp()
 }
 func (e *Editor) down() {
-	np := e.DownDown(e.CurrentBuffer.Point())
-	e.CurrentBuffer.SetPoint(
-		e.OffsetForColumn(
-			np, e.CurrentBuffer.PointCol))
+	//np := e.DownDown(e.CurrentBuffer.Point())
+	// e.CurrentBuffer.SetPoint(
+	// 	e.OffsetForColumn(
+	// 		np, e.CurrentBuffer.PointCol))
+	//e.CurrentBuffer.SetPoint(np)
+	e.CurrentBuffer.PointDown()
 }
 func (e *Editor) lnbegin() {
-	e.CurrentBuffer.SetPoint(e.SegStart(
-		e.LineStart(e.CurrentBuffer.Point()), e.CurrentBuffer.Point()))
+	// e.CurrentBuffer.SetPoint(e.SegStart(
+	// 	e.LineStart(e.CurrentBuffer.Point()), e.CurrentBuffer.Point()))
+	e.CurrentBuffer.SetPoint(e.CurrentBuffer.LineForPoint(e.CurrentBuffer.Point()))
 }
 func (e *Editor) version() { e.msg(VERSION) }
 func (e *Editor) top() {
