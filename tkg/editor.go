@@ -21,7 +21,7 @@ const (
 	B_OVERWRITE = 0x02 /* overwite mode */
 	//LINES            = 24
 	NOMARK           = -1
-	CHUNK            = 8096
+	CHUNK            = 16 //= 8096
 	K_BUFFER_LENGTH  = 256
 	TEMPBUF          = 512
 	STRBUF_L         = 256
@@ -150,17 +150,16 @@ func (e *Editor) StartEditor(argv []string, argc int) {
 func (e *Editor) HandleEvent(ev *termbox.Event) bool {
 	switch ev.Type {
 	case termbox.EventKey:
-		e.OnSysKey(ev)
-		if e.Done {
-			return false
+		if e.OnSysKey(ev) {
+			if e.Done {
+				return false
+			}
+		} else {
+			e.OnKey(ev)
 		}
-		e.OnKey(ev)
+
 	case termbox.EventResize:
 		termbox.Clear(termbox.ColorDefault, termbox.ColorDefault)
-		// g.resize()
-		// if g.overlay != nil {
-		// 	g.overlay.on_resize(ev)
-		// }
 		e.Cols, e.Lines = termbox.Size()
 		e.msg("Resize: h %d,w %d", e.Lines, e.Cols)
 		e.CurrentWindow.WindowResize()
@@ -213,30 +212,24 @@ func (e *Editor) OnSysKey(ev *termbox.Event) bool {
 	// 	//suspend(e)
 	case termbox.KeyCtrlQ:
 		e.Done = true
+		return true
 	}
 	lookfor := fmt.Sprintf("%c", ev.Key)
 	for i, j := range e.Keymap {
 		if strings.Compare(lookfor, j.KeyBytes) == 0 {
 			log.Println("OnSysKey FOUND ", lookfor, e.Keymap[i])
-			log.Printf("K %#v", j)
 			jj := e.Keymap[i].Do
-			e.PerformAction(e.(jj.Do))
+			e.PerformAction(jj)
 			return true
 		}
 	}
-	// if k, ok := e.KeysMapMap[lookfor]; ok == true {
-	// 	// perform
-	// 	log.Printf("K %#v (%t)", k, ok)
-	// 	e.PerformAction(k.Do)
-	// 	return true
-	// }
+
 	return false
 }
 
-func PerformAction(fn func()) {
+func (e *Editor) PerformAction(fn actionFunc) {
 	if fn != nil {
-		//log.Printf("%#v", fn)
-		fn()
+		fn(e)
 	}
 }
 

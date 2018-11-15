@@ -1,25 +1,11 @@
-2018/11/14 16:14:51 Start of Log...
-2018/11/14 16:14:54 OnSysKey FOUND   {C-f foward-char            0x12c9940}
-2018/11/14 16:14:54 K tkg.Keymapt{KeyDesc:"C-f foward-char          ", KeyBytes:"\x06", Do:(func(*tkg.Editor))(0x12c9940)}
-2018/11/14 16:14:54 Win OnKey U+0000 Point is 0
-2018/11/14 16:14:54 OnSysKey FOUND   {C-f foward-char            0x12c9940}
-2018/11/14 16:14:54 K tkg.Keymapt{KeyDesc:"C-f foward-char          ", KeyBytes:"\x06", Do:(func(*tkg.Editor))(0x12c9940)}
-2018/11/14 16:14:54 Win OnKey U+0000 Point is 0
-2018/11/14 16:14:54 OnSysKey FOUND   {C-f foward-char            0x12c9940}
-2018/11/14 16:14:54 K tkg.Keymapt{KeyDesc:"C-f foward-char          ", KeyBytes:"\x06", Do:(func(*tkg.Editor))(0x12c9940)}
-2018/11/14 16:14:54 Win OnKey U+0000 Point is 0
-2018/11/14 16:14:54 OnSysKey FOUND   {C-f foward-char            0x12c9940}
-2018/11/14 16:14:54 K tkg.Keymapt{KeyDesc:"C-f foward-char          ", KeyBytes:"\x06", Do:(func(*tkg.Editor))(0x12c9940)}
-2018/11/14 16:14:54 Win OnKey U+0000 Point is 0
-2018/11/14 16:14:55 OnSysKey FOUND   {C-f foward-char            0x12c9940}
-2018/11/14 16:14:55 K tkg.Keymapt{KeyDesc:"C-f foward-char          ", KeyBytes:"\x06", Do:(func(*tkg.Editor))(0x12c9940)}
-2018/11/14 16:14:55 Win OnKey U+0000 Point is 0
-2018/11/14 16:14:55 OnSysKey FOUND   {C-f foward-char            0x12c9940}
-2018/11/14 16:14:55 K tkg.Keymapt{KeyDesc:"C-f foward-char          ", KeyBytes:"\x06", Do:(func(*tkg.Editor))(0x12c9940)}
-2018/11/14 16:14:55 Win OnKey U+0000 Point is 0
-2018/11/14 16:14:55 OnSysKey FOUND   {C-f foward-char            0x12c9940}
-2018/11/14 16:14:55 K tkg.Keymapt{KeyDesc:"C-f foward-char          ", KeyBytes:"\x06", Do:(func(*tkg.Editor))(0x12c9940)}
-2018/11/14 16:14:55 Win OnKey U+0000 Point is 0
-2018/11/14 16:14:55 OnSysKey FOUND   {C-f foward-char            0x12c9940}
-2018/11/14 16:14:55 K tkg.Keymapt{KeyDesc:"C-f foward-char          ", KeyBytes:"\x06", Do:(func(*tkg.Editor))(0x12c9940)}
-2018/11/14 16:14:55 Win OnKey U+0000 Point is 0
+2018/11/14 20:24:15 Start of Log...
+2018/11/14 20:24:16 Win OnKey U+0066 'f' Point is 0
+2018/11/14 20:24:17 Win OnKey U+0066 'f' Point is 1
+2018/11/14 20:24:19 OnSysKey FOUND   {backspace delete-left      0x6ca340}
+2018/11/14 20:24:19 OnSysKey FOUND   {backspace delete-left      0x6ca340}
+2018/11/14 20:24:21 OnSysKey FOUND   {C-f foward-char            0x6ca290}
+2018/11/14 20:24:22 OnSysKey FOUND   {C-f foward-char            0x6ca290}
+2018/11/14 20:24:24 OnSysKey FOUND   {C-n next-line              0x6c9b90}
+2018/11/14 20:24:24 Pt X Y 2 3 1
+2018/11/14 20:24:24 2ndPt X Y pt-op 44 3 2 42
+2018/11/14 20:24:24 3rdPt X Y pt-op 46 3 2 44

@@ -153,7 +153,7 @@ func (r *Buffer) GrowGap(n int) bool {
 	return true
 }
 
-// MoveGap moves the gap forward by offset runes
+// MoveGap moves the gap forward/backward by offset runes
 func (r *Buffer) MoveGap(offset int) int {
 
 	if offset > 0 {

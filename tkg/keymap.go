@@ -1,9 +1,11 @@
 package tkg
 
+type actionFunc func(*Editor)
+
 type Keymapt struct {
 	KeyDesc  string
 	KeyBytes string
-	Do       func(*Editor) // function to call for Keymap-ping
+	Do       actionFunc // function to call for Keymap-ping
 }
 
 /* desc, keys, func */
