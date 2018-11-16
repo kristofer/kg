@@ -1,9 +1,7 @@
-2018/11/15 18:19:39 Start of Log...
-2018/11/15 18:19:48 OnSysKey FOUND   {C-f foward-char            0x125f320}
-2018/11/15 18:19:49 OnSysKey FOUND   {C-f foward-char            0x125f320}
-2018/11/15 18:19:50 OnSysKey FOUND   {C-n next-line              0x125efc0}
-2018/11/15 18:19:53 OnSysKey FOUND   {C-n next-line              0x125efc0}
-2018/11/15 18:19:54 OnSysKey FOUND   {C-n next-line              0x125efc0}
-2018/11/15 18:19:54 OnSysKey FOUND   {C-n next-line              0x125efc0}
-2018/11/15 18:20:03 OnSysKey FOUND   {C-f foward-char            0x125f320}
-2018/11/15 18:20:05 OnSysKey FOUND   {C-b backward-char          0x125f2b0}
+2018/11/16 09:15:19 Start of Log...
+2018/11/16 09:15:21 OnSysKey FOUND   {C-f foward-char            0x125f880}
+2018/11/16 09:15:22 OnSysKey FOUND   {C-f foward-char            0x125f880}
+2018/11/16 09:15:23 OnSysKey FOUND   {C-f foward-char            0x125f880}
+2018/11/16 09:15:30 OnSysKey FOUND   {C-n next-line              0x125f4a0}
+2018/11/16 09:15:30 PointDown c1 4, l1 27, l2 28)
+2018/11/16 09:15:30 Point 124 (31,3)

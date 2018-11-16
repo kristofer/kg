@@ -3,7 +3,7 @@ package tkg
 import (
 	"errors"
 	"fmt"
-	"log"
+	"testing"
 )
 
 /*
@@ -74,31 +74,22 @@ func (r *Buffer) GetTextForLines(l1, l2 int) string {
 	return string(ret)
 }
 
-func (r *Buffer) RuneAt(p int) (rune, error) {
-	if p >= len(r.data) {
+// RuneAt finally have a reliable??
+func (r *Buffer) RuneAt(pt int) (rune, error) {
+	if pt >= len(r.data) {
 		return 0, errors.New("Beyond data buffer in RuneAt")
 	}
-	if p < 0 {
+	if pt < 0 {
 		return '\u0000', errors.New("negative buffer pointer in RuneAt")
 	}
-	if p <= r.preLen {
-		return r.data[p], nil
+	if pt < r.preLen {
+		return r.data[pt], nil
 	}
-	if p > r.preLen && p < len(r.data) {
-		p -= r.preLen
-		npt := r.postStart() + p
-		if npt >= len(r.data) {
-			log.Println("pt len gap s e l", r.postStart()+p, len(r.data), r.gapStart(), r.postStart(), r.gapLen())
-			return 0, errors.New("Ran over end of data buffer in RuneAt")
-		}
-		return r.data[npt], nil
+	if pt >= r.preLen && pt < len(r.data) {
+		pt = pt + r.gapLen()
+		return r.data[pt], nil
 	}
-	if p < len(r.data)-1 {
-		log.Println("RuneAt", p, r.data[p], r.preLen, r.postLen, r.postStart())
-	} else {
-		log.Println("RuneAt", p, '\uFFFD', r.preLen, r.postLen, r.postStart())
-	}
-	return 0, errors.New("error at end of RuneAt") //'\u2318'
+	return 0, errors.New("Ran over end of data buffer in RuneAt")
 }
 
 // AddRune add a run to the buffer
@@ -123,15 +114,19 @@ func (r *Buffer) Point() int {
 // SetPoint set thecurrent point to np
 func (r *Buffer) SetPoint(np int) {
 	// 	slade gap to end
-	copy(r.data[r.preLen:], r.data[r.gapStart():])
-	r.preLen += r.postLen
-	r.postLen = 0
+	r.CollapseGap()
 	// move gap left by np chars
 	for i := np; i < 0; i-- {
-		r.data[r.postStart()-1] = r.data[r.preLen-1]
+		r.data[r.postStart()] = r.data[r.preLen]
 		r.preLen--
 		r.postLen++
 	}
+}
+func (r *Buffer) SetPointAndCursor(np int) {
+	r.SetPoint(np)
+	x, y := r.XYForPoint(np)
+	r.PointRow = y
+	r.PointCol = x
 }
 
 // PrintPoint print Point point
@@ -163,10 +158,11 @@ func (r *Buffer) postStart() int {
 
 // CollapseGap moves the gap to the end of the buffer for replacement
 func (r *Buffer) CollapseGap() {
-	copy(r.data[r.preLen:], r.data[r.gapStart():])
-	r.preLen += r.postLen
-	r.postLen = 0
-
+	for i := r.preLen; r.postLen > 0; i++ {
+		r.data[r.preLen] = r.data[len(r.data)-r.postLen]
+		r.preLen++
+		r.postLen--
+	}
 }
 
 // Insert adds the string, growing the gap if needed.
@@ -222,28 +218,31 @@ func (r *Buffer) MoveGap(offset int) int {
 	return offset
 }
 func (r *Buffer) LineStart(point int) int {
-	if point < 0 {
-		return 0
+	if point > len(r.data)-r.gapLen() {
+		point = len(r.data) - r.gapLen()
 	}
-	p, err := r.RuneAt(point)
-	if err != nil {
-		panic(err)
+	sp := point - 1
+	p, err := r.RuneAt(sp)
+	if p == '\n' {
+		//fmt.Println("Newline", x)
+		sp++
+		return sp
 	}
-	for point > 0 {
-		point--
-		p, err = r.RuneAt(point)
+	for x := sp; x > 0; x-- {
+		if x == 0 {
+			return 0
+		}
+		p, err = r.RuneAt(x)
 		if err != nil {
 			panic(err)
 		}
 		if p == '\n' {
-			point++
-			return point
+			//fmt.Println("Newline", x)
+			x++
+			return x
 		}
 	}
-	if point <= 0 {
-		return 0
-	}
-	return point
+	return 0
 }
 
 // LineEnd find the point at end of this line
@@ -268,6 +267,19 @@ func (r *Buffer) LineEnd(point int) int {
 		}
 		point++
 	}
+}
+
+// LineLenAtPoint length of line at point
+func (r *Buffer) LineLenAtPoint(point int) int {
+	if point >= len(r.data) {
+		point = len(r.data) - 1
+	}
+	if point < 0 {
+		point = 0
+	}
+	start := r.LineStart(point)
+	end := r.LineEnd(point)
+	return end - start + 1
 }
 
 // PointForLine return point for beginning of line ln
@@ -344,8 +356,8 @@ func (bp *Buffer) PointForXY(x, y int) (finalpt int) {
 		return 0
 	}
 	ep := len(bp.data) - 1
-	for pt := 1; pt < ep; pt++ {
-		if pt == bp.preLen+1 { // jump over gap
+	for pt := 1; pt <= ep; pt++ {
+		if pt == bp.preLen { // jump over gap
 			pt = bp.postStart()
 		}
 		if lch == '\n' {
@@ -360,8 +372,12 @@ func (bp *Buffer) PointForXY(x, y int) (finalpt int) {
 		if (c == x) && (r == y) {
 			return pt
 		}
-		lch = bp.data[pt]
-		lpt = pt
+		if pt <= ep {
+			lch = bp.data[pt]
+			lpt = pt
+		} else {
+			break
+		}
 	}
 	return ep
 }
@@ -466,12 +482,17 @@ func (r *Buffer) PointUp() {
 	l1 := r.LineStart(r.Point())
 	l1--
 	l2 := r.LineStart(l1)
-	r.SetPoint(l2 + c1)
+	r.SetPointAndCursor(l2 + c1)
 }
 
 // PointDown move point down one line
 func (r *Buffer) PointDown() {
-
+	c1 := r.ColumnForPoint(r.Point())
+	l1 := r.LineEnd(r.Point())
+	l2 := r.LineStart(l1 + 1)
+	fmt.Printf("PointDown c1 %d, l1 %d, l2 %d)\n", c1, l1, l2)
+	r.SetPoint(l2 + c1)
+	fmt.Printf("Point %d (%d,%d)\n", r.Point(), r.PointCol, r.PointRow)
 }
 
 // PointNext move point left one
@@ -520,17 +541,39 @@ func (r *Buffer) GetLineStats() (curline int, lastline int) {
 	return curline, lastline
 }
 
-func (r *Buffer) debugPrint() {
-	fmt.Printf("*********\n")
+func (r *Buffer) DebugPrint() {
+	fmt.Printf("*********(gap)\n")
 	for i := 0; i < len(r.data); i++ {
 		if i >= r.gapStart() && i < r.gapStart()+r.gapLen() {
 			fmt.Printf("@")
 		} else if i < r.preLen {
-			fmt.Printf("%c", r.data[i])
+			if r.data[i] == '\n' {
+				fmt.Printf("%c\n", 0x00B6)
+			} else {
+				fmt.Printf("%c", r.data[i])
+			}
 		} else {
-			fmt.Printf("%c", r.data[i])
+			if r.data[i] == '\n' {
+				fmt.Printf("%c\n", 0x00B6)
+			} else {
+				fmt.Printf("%c", r.data[i])
+			}
+		}
+	}
+	fmt.Printf("\n*********\n")
+}
+func (r *Buffer) DebugError(t *testing.T) {
+	t.Error("|-")
+	t.Errorf("*********\n")
+	for i := 0; i < len(r.data); i++ {
+		if i >= r.gapStart() && i < r.gapStart()+r.gapLen() {
+			t.Errorf("@")
+		} else if i < r.preLen {
+			t.Errorf("%c", r.data[i])
+		} else {
+			t.Errorf("%c", r.data[i])
 		}
 	}
 
-	fmt.Printf("\n")
+	t.Errorf("\n")
 }

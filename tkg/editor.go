@@ -370,7 +370,7 @@ func (e *Editor) Display(wp *Window, flag bool) {
 				// const char *ctrl = unctrl(*p);
 				// j += (int) strlen(ctrl);
 				// addstr(ctrl); '\u2318'
-				termbox.SetCell(c, r, '\uFFFD', e.FGColor, termbox.ColorDefault)
+				termbox.SetCell(c, r, rch, e.FGColor, termbox.ColorDefault)
 				c++
 			}
 		}
@@ -423,6 +423,7 @@ func (e *Editor) UpdateDisplay() {
 		}
 	}
 
+	e.SetTermCursor()
 	/* now display our window and buffer */
 	SyncBuffer(e.CurrentWindow)
 	//e.DisplayMsg()

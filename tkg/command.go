@@ -1,5 +1,11 @@
 package tkg
 
+import (
+	"log"
+
+	termbox "github.com/nsf/termbox-go"
+)
+
 //type editFunc ((*Editor)func())
 
 func (e *Editor) quit() { e.Done = true }
@@ -18,6 +24,7 @@ func (e *Editor) down() {
 	// 		np, e.CurrentBuffer.PointCol))
 	//e.CurrentBuffer.SetPoint(np)
 	e.CurrentBuffer.PointDown()
+
 }
 func (e *Editor) lnbegin() {
 	// e.CurrentBuffer.SetPoint(e.SegStart(
@@ -79,8 +86,11 @@ func (e *Editor) redraw() {
 	// for (wp=wheadp; wp != NULL; wp = wp->w_next)
 	// 	wp->w_update = TRUE;
 	// update_display();
+	log.Println("editor redraw")
+	termbox.Clear(termbox.ColorDefault, termbox.ColorDefault)
 	e.CurrentWindow.Updated = true
 	e.UpdateDisplay()
+	termbox.Flush()
 }
 
 func (e *Editor) left() {
