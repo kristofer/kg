@@ -250,13 +250,13 @@ func (r *Buffer) LineEnd(point int) int {
 	if point < 0 {
 		return 0
 	}
-	ep := len(r.data)
+	ep := len(r.data) - r.gapLen()
 	for {
-		if point == r.preLen {
-			point = r.postStart()
-		}
+		// if point == r.preLen {
+		// 	point = r.postStart()
+		// }
 		if point >= ep {
-			return ep
+			return ep - 1
 		}
 		p, err := r.RuneAt(point)
 		if err != nil {
@@ -277,36 +277,33 @@ func (r *Buffer) LineLenAtPoint(point int) int {
 	if point < 0 {
 		point = 0
 	}
-	start := r.LineStart(point)
+	start := r.LineStart(point) - 1
 	end := r.LineEnd(point)
-	return end - start + 1
+	return end - start
 }
 
 // PointForLine return point for beginning of line ln
 func (r *Buffer) PointForLine(ln int) int {
-	if ln < 1 {
+	if ln <= 1 {
 		return 0
 	}
-	ep := len(r.data) - 1
-	sp := 0
-	for pt := 0; pt < ep; pt++ {
-		if pt == r.preLen {
-			pt = r.postStart()
+	lines := 0
+	for pt := 0; pt < r.BufferLen(); pt++ {
+		etch, err := r.RuneAt(pt)
+		if err != nil {
+			panic(err)
 		}
-		if r.data[pt] == '\n' {
-			ln--
-			if ln == 0 {
-				return sp
-			}
-			if (pt + 1) < ep {
-				sp = pt + 1
-			}
+		if etch == '\n' {
+			//fmt.Println("newline")
+			lines++
 		}
-		if (pt + 1) == ep {
-			return sp
+		//fmt.Printf("pt %d rune %c lines %d\n", pt, etch, lines)
+		if lines == ln {
+			//fmt.Printf("pt %d ln %d\n", pt, ln)
+			return r.LineStart(pt)
 		}
 	}
-	return ep
+	return r.BufferLen() - 1
 }
 
 func (r *Buffer) ColumnForPoint(point int) (column int) {
