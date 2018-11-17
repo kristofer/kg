@@ -58,9 +58,27 @@ func (wp *Window) WindowResize() {
 
 // OnKey handles the insertion of non-control/editor keys
 func (wp *Window) OnKey(ev *termbox.Event) {
-	ch := ev.Ch
-	log.Printf("Win OnKey %#U Point is %d\n", ch, wp.Buffer.Point())
-	wp.Buffer.AddRune(ch)
+	switch ev.Key {
+	case termbox.KeySpace:
+		wp.Buffer.AddRune(' ')
+	case termbox.KeyEnter, termbox.KeyCtrlJ:
+		wp.Buffer.AddRune('\n')
+	case termbox.KeyTab:
+		wp.Buffer.AddRune('\t')
+		//g.set_overlay_mode(init_extended_mode(g))
+	// case termbox.KeyCtrlS:
+	// 	g.set_overlay_mode(init_isearch_mode(g, false))
+	// case termbox.KeyCtrlR:
+	// 	g.set_overlay_mode(init_isearch_mode(g, true))
+	default:
+		// if ev.Mod&termbox.ModAlt != 0 && e.OnAltKey(ev) {
+		// 	break
+		// }
+		ch := ev.Ch
+		log.Printf("Win OnKey %#U Point is %d\n", ch, wp.Buffer.Point())
+		wp.Buffer.AddRune(ch)
+	}
+
 }
 
 // AssociateBuffer

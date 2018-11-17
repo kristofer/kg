@@ -121,9 +121,10 @@ func (r *Buffer) Point() int {
 func (r *Buffer) SetPoint(np int) {
 	// 	slade gap to end
 	r.CollapseGap()
-	// move gap left by np chars
-	for i := np; i < 0; i-- {
-		r.data[r.postStart()] = r.data[r.preLen]
+	// move gap <-(left) by np chars
+	gs := r.gapStart()
+	for i := gs - np; i > 0; i-- {
+		r.data[r.postStart()-1] = r.data[r.preLen-1]
 		r.preLen--
 		r.postLen++
 	}
@@ -153,8 +154,14 @@ func (r *Buffer) ActualLen() int {
 func (r *Buffer) gapStart() int {
 	return r.preLen
 }
+func (r *Buffer) GapStart() int {
+	return r.preLen
+}
 
 func (r *Buffer) gapLen() int {
+	return r.postStart() - r.preLen
+}
+func (r *Buffer) GapLen() int {
 	return r.postStart() - r.preLen
 }
 
@@ -200,7 +207,7 @@ func (r *Buffer) GrowGap(n int) bool {
 // MoveGap moves the gap to a Point
 func (r *Buffer) MoveGap(offset int) int {
 
-	if offset > 0 {
+	if offset < 0 {
 		if r.postLen == 0 {
 			return 0
 		}
@@ -210,7 +217,7 @@ func (r *Buffer) MoveGap(offset int) int {
 			r.postLen--
 		}
 	}
-	if offset < 0 {
+	if offset > 0 {
 		if r.preLen == 0 {
 			return 0
 		}
@@ -442,7 +449,7 @@ func (r *Buffer) PointUp() {
 	l1 := r.LineStart(r.Point())
 	l1--
 	l2 := r.LineStart(l1)
-	r.SetPointAndCursor(l2 + c1)
+	r.SetPointAndCursor(l2 + c1 - 1)
 }
 
 // PointDown move point down one line
@@ -451,7 +458,7 @@ func (r *Buffer) PointDown() {
 	l1 := r.LineEnd(r.Point())
 	l2 := r.LineStart(l1 + 1)
 	//fmt.Printf("PointDown c1 %d, l1 %d, l2 %d)\n", c1, l1, l2)
-	r.SetPoint(l2 + c1)
+	r.SetPoint(l2 + c1 - 1)
 	//fmt.Printf("Point %d (%d,%d)\n", r.Point(), r.PointCol, r.PointRow)
 }
 

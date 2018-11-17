@@ -346,6 +346,52 @@ func TestPointForXY(t *testing.T) {
 
 }
 
+func TestSetPoint(t *testing.T) {
+	gb := NewBuffer()
+	s := "Lorem\nlite\nsed ut\naliqua.-\nhhh"
+	//    01234 56789 1123456 789212345 67893
+	//s := "fookris\nLXorem\nlite\nsed ut\naliqua. \nhhh"
+	//    	01234567 8911234 5678 9212345 678931234 56789412345
+	gb.SetText(s)
+	gb.DebugPrint()
+	gb.Insert("foo")
+	gb.AddRune('k')
+	gb.AddRune('r')
+	gb.AddRune('i')
+	gb.AddRune('s')
+	gb.AddRune('\n')
+
+	assert.Equal(t, 8, gb.GapStart())
+	assert.Equal(t, 27, gb.GapLen())
+	gb.PointNext()
+	assert.Equal(t, 9, gb.GapStart())
+	assert.Equal(t, 27, gb.GapLen())
+	gb.AddRune('X')
+	assert.Equal(t, 10, gb.GapStart())
+	assert.Equal(t, 26, gb.GapLen())
+	gb.DebugPrint()
+
+	gb.SetPoint(5)
+	assert.Equal(t, 5, gb.GapStart())
+	assert.Equal(t, 26, gb.GapLen())
+	gb.SetPoint(8)
+	assert.Equal(t, 8, gb.GapStart())
+	assert.Equal(t, 26, gb.GapLen())
+	gb.DebugPrint()
+	gb.SetPoint(15)
+	assert.Equal(t, 15, gb.GapStart())
+	assert.Equal(t, 26, gb.GapLen())
+	gb.SetPoint(10)
+	assert.Equal(t, 10, gb.GapStart())
+	assert.Equal(t, 26, gb.GapLen())
+	gb.AddRune('X')
+	gb.AddRune('X')
+	gb.DebugPrint()
+	assert.Equal(t, 10, gb.GapStart())
+	assert.Equal(t, 26, gb.GapLen())
+
+}
+
 func TestRuneAt(t *testing.T) {
 	gb := NewBuffer()
 	s := "Lorem ipsum dolor sit amet,\nconsectetur adipiscing elit,\nsed do eiusmod tempor incididunt ut\nlabore et dolore magna aliqua. "

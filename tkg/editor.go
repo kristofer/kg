@@ -132,6 +132,7 @@ func (e *Editor) StartEditor(argv []string, argc int) {
 	for {
 		select {
 		case ev := <-e.EventChan:
+			log.Printf("%#v\n", ev)
 			ok := e.HandleEvent(&ev)
 			if !ok {
 				return
@@ -150,14 +151,15 @@ func (e *Editor) StartEditor(argv []string, argc int) {
 func (e *Editor) HandleEvent(ev *termbox.Event) bool {
 	switch ev.Type {
 	case termbox.EventKey:
-		if e.OnSysKey(ev) {
-			if e.Done {
-				return false
+		if ev.Ch == 0 {
+			if e.OnSysKey(ev) {
+				if e.Done {
+					return false
+				}
 			}
 		} else {
-			e.OnKey(ev)
+			e.CurrentWindow.OnKey(ev)
 		}
-
 	case termbox.EventResize:
 		termbox.Clear(termbox.ColorDefault, termbox.ColorDefault)
 		e.Cols, e.Lines = termbox.Size()
@@ -169,7 +171,7 @@ func (e *Editor) HandleEvent(ev *termbox.Event) bool {
 		//log.Println("[", e.Lines, e.Cols, ev, "event", ctrlxpressed)
 		e.msg("Mouse: %d,%d [%d %d]", ev.MouseX, ev.MouseY, e.Cols, e.Lines)
 		// TODO: need to set the Point to mouse click location.
-		pt := e.CurrentBuffer.PointForXY(ev.MouseX, ev.MouseY)
+		pt := e.CurrentBuffer.PointForXY(ev.MouseX+1, ev.MouseY+1)
 		e.CurrentBuffer.SetPoint(pt)
 		e.UpdateDisplay()
 		//termbox.Flush()
@@ -202,6 +204,9 @@ func (e *Editor) ConsumeMoreEvents() bool {
 
 // OnSysKey on Ctrl key pressed
 func (e *Editor) OnSysKey(ev *termbox.Event) bool {
+	// if ev.Type == termbox.EventKey {
+	// 	return false
+	// }
 	switch ev.Key {
 	// case termbox.KeyCtrlG:
 	// 	//v := g.active.leaf
@@ -214,6 +219,9 @@ func (e *Editor) OnSysKey(ev *termbox.Event) bool {
 	// 	//suspend(e)
 	case termbox.KeyCtrlQ:
 		e.Done = true
+		return true
+	case termbox.KeySpace, termbox.KeyEnter, termbox.KeyCtrlJ, termbox.KeyTab:
+		e.CurrentWindow.OnKey(ev)
 		return true
 	}
 	lookfor := fmt.Sprintf("%c", ev.Key)
@@ -261,19 +269,19 @@ func (e *Editor) OnAltKey(ev *termbox.Event) bool {
 
 // OnKey some key
 func (e *Editor) OnKey(ev *termbox.Event) {
-	switch ev.Key {
-	case termbox.KeyCtrlX:
-		//g.set_overlay_mode(init_extended_mode(g))
-	// case termbox.KeyCtrlS:
-	// 	g.set_overlay_mode(init_isearch_mode(g, false))
-	// case termbox.KeyCtrlR:
-	// 	g.set_overlay_mode(init_isearch_mode(g, true))
-	default:
-		if ev.Mod&termbox.ModAlt != 0 && e.OnAltKey(ev) {
-			break
-		}
-		e.CurrentWindow.OnKey(ev)
-	}
+	// switch ev.Key {
+	// case termbox.KeyCtrlX:
+	// 	//g.set_overlay_mode(init_extended_mode(g))
+	// // case termbox.KeyCtrlS:
+	// // 	g.set_overlay_mode(init_isearch_mode(g, false))
+	// // case termbox.KeyCtrlR:
+	// // 	g.set_overlay_mode(init_isearch_mode(g, true))
+	// default:
+	// 	// if ev.Mod&termbox.ModAlt != 0 && e.OnAltKey(ev) {
+	// 	// 	break
+	// 	// }
+	// 	e.CurrentWindow.OnKey(ev)
+	// }
 }
 
 func (e *Editor) msg(fm string, args ...interface{}) {
