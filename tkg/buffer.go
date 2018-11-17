@@ -82,14 +82,20 @@ func (r *Buffer) RuneAt(pt int) (rune, error) {
 	if pt < 0 {
 		return '\u0000', errors.New("negative buffer pointer in RuneAt")
 	}
+
+	return r.data[r.DataPointForBufferPoint(pt)], nil
+	//return 0, errors.New("Ran over end of data buffer in RuneAt")
+}
+
+func (r *Buffer) DataPointForBufferPoint(pt int) int {
+	npt := 0
 	if pt < r.preLen {
-		return r.data[pt], nil
+		npt = pt
 	}
 	if pt >= r.preLen && pt < len(r.data) {
-		pt = pt + r.gapLen()
-		return r.data[pt], nil
+		npt = pt + r.gapLen()
 	}
-	return 0, errors.New("Ran over end of data buffer in RuneAt")
+	return npt
 }
 
 // AddRune add a run to the buffer
@@ -252,9 +258,6 @@ func (r *Buffer) LineEnd(point int) int {
 	}
 	ep := len(r.data) - r.gapLen()
 	for {
-		// if point == r.preLen {
-		// 	point = r.postStart()
-		// }
 		if point >= ep {
 			return ep - 1
 		}
@@ -294,31 +297,19 @@ func (r *Buffer) PointForLine(ln int) int {
 			panic(err)
 		}
 		if etch == '\n' {
-			//fmt.Println("newline")
 			lines++
 		}
-		//fmt.Printf("pt %d rune %c lines %d\n", pt, etch, lines)
 		if lines == ln {
-			//fmt.Printf("pt %d ln %d\n", pt, ln)
 			return r.LineStart(pt)
 		}
 	}
-	return r.BufferLen() - 1
+	return r.LineStart(r.BufferLen() - 1)
 }
 
 func (r *Buffer) ColumnForPoint(point int) (column int) {
-	i := point
-	if r.data[i] == '\n' {
-		return point
-	}
-	for i > 0 {
-		if r.data[i] == '\n' {
-			return point - i
-		}
-		i--
-	}
+	start := r.LineStart(point)
+	return point - start + 1
 
-	return point - i + 1
 }
 
 func (r *Buffer) LineForPoint(point int) (line int) {
@@ -337,7 +328,6 @@ func (r *Buffer) LineForPoint(point int) (line int) {
 
 // XYForPoint returns the cursor location for a pt in the buffer
 func (r *Buffer) XYForPoint(pt int) (x, y int) {
-	x, y = 0, 0
 	x = r.ColumnForPoint(pt)
 	y = r.LineForPoint(pt)
 	return
@@ -345,38 +335,11 @@ func (r *Buffer) XYForPoint(pt int) (x, y int) {
 
 // PointForXY returns the Point location for X, Y in the buffer
 func (bp *Buffer) PointForXY(x, y int) (finalpt int) {
-	c := 1
-	r := 1
-	lch := bp.data[0] // last rune
-	lpt := 0
-	if (c == x) && (r == y) {
-		return 0
-	}
-	ep := len(bp.data) - 1
-	for pt := 1; pt <= ep; pt++ {
-		if pt == bp.preLen { // jump over gap
-			pt = bp.postStart()
-		}
-		if lch == '\n' {
-			if (r-1 == y) && (c <= x) {
-				return lpt
-			}
-			r++
-			c = 1
-		} else {
-			c++
-		}
-		if (c == x) && (r == y) {
-			return pt
-		}
-		if pt <= ep {
-			lch = bp.data[pt]
-			lpt = pt
-		} else {
-			break
-		}
-	}
-	return ep
+	//10, 1
+	lpt := bp.PointForLine(y)
+	c := x - 1
+	finalpt = lpt + c //bp.DataPointForBufferPoint(lpt + c)
+	return finalpt
 }
 
 // SegStart Forward scan for start of logical line segment
@@ -487,9 +450,9 @@ func (r *Buffer) PointDown() {
 	c1 := r.ColumnForPoint(r.Point())
 	l1 := r.LineEnd(r.Point())
 	l2 := r.LineStart(l1 + 1)
-	fmt.Printf("PointDown c1 %d, l1 %d, l2 %d)\n", c1, l1, l2)
+	//fmt.Printf("PointDown c1 %d, l1 %d, l2 %d)\n", c1, l1, l2)
 	r.SetPoint(l2 + c1)
-	fmt.Printf("Point %d (%d,%d)\n", r.Point(), r.PointCol, r.PointRow)
+	//fmt.Printf("Point %d (%d,%d)\n", r.Point(), r.PointCol, r.PointRow)
 }
 
 // PointNext move point left one

@@ -285,7 +285,7 @@ func TestPointForLine2(t *testing.T) {
 	assert.Equal(t, 19, gb.PointForLine(4))
 	assert.Equal(t, 26, gb.PointForLine(5))
 	assert.Equal(t, 35, gb.PointForLine(6))
-	assert.Equal(t, 37, gb.PointForLine(100))
+	assert.Equal(t, 35, gb.PointForLine(100))
 }
 func TestColumnForPoint(t *testing.T) {
 	gb := NewBuffer()
@@ -304,18 +304,21 @@ func TestColumnForPoint(t *testing.T) {
 	assert.Equal(t, 1, gb.ColumnForPoint(0))
 	assert.Equal(t, 2, gb.ColumnForPoint(1))
 	assert.Equal(t, 3, gb.ColumnForPoint(2))
-	assert.Equal(t, 5, gb.ColumnForPoint(5))
-	assert.Equal(t, 1, gb.ColumnForPoint(11))
-	assert.Equal(t, 3, gb.ColumnForPoint(13))
-	// assert.Equal(t, 27, gb.ColumnForPoint(5))
-	// assert.Equal(t, 27, gb.ColumnForPoint(6))
+	assert.Equal(t, 8, gb.ColumnForPoint(7))
+	assert.Equal(t, 1, gb.ColumnForPoint(8))
+	assert.Equal(t, 4, gb.ColumnForPoint(11))
+	assert.Equal(t, 6, gb.ColumnForPoint(13))
+	assert.Equal(t, 1, gb.ColumnForPoint(14))
+	assert.Equal(t, 1, gb.ColumnForPoint(19))
+	assert.Equal(t, 3, gb.ColumnForPoint(28))
 	// assert.Equal(t, 27, gb.ColumnForPoint(100))
 }
 func TestPointForXY(t *testing.T) {
 	gb := NewBuffer()
 	s := "Lorem\nlite\nsed ut\naliqua.-\nhhh"
 	//    01234 56789 1123456 789212345 67893
-	gb.SetText(s)
+	//s := "fookris\nLorem\nlite\nsed ut\naliqua. \nhhh"
+	//    	01234567 891123 45678 9212345 678931234 56789412345
 	gb.SetText(s)
 	gb.Insert("foo")
 	gb.AddRune('k')
@@ -323,22 +326,23 @@ func TestPointForXY(t *testing.T) {
 	gb.AddRune('i')
 	gb.AddRune('s')
 	gb.AddRune('\n')
+	gb.DebugPrint()
 	//assert.Equal(t, "1, 1)", fmt.Sprint("%d, %d", gb.TestXYForPoint(0))
 	assert.Equal(t, 0, gb.PointForXY(1, 1))
 	assert.Equal(t, 1, gb.PointForXY(2, 1))
 	assert.Equal(t, 3, gb.PointForXY(4, 1))
 	assert.Equal(t, 4, gb.PointForXY(5, 1))
-	assert.Equal(t, 4, gb.PointForXY(6, 1))
-	assert.Equal(t, 4, gb.PointForXY(7, 1))
-	assert.Equal(t, 4, gb.PointForXY(10, 1))
-	assert.Equal(t, 4, gb.PointForXY(32, 1))
-	assert.Equal(t, 6, gb.PointForXY(1, 2))
-	assert.Equal(t, 11, gb.PointForXY(1, 3))
-	assert.Equal(t, 13, gb.PointForXY(3, 3))
-	assert.Equal(t, 18, gb.PointForXY(1, 4))
-	assert.Equal(t, 19, gb.PointForXY(2, 4))
-	assert.Equal(t, 20, gb.PointForXY(3, 4))
-	assert.Equal(t, gb.BufferLen()-1, gb.PointForXY(6, 6))
+	assert.Equal(t, 5, gb.PointForXY(6, 1))
+	assert.Equal(t, 6, gb.PointForXY(7, 1))
+	//assert.Equal(t, 4, gb.PointForXY(10, 1))
+	//assert.Equal(t, 4, gb.PointForXY(32, 1))
+	assert.Equal(t, 8, gb.PointForXY(1, 2))
+	assert.Equal(t, 14, gb.PointForXY(1, 3))
+	assert.Equal(t, 16, gb.PointForXY(3, 3))
+	assert.Equal(t, 19, gb.PointForXY(1, 4))
+	assert.Equal(t, 20, gb.PointForXY(2, 4))
+	assert.Equal(t, 21, gb.PointForXY(3, 4))
+	//assert.Equal(t, gb.BufferLen()-1, gb.PointForXY(6, 6))
 
 }
 
