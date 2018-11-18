@@ -9,34 +9,30 @@ import (
 //type editFunc ((*Editor)func())
 
 func (e *Editor) quit() { e.Done = true }
+func (e *Editor) quitquit() {
+	e.EscapeFlag = false
+	e.CtrlXFlag = false
+	e.msg("Quit.\x07")
+}
 func (e *Editor) up() {
-	//np := e.UpUp(e.CurrentBuffer.Point())
-	// e.CurrentBuffer.SetPoint(
-	// 	e.OffsetForColumn(
-	// 		np, e.CurrentBuffer.PointCol))
-	//e.CurrentBuffer.SetPoint(np)
 	e.CurrentBuffer.PointUp()
 }
 func (e *Editor) down() {
-	//np := e.DownDown(e.CurrentBuffer.Point())
-	// e.CurrentBuffer.SetPoint(
-	// 	e.OffsetForColumn(
-	// 		np, e.CurrentBuffer.PointCol))
-	//e.CurrentBuffer.SetPoint(np)
 	e.CurrentBuffer.PointDown()
 
 }
 func (e *Editor) lnbegin() {
-	// e.CurrentBuffer.SetPoint(e.SegStart(
-	// 	e.LineStart(e.CurrentBuffer.Point()), e.CurrentBuffer.Point()))
 	e.CurrentBuffer.SetPoint(e.CurrentBuffer.LineForPoint(e.CurrentBuffer.Point()))
+}
+func (e *Editor) lnend() {
+	e.CurrentBuffer.SetPoint(e.CurrentBuffer.LineEnd(e.CurrentBuffer.Point()))
 }
 func (e *Editor) version() { e.msg(VERSION) }
 func (e *Editor) top() {
 	e.CurrentBuffer.SetPoint(0)
 }
 func (e *Editor) bottom() {
-	e.CurrentBuffer.SetPoint(e.CurrentBuffer.BufferLen())
+	e.CurrentBuffer.SetPoint(e.CurrentBuffer.BufferLen() - 1)
 	if e.CurrentBuffer.PageEnd < e.CurrentBuffer.BufferLen() {
 		e.CurrentBuffer.Reframe = true
 	}
@@ -80,12 +76,6 @@ func (e *Editor) yesno(flag bool) bool {
 }
 
 func (e *Editor) redraw() {
-	// window_t *wp;
-
-	// clear();
-	// for (wp=wheadp; wp != NULL; wp = wp->w_next)
-	// 	wp->w_update = TRUE;
-	// update_display();
 	log.Println("editor redraw")
 	termbox.Clear(termbox.ColorDefault, termbox.ColorDefault)
 	e.CurrentWindow.Updated = true
@@ -94,7 +84,6 @@ func (e *Editor) redraw() {
 }
 
 func (e *Editor) left() {
-	//log.Println("left, pointnext() called.")
 	e.CurrentBuffer.PointPrevious()
 }
 
@@ -102,79 +91,24 @@ func (e *Editor) right() {
 	e.CurrentBuffer.PointNext()
 }
 
-// /* work out number of bytes based on first byte */
-// int utf8_size(char_t c)
-// {
-// 	if (c >= 192 && c < 224) return 2;
-// 	if (c >= 224 && c < 240) return 3;
-// 	if (c >= 240 && c < 248) return 4;
-// 	return 1; /* if in doubt it is 1 */
-// }
-
-// int prev_utf8_char_size()
-// {
-// 	int n;
-// 	for (n=2;n<5;n++)
-// 		if (-1 < curbp->b_point - n && (utf8_size(*(ptr(curbp, curbp->b_point - n))) == n))
-// 			return n;
-// 	return 1;
-// }
-
-func (e *Editor) lnend() {
-	//     if (curbp->b_point == pos(curbp, curbp->b_ebuf)) return; /* do nothing if EOF */
-	// curbp->b_point = dndn(curbp, curbp->b_point);
-	// point_t p = curbp->b_point;
-	// left();
-	// curbp->b_point = (*ptr(curbp, curbp->b_point) == '\n') ? curbp->b_point : p;
-}
-
 func (e *Editor) wleft() {
-	// char_t *p;
-	// while (!isspace(*(p = ptr(curbp, curbp->b_point))) && curbp->b_buf < p)
-	// 	--curbp->b_point;
-	// while (isspace(*(p = ptr(curbp, curbp->b_point))) && curbp->b_buf < p)
-	// 	--curbp->b_point;
+
 }
 
 func (e *Editor) pgdown() {
-	// curbp->b_page = curbp->b_point = upup(curbp, curbp->b_epage);
-	// while (0 < curbp->b_row--)
-	// 	down();
-	// curbp->b_epage = pos(curbp, curbp->b_ebuf);
+
 }
 
 func (e *Editor) pgup() {
-	// int i = curwp->w_rows;
-	// while (0 < --i) {
-	// 	curbp->b_page = upup(curbp, curbp->b_page);
-	// 	up();
-	// }
+
 }
 
 func (e *Editor) wright() {
-	// char_t *p;
-	// while (!isspace(*(p = ptr(curbp, curbp->b_point))) && p < curbp->b_ebuf)
-	// 	++curbp->b_point;
-	// while (isspace(*(p = ptr(curbp, curbp->b_point))) && p < curbp->b_ebuf)
-	// 	++curbp->b_point;
+
 }
 
 func (e *Editor) insert() {
-	// assert(curbp->b_gap <= curbp->b_egap);
-	// if (curbp->b_gap == curbp->b_egap && !growgap(curbp, CHUNK))
-	// 	return;
-	// curbp->b_point = movegap(curbp, curbp->b_point);
 
-	// /* overwrite if mid line, not EOL or EOF, CR will insert as normal */
-	// if ((curbp->b_flags & B_OVERWRITE) && *input != '\r' && *(ptr(curbp, curbp->b_point)) != '\n' && curbp->b_point < pos(curbp,curbp->b_ebuf) ) {
-	// 	*(ptr(curbp, curbp->b_point)) = *input;
-	// 	if (curbp->b_point < pos(curbp, curbp->b_ebuf))
-	// 		++curbp->b_point;
-	// } else {
-	// 	*curbp->b_gap++ = *input == '\r' ? '\n' : *input;
-	// 	curbp->b_point = pos(curbp, curbp->b_egap);
-	// }
-	// curbp->b_flags |= B_MODIFIED;
 }
 
 func (e *Editor) backsp() {
@@ -277,8 +211,8 @@ func (e *Editor) killbuffer() {
 }
 
 func (e *Editor) iblock() {
-	// block();
-	// msg("Mark set");
+	e.block()
+	e.msg("Mark set")
 }
 
 func (e *Editor) toggle_overwrite_mode() {
@@ -351,17 +285,7 @@ func (e *Editor) paste() {
 }
 
 func (e *Editor) showpos() {
-	// int current, lastln;
-	// point_t end_p = pos(curbp, curbp->b_ebuf);
-
-	// get_line_stats(&current, &lastln);
-
-	// if (curbp->b_point == end_p) {
-	// 	msg("[EOB] Line = %d/%d  Point = %d/%d", current, lastln,
-	// 		curbp->b_point, ((curbp->b_ebuf - curbp->b_buf) - (curbp->b_egap - curbp->b_gap)));
-	// } else {
-	// 	msg("Char = %s 0x%x  Line = %d/%d  Point = %d/%d", unctrl(*(ptr(curbp, curbp->b_point))), *(ptr(curbp, curbp->b_point)),
-	// 		current, lastln,
-	// 		curbp->b_point, ((curbp->b_ebuf - curbp->b_buf) - (curbp->b_egap - curbp->b_gap)));
-	// }
+	x, y := e.CurrentBuffer.XYForPoint(e.CurrentBuffer.Point())
+	cl, ll := e.CurrentBuffer.GetLineStats()
+	e.msg("(%d,%d) CurrLine %d LastLine %d", x, y, cl, ll)
 }

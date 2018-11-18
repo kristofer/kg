@@ -76,13 +76,19 @@ func TestCollapseGap(t *testing.T) {
 func TestTextLines(t *testing.T) {
 	gb := NewBuffer()
 	s := "Lorem ipsum dolor sit amet,\nconsectetur adipiscing elit,\nsed do eiusmod tempor incididunt ut\nlabore et dolore magna aliqua. "
+	//    0123456789112345678921234567 89312345678941234567895123456 7896123456789612345678971234567898123456789
 	gb.SetText(s)
-	fmt.Printf("%v\n", gb.GetText())
+	//fmt.Printf("%v\n", gb.GetText())
 	fmt.Println("--- [1, 3)")
 	fmt.Printf("%v\n", gb.GetTextForLines(1, 3))
+	fmt.Println("--- [1, 2)")
+	fmt.Printf("%v\n", gb.GetTextForLines(1, 2))
 	fmt.Println("--- [2, 3)")
+	fmt.Printf("%v\n", gb.GetTextForLines(2, 3))
+	fmt.Println("--- [2, 5)")
 	fmt.Printf("%v\n", gb.GetTextForLines(2, 5))
-
+	gb.DebugPrint()
+	t.Error("force print")
 }
 
 func TestLineStart(t *testing.T) {
@@ -259,9 +265,9 @@ func TestPointForLine(t *testing.T) {
 	assert.Equal(t, 6, gb.PointForLine(2))
 	assert.Equal(t, 11, gb.PointForLine(3))
 	assert.Equal(t, 18, gb.PointForLine(4))
-	assert.Equal(t, 27, gb.PointForLine(5))
-	assert.Equal(t, 27, gb.PointForLine(6))
-	assert.Equal(t, 27, gb.PointForLine(100))
+	assert.Equal(t, 29, gb.PointForLine(5))
+	assert.Equal(t, 29, gb.PointForLine(6))
+	assert.Equal(t, 29, gb.PointForLine(100))
 	gb.DebugPrint()
 }
 func TestPointForLine2(t *testing.T) {
@@ -284,8 +290,8 @@ func TestPointForLine2(t *testing.T) {
 	assert.Equal(t, 14, gb.PointForLine(3))
 	assert.Equal(t, 19, gb.PointForLine(4))
 	assert.Equal(t, 26, gb.PointForLine(5))
-	assert.Equal(t, 35, gb.PointForLine(6))
-	assert.Equal(t, 35, gb.PointForLine(100))
+	assert.Equal(t, 37, gb.PointForLine(6))
+	assert.Equal(t, 37, gb.PointForLine(100))
 }
 func TestColumnForPoint(t *testing.T) {
 	gb := NewBuffer()
@@ -423,4 +429,117 @@ func TestRuneAt(t *testing.T) {
 	fmt.Printf("\n*********\n")
 	gb.DebugPrint()
 	t.Error("End of Buffer")
+}
+
+func TestSegStart(t *testing.T) {
+	gb := NewBuffer()
+	s := "Lorem\nlite\nsed ut\naliqua. \nhhh"
+	//    01234 56789 1123456 789212345 67893
+	//s := "fookris\nLorem\nlite\nsed ut\naliqua. \nhhh"
+	//    	01234567 891123 45678 9212345 678931234 56789412345
+	gb.SetText(s)
+	gb.SetText(s)
+	gb.Insert("foo")
+	gb.AddRune('k')
+	gb.AddRune('r')
+	gb.AddRune('i')
+	gb.AddRune('s')
+	gb.AddRune('\n')
+	assert.Equal(t, 8, gb.SegStart(0, 11, 50))
+	assert.Equal(t, 0, gb.SegStart(0, 1, 50))
+	assert.Equal(t, 0, gb.SegStart(0, 3, 50))
+	assert.Equal(t, 14, gb.SegStart(0, 16, 50))
+	assert.Equal(t, 14, gb.SegStart(9, 16, 50))
+	assert.Equal(t, 19, gb.SegStart(9, 25, 50))
+	assert.Equal(t, 26, gb.SegStart(9, 31, 50))
+	assert.Equal(t, 35, gb.SegStart(32, 36, 50))
+	assert.Equal(t, 38, gb.SegStart(0, 39, 50))
+	assert.Equal(t, 38, gb.SegStart(35, 41, 50))
+
+	//t.Error("end of test")
+}
+
+func TestSegNext(t *testing.T) {
+	gb := NewBuffer()
+	s := "Lorem\nlite\nsed ut\naliqua. \nhhh"
+	//    01234 56789 1123456 789212345 67893
+	//s := "fookris\nLorem\nlite\nsed ut\naliqua. \nhhh"
+	//    	01234567 891123 45678 9212345 678931234 56789412345
+	gb.SetText(s)
+	gb.SetText(s)
+	gb.Insert("foo")
+	gb.AddRune('k')
+	gb.AddRune('r')
+	gb.AddRune('i')
+	gb.AddRune('s')
+	gb.AddRune('\n')
+	assert.Equal(t, 14, gb.SegNext(0, 11, 50))
+	assert.Equal(t, 8, gb.SegNext(0, 1, 50))
+	assert.Equal(t, 8, gb.SegNext(0, 3, 50))
+	assert.Equal(t, 19, gb.SegNext(0, 16, 50))
+	assert.Equal(t, 19, gb.SegNext(9, 16, 50))
+	assert.Equal(t, 26, gb.SegNext(9, 25, 50))
+	assert.Equal(t, 35, gb.SegNext(9, 31, 50))
+	assert.Equal(t, 38, gb.SegNext(32, 36, 50))
+	assert.Equal(t, 38, gb.SegNext(0, 39, 50))
+	assert.Equal(t, 38, gb.SegNext(35, 41, 50))
+
+	//t.Error("end of test")
+}
+
+func TestUpUp(t *testing.T) {
+	gb := NewBuffer()
+	s := "Lorem\nlite\nsed ut\naliqua. \nhhh"
+	//    01234 56789 1123456 789212345 67893
+	//s := "fookris\nLorem\nlite\nsed ut\naliqua. \nhhh"
+	//    	01234567 891123 45678 9212345 678931234 56789412345
+	gb.SetText(s)
+	gb.SetText(s)
+	gb.Insert("foo")
+	gb.AddRune('k')
+	gb.AddRune('r')
+	gb.AddRune('i')
+	gb.AddRune('s')
+	gb.AddRune('\n')
+	assert.Equal(t, 0, gb.UpUp(0, 50))
+	assert.Equal(t, 0, gb.UpUp(1, 50))
+	assert.Equal(t, 0, gb.UpUp(3, 50))
+	assert.Equal(t, 0, gb.UpUp(9, 50))
+	assert.Equal(t, 8, gb.UpUp(16, 50))
+	assert.Equal(t, 14, gb.UpUp(25, 50))
+	assert.Equal(t, 19, gb.UpUp(31, 50))
+	assert.Equal(t, 26, gb.UpUp(36, 50))
+	assert.Equal(t, 35, gb.UpUp(39, 50))
+	assert.Equal(t, 35, gb.UpUp(41, 50))
+
+	//t.Error("end of test")
+}
+
+func TestDownDown(t *testing.T) {
+	gb := NewBuffer()
+	s := "Lorem\nlite\nsed ut\naliqua. \nhhh"
+	//    01234 56789 1123456 789212345 67893
+	//s := "fookris\nLorem\nlite\nsed ut\naliqua. \nhhh"
+	//    	01234567 891123 45678 9212345 678931234 56789412345
+	gb.SetText(s)
+	gb.SetText(s)
+	gb.Insert("foo")
+	gb.AddRune('k')
+	gb.AddRune('r')
+	gb.AddRune('i')
+	gb.AddRune('s')
+	gb.AddRune('\n')
+	assert.Equal(t, 8, gb.DownDown(0, 50))
+	assert.Equal(t, 8, gb.DownDown(1, 50))
+	assert.Equal(t, 8, gb.DownDown(3, 50))
+	assert.Equal(t, 14, gb.DownDown(9, 50))
+	assert.Equal(t, 19, gb.DownDown(16, 50))
+	assert.Equal(t, 26, gb.DownDown(19, 50))
+	assert.Equal(t, 26, gb.DownDown(25, 50))
+	assert.Equal(t, 35, gb.DownDown(31, 50))
+	assert.Equal(t, 38, gb.DownDown(36, 50))
+	assert.Equal(t, 38, gb.DownDown(39, 50))
+	assert.Equal(t, 38, gb.DownDown(41, 50))
+
+	//t.Error("end of test")
 }

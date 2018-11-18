@@ -61,10 +61,12 @@ type Editor struct {
 	Keymap     []Keymapt
 	KeysMapMap map[string]*Keymapt
 	//
-	Lines   int
-	Cols    int
-	FGColor termbox.Attribute
-	BGColor termbox.Attribute
+	Lines      int
+	Cols       int
+	FGColor    termbox.Attribute
+	BGColor    termbox.Attribute
+	EscapeFlag bool
+	CtrlXFlag  bool
 }
 
 // StartEditor is the old C main function
@@ -101,6 +103,18 @@ func (e *Editor) StartEditor(argv []string, argc int) {
 		s := "Lorem ipsum dolor sit amet,\nconsectetur adipiscing elit,\nsed do eiusmod tempor incididunt ut\nlabore et dolore magna aliqua. "
 
 		e.CurrentBuffer.SetText(s)
+		e.CurrentBuffer.Insert(s)
+		// e.CurrentBuffer.Insert(s)
+		// e.CurrentBuffer.Insert(s)
+		// e.CurrentBuffer.Insert(s)
+		// e.CurrentBuffer.Insert(s)
+		// e.CurrentBuffer.Insert(s)
+		// e.CurrentBuffer.Insert(s)
+		// e.CurrentBuffer.Insert(s)
+		// e.CurrentBuffer.Insert(s)
+		// e.CurrentBuffer.Insert(s)
+		e.CurrentBuffer.Insert("\nbottom End Of File.")
+		e.top()
 	}
 	e.CurrentWindow = NewWindow(e)
 	e.RootWindow = e.CurrentWindow
@@ -116,7 +130,7 @@ func (e *Editor) StartEditor(argv []string, argc int) {
 	for _, k := range e.Keymap {
 		e.KeysMapMap[k.KeyBytes] = &k
 	}
-	termbox.SetInputMode(termbox.InputAlt | termbox.InputMouse)
+	termbox.SetInputMode(termbox.InputAlt | termbox.InputEsc | termbox.InputMouse)
 	//termbox.SetInputMode(termbox.InputAlt)
 
 	termbox.Clear(termbox.ColorDefault, termbox.ColorDefault)
@@ -132,12 +146,11 @@ func (e *Editor) StartEditor(argv []string, argc int) {
 	for {
 		select {
 		case ev := <-e.EventChan:
-			log.Printf("%#v\n", ev)
+			//log.Printf("%#v\n", ev)
 			ok := e.HandleEvent(&ev)
 			if !ok {
 				return
 			}
-			//e.consume_more_events()
 			e.ConsumeMoreEvents()
 			e.UpdateDisplay()
 			termbox.Flush()
@@ -149,15 +162,23 @@ func (e *Editor) StartEditor(argv []string, argc int) {
 
 // HandleEvent
 func (e *Editor) HandleEvent(ev *termbox.Event) bool {
+	e.msg("")
 	switch ev.Type {
 	case termbox.EventKey:
-		if ev.Ch == 0 {
-			if e.OnSysKey(ev) {
-				if e.Done {
-					return false
-				}
+		if ev.Ch != 0 && (e.CtrlXFlag || e.EscapeFlag) {
+			_ = e.OnSysKey(ev)
+			if e.Done {
+				return false
+			}
+		} else if ev.Ch == 0 {
+			_ = e.OnSysKey(ev)
+			if e.Done {
+				return false
 			}
 		} else {
+			if ev.Mod&termbox.ModAlt != 0 && e.OnAltKey(ev) {
+				break
+			}
 			e.CurrentWindow.OnKey(ev)
 		}
 	case termbox.EventResize:
@@ -168,9 +189,7 @@ func (e *Editor) HandleEvent(ev *termbox.Event) bool {
 		e.UpdateDisplay()
 	case termbox.EventMouse:
 		termbox.Clear(termbox.ColorDefault, termbox.ColorDefault)
-		//log.Println("[", e.Lines, e.Cols, ev, "event", ctrlxpressed)
 		e.msg("Mouse: %d,%d [%d %d]", ev.MouseX, ev.MouseY, e.Cols, e.Lines)
-		// TODO: need to set the Point to mouse click location.
 		pt := e.CurrentBuffer.PointForXY(ev.MouseX+1, ev.MouseY+1)
 		e.CurrentBuffer.SetPoint(pt)
 		e.UpdateDisplay()
@@ -179,10 +198,6 @@ func (e *Editor) HandleEvent(ev *termbox.Event) bool {
 		panic(ev.Err)
 	}
 
-	// just dump the current view location from the view to the buffer
-	// after each event, it's cheap and does what it needs to be done
-	//v := g.active.leaf
-	//v.buf.loc = v.view_location
 	return true
 }
 
@@ -204,40 +219,58 @@ func (e *Editor) ConsumeMoreEvents() bool {
 
 // OnSysKey on Ctrl key pressed
 func (e *Editor) OnSysKey(ev *termbox.Event) bool {
-	// if ev.Type == termbox.EventKey {
-	// 	return false
-	// }
 	switch ev.Key {
-	// case termbox.KeyCtrlG:
-	// 	//v := g.active.leaf
-	// 	//v.ac = nil
-	// 	//g.set_overlay_mode(nil)
-	// 	//g.set_status("Quit")
-	// 	e.msg("Quit")
-	// 	e.Msgflag = true
-	// case termbox.KeyCtrlZ:
-	// 	//suspend(e)
+	case termbox.KeyCtrlX:
+		e.msg("C-X ")
+		e.CtrlXFlag = true
+		return true
+	case termbox.KeyEsc:
+		e.msg("Esc ")
+		e.EscapeFlag = true
+		return true
 	case termbox.KeyCtrlQ:
 		e.Done = true
 		return true
 	case termbox.KeySpace, termbox.KeyEnter, termbox.KeyCtrlJ, termbox.KeyTab:
 		e.CurrentWindow.OnKey(ev)
 		return true
+	case termbox.KeyArrowDown, termbox.KeyArrowLeft, termbox.KeyArrowRight, termbox.KeyArrowUp:
+		e.CtrlXFlag = false
+		e.EscapeFlag = false
+		return e.searchAndPerform(ev)
+	default:
+		return e.searchAndPerform(ev)
 	}
-	lookfor := fmt.Sprintf("%c", ev.Key)
-	for i, j := range e.Keymap {
-		if strings.Compare(lookfor, j.KeyBytes) == 0 {
-			log.Println("OnSysKey FOUND ", lookfor, e.Keymap[i])
-			jj := e.Keymap[i].Do
-			e.PerformAction(jj)
-			return true
-		}
-	}
-
 	return false
 }
 
-func (e *Editor) PerformAction(fn actionFunc) {
+func (e *Editor) searchAndPerform(ev *termbox.Event) bool {
+	lookfor := ""
+	rch := ev.Ch
+	if ev.Ch == 0 {
+		rch = rune(ev.Key)
+	}
+	lookfor = fmt.Sprintf("%c", rch)
+	if e.CtrlXFlag {
+		log.Printf("lookfor %c\n", rch)
+		lookfor = fmt.Sprintf("\x18%c", rch)
+	}
+	if e.EscapeFlag {
+		lookfor = fmt.Sprintf("\x1B%c", rch)
+	}
+	for i, j := range e.Keymap {
+		if strings.Compare(lookfor, j.KeyBytes) == 0 {
+			//log.Println("SearchAndPerform FOUND ", lookfor, e.Keymap[i])
+			jj := e.Keymap[i].Do
+			e.performAction(jj)
+			e.CtrlXFlag = false
+			e.EscapeFlag = false
+			return true
+		}
+	}
+	return false
+}
+func (e *Editor) performAction(fn actionFunc) {
 	if fn != nil {
 		fn(e)
 	}
@@ -245,25 +278,26 @@ func (e *Editor) PerformAction(fn actionFunc) {
 
 // OnAltKey on Alt key pressed
 func (e *Editor) OnAltKey(ev *termbox.Event) bool {
-	switch ev.Ch {
-	case 'g':
-		//g.set_overlay_mode(init_line_edit_mode(g, g.goto_line_lemp()))
-		return true
-		e.msg("Alt G")
-		e.Msgflag = true
-		return true
-	case '/':
-		//g.set_overlay_mode(init_autocomplete_mode(g))
-		return true
-		e.msg("Alt /")
-		e.Msgflag = true
-		return true
-	case 'q':
-		//g.set_overlay_mode(init_fill_region_mode(g))
-		e.msg("Alt Q")
-		e.Msgflag = true
-		return true
-	}
+	e.msg("AltKey\n")
+	// switch ev.Ch {
+	// case 'g':
+	// 	//g.set_overlay_mode(init_line_edit_mode(g, g.goto_line_lemp()))
+	// 	return true
+	// 	e.msg("Alt G")
+	// 	e.Msgflag = true
+	// 	return true
+	// case '/':
+	// 	//g.set_overlay_mode(init_autocomplete_mode(g))
+	// 	return true
+	// 	e.msg("Alt /")
+	// 	e.Msgflag = true
+	// 	return true
+	// case 'q':
+	// 	//g.set_overlay_mode(init_fill_region_mode(g))
+	// 	e.msg("Alt Q")
+	// 	e.Msgflag = true
+	// 	return true
+	// }
 	return false
 }
 
@@ -277,10 +311,7 @@ func (e *Editor) OnKey(ev *termbox.Event) {
 	// // case termbox.KeyCtrlR:
 	// // 	g.set_overlay_mode(init_isearch_mode(g, true))
 	// default:
-	// 	// if ev.Mod&termbox.ModAlt != 0 && e.OnAltKey(ev) {
-	// 	// 	break
-	// 	// }
-	// 	e.CurrentWindow.OnKey(ev)
+
 	// }
 }
 
@@ -304,46 +335,46 @@ func (e *Editor) DisplayMsg() {
 	}
 }
 
+// Display draws the window, minding the buffer pagestart/pageend
 func (e *Editor) Display(wp *Window, flag bool) {
 	termbox.Clear(termbox.ColorDefault, termbox.ColorDefault)
 
-	r, c := 0, 0
-	idx := 0
+	i, j := 0, 0
+	//idx := 0
 	//var rch rune
 	bp := wp.Buffer
-
-	// token_type := ID_DEFAULT
-
 	// /* find start of screen, handle scroll up off page or top of file  */
 	// /* Point is always within b_page and b_epage */
 	if bp.Point() < bp.PageStart {
 		bp.PageStart = bp.SegStart(bp.LineStart(bp.Point()), bp.Point(), e.Cols)
 	}
-
+	log.Printf("Disp Page %d Start %d /End %d WTop %d WRows %d\n", bp.Point(), bp.PageStart, bp.PageEnd, wp.TopPt, wp.Rows)
 	// /* reframe when scrolled off bottom */
-	if bp.Reframe == true || (bp.PageEnd <= bp.Point() && e.CurrentBuffer.Point() != e.CurrentBuffer.PageEnd) {
+	if bp.Reframe == true || (bp.PageEnd <= bp.Point() && bp.Point() != bp.PageEnd) {
 		bp.Reframe = false
-		i := 0
+		i = 0
 		/* Find end of screen plus one. */
-		bp.PageStart = e.DownDown(bp.Point())
+		bp.PageStart = bp.DownDown(bp.Point(), e.Cols)
 		/* if we scoll to EOF we show 1 blank line at bottom of screen */
-		if bp.BufferLen() <= bp.PageStart {
-			bp.PageStart = bp.BufferLen()
+		if bp.PageEnd <= bp.PageStart {
+			bp.PageStart = bp.PageEnd
 			i = wp.Rows - 1
 		} else {
 			i = wp.Rows - 0
 		}
 		/* Scan backwards the required number of lines. */
-		for 0 < i {
-			bp.PageStart = e.UpUp(bp.PageStart)
+		for i > 0 {
+			bp.PageStart = bp.UpUp(bp.PageStart, e.Cols)
 			i--
 		}
 
 	}
+	log.Printf("Reframe Page Point %d i %d Start %d /End %d\n", bp.Point(), i, bp.PageStart, bp.PageEnd)
 
 	// move(wp.TopPt, 0); /* start from top of window */
-	r = wp.TopPt
-	c = 0
+	//bp.FirstLine = bp.LineForPoint
+	i = wp.TopPt
+	j = 0
 	// // bp.b_epage = bp.b_page;
 	bp.PageEnd = bp.PageStart
 	// // set_parse_state(bp, bp.b_epage); /* are we in a multline comment ? */
@@ -351,54 +382,55 @@ func (e *Editor) Display(wp *Window, flag bool) {
 	// // /* paint screen from top of page until we hit maxline */
 	for {
 		// 	/* reached Point - store the Point position */
-		if bp.Point() == bp.PageEnd {
-			bp.PointRow = r
-			bp.PointCol = c
-		}
+		// if bp.Point() == bp.PageEnd {
+		// 	bp.PointRow = i
+		// 	bp.PointCol = j
+		// }
 		// 	p = ptr(bp, bp.b_epage);
-		// 	nch = 1;
-		if r > wp.TopPt+wp.Rows || idx >= bp.BufferLen() { /* maxline */
+		i = bp.PageEnd
+		if wp.TopPt+wp.Rows <= i || bp.PageEnd <= i { /* maxline */
 			break
 		}
-		rch, err := bp.RuneAt(idx)
+		rch, err := bp.RuneAt(i)
 		if err != nil {
-			log.Println("Oops!", idx)
+			log.Println("Oops!", i)
 			panic(err)
 		}
+		log.Printf("Paint Page Point %d %c i %d Start %d /End %d\n", bp.Point(), rch, i, bp.PageStart, bp.PageEnd)
 		//log.Println(rch, c, r)
 		if rch != '\r' {
 			if unicode.IsPrint(rch) || rch == '\t' || rch == '\n' {
 				if rch == '\t' {
-					c += 4 //? 8-(j&7) : 1;
+					j += 3 //? 8-(j&7) : 1;
 				}
-				termbox.SetCell(c, r, rch, e.FGColor, termbox.ColorDefault)
-				c++
+				termbox.SetCell(j, i, rch, e.FGColor, termbox.ColorDefault)
+				j++
 
 			} else {
-				// const char *ctrl = unctrl(*p);
-				// j += (int) strlen(ctrl);
-				// addstr(ctrl); '\u2318'
-				termbox.SetCell(c, r, rch, e.FGColor, termbox.ColorDefault)
-				c++
+				termbox.SetCell(j, i, rch, e.FGColor, termbox.ColorDefault)
+				j++
 			}
 		}
 
-		if rch == '\n' || e.Cols <= c {
-			c -= e.Cols
-			if c < 0 {
-				c = 0
+		if rch == '\n' || e.Cols <= j {
+			j -= e.Cols
+			if j < 0 {
+				j = 0
 			}
-			r++
+			i++
 		}
-		idx++
+		bp.PageEnd++
 		// 	bp.b_epage = bp.b_epage + nch;
 	}
 
 	// /* replacement for clrtobot() to bottom of window */
-	// for (k=i; k < wp.w_top + wp.w_rows; k++) {
-	// 	move(k, j) /* clear from very last char not start of line */
-	// 	clrtoeol()
-	// 	j = 0 /* thereafter start of line */
+	// for k := idx; k < wp.TopPt+wp.Rows; k++ {
+	// 	//move(k, j) /* clear from very last char not start of line */
+	// 	//clrtoeol()
+	// 	for cc := 0; cc < e.Cols; cc++ {
+	// 		termbox.SetCell(cc, k, ' ', e.FGColor, termbox.ColorDefault)
+	// 	}
+	// 	//sc = 0 /* thereafter start of line */
 	// }
 
 	PushBuffer2Window(wp)
@@ -445,6 +477,7 @@ func (e *Editor) SetTermCursor() {
 
 }
 
+// ModeLine draw modeline for window
 func (e *Editor) ModeLine(wp *Window) {
 	//i := 0
 	var lch, mch, och rune
@@ -477,14 +510,13 @@ func (e *Editor) ModeLine(wp *Window) {
 	y := wp.TopPt + wp.Rows
 	//e.msg("win x %d y %d ", x, y)
 	for _, c := range temp {
-		termbox.SetCell(x, y, c, e.FGColor, e.BGColor)
+		termbox.SetCell(x, y, c, termbox.ColorBlack, e.BGColor)
 		x++
-	} //addstr(temp) // term
+	}
 
 	for i := len(temp); i <= e.Cols; i++ {
-		termbox.SetCell(i, y, lch, e.FGColor, e.BGColor)
+		termbox.SetCell(i, y, lch, termbox.ColorBlack, e.BGColor) // e.FGColor
 	}
-	//standend();
 }
 
 func (e *Editor) DisplayPromptAndResponse(prompt string, response string) {
@@ -495,71 +527,6 @@ func (e *Editor) DisplayPromptAndResponse(prompt string, response string) {
 	}
 
 }
-
-// /* Reverse scan for start of logical line containing offset */
-// func (e *Editor) LineStart(pt int) int {
-// 	return e.CurrentBuffer.LineStart(pt)
-// }
-
-// /* Forward scan for start of logical line segment (corresponds to screen line)  containing 'finish' */
-// func (e *Editor) SegStart(start int, finish int) int {
-// 	return e.CurrentBuffer.SegStart(start, finish)
-// }
-
-// /* Forward scan for start of logical line segment following 'finish' */
-// func (e *Editor) SegNext(start, finish int) int {
-// 	return e.CurrentBuffer.SegNext(start, finish)
-// }
-
-/* Move up one screen line */
-func (e *Editor) UpUp(pt int) int {
-	bp := e.CurrentBuffer
-	// curr := bp.LineStart(pt)
-	// seg := bp.SegStart(curr, pt, e.Cols)
-	// if curr < seg {
-	// 	pt = bp.SegStart(curr, seg-1, e.Cols)
-	// } else {
-	// 	pt = bp.SegStart(bp.LineStart(curr-1), curr-1, e.Cols)
-	// }
-	x, y := bp.XYForPoint(pt)
-	if (y - 1) >= 1 {
-		pt = bp.PointForXY(x, y-1)
-	}
-	return pt
-}
-
-/* Move down one screen line */
-func (e *Editor) DownDown(pt int) int {
-	bp := e.CurrentBuffer
-	//return bp.SegNext(bp.LineStart(pt), pt, e.Cols)
-	x, y := bp.XYForPoint(pt)
-	pt = bp.PointForXY(x, y+1)
-	return pt
-}
-
-// OffsetForColumn ln column - Return the offset of a column on the specified line
-// func (e *Editor) OffsetForColumn(offset int, column int) int {
-// 	//var p rune
-// 	c := 0
-// 	p, err := e.CurrentBuffer.RuneAt(offset)
-// 	if err != nil {
-// 		panic(err)
-// 	}
-// 	for offset < e.CurrentBuffer.PageEnd && p != '\n' && c < column {
-// 		if p == '\t' {
-// 			c += 4 //8 - (c % 7)
-// 		} else {
-// 			c++
-// 		}
-// 		offset++
-// 		p, err = e.CurrentBuffer.RuneAt(offset)
-// 		if err != nil {
-// 			panic(err)
-// 		}
-
-// 	}
-// 	return offset
-// }
 
 // DeleteBuffer unlink from the list of buffers, free associated memory,
 // assumes buffer has been saved if modified

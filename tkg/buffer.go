@@ -20,6 +20,8 @@ type Buffer struct {
 	OrigPoint  int    /* b_cpoint the original current point, used for mutliple window displaying */
 	PageStart  int    /* b_page start of page */
 	PageEnd    int    /* b_epage end of page */
+	FirstLine  int    /* b_page start of page */
+	LastLine   int    /* b_epage end of page */
 	Reframe    bool   /* b_reframe force a reframe of the display */
 	WinCount   int    /* b_cnt count of windows referencing this buffer */
 	TextSize   int    /* b_size current size of text being edited (not including gap) */
@@ -59,22 +61,7 @@ func (r *Buffer) GetText() string {
 	return string(ret)
 }
 
-func (r *Buffer) GetTextForLines(l1, l2 int) string {
-	pt1 := r.PointForLine(l1)
-	pt2 := r.PointForLine(l2)
-	fmt.Println(pt1, pt2)
-	ret := make([]rune, pt2-pt1)
-
-	for i, j := pt1, 0; i < len(ret); i, j = i+1, j+1 {
-		if i == r.preLen {
-			i = r.postStart()
-		}
-		ret[j] = r.data[i]
-	}
-	return string(ret)
-}
-
-// RuneAt finally have a reliable??
+// RuneAt finally have a reliable!!
 func (r *Buffer) RuneAt(pt int) (rune, error) {
 	if pt >= len(r.data) {
 		return 0, errors.New("Beyond data buffer in RuneAt")
@@ -82,12 +69,13 @@ func (r *Buffer) RuneAt(pt int) (rune, error) {
 	if pt < 0 {
 		return '\u0000', errors.New("negative buffer pointer in RuneAt")
 	}
-
-	return r.data[r.DataPointForBufferPoint(pt)], nil
-	//return 0, errors.New("Ran over end of data buffer in RuneAt")
+	if npt := r.dataPointForBufferPoint(pt); npt < len(r.data) {
+		return r.data[npt], nil
+	}
+	return 0, errors.New("Ran over end of data buffer in RuneAt")
 }
 
-func (r *Buffer) DataPointForBufferPoint(pt int) int {
+func (r *Buffer) dataPointForBufferPoint(pt int) int {
 	npt := 0
 	if pt < r.preLen {
 		npt = pt
@@ -112,12 +100,7 @@ func (r *Buffer) Point() int {
 	return r.preLen
 }
 
-// Return rune at Point
-// func (r *Buffer) RuneForPoint() rune {
-// 	return r.data[r.preLen]
-// }
-
-// SetPoint set thecurrent point to np
+// SetPoint set the current point to np
 func (r *Buffer) SetPoint(np int) {
 	// 	slade gap to end
 	r.CollapseGap()
@@ -188,6 +171,24 @@ func (r *Buffer) Insert(s string) {
 	copy(r.data[r.gapStart():], []rune(s))
 	r.preLen += len(s)
 	//fmt.Println("G", len(r.data)-r.postLen-r.preLen, "S", r.preLen, "E", r.postLen)
+}
+
+// GetTextForLines return string for [l1, l2) (l2 not included)
+func (r *Buffer) GetTextForLines(l1, l2 int) string {
+	pt1 := r.PointForLine(l1)
+	pt2 := r.PointForLine(l2)
+	//fmt.Println(pt1, pt2)
+	ret := make([]rune, pt2-pt1)
+	j := 0
+	for i := pt1; j < len(ret); i++ {
+		rch, err := r.RuneAt(i)
+		if err != nil {
+			panic(err)
+		}
+		ret[j] = rch
+		j++
+	}
+	return string(ret)
 }
 
 // GrowGap makes the gap bigger by n
@@ -310,15 +311,10 @@ func (r *Buffer) PointForLine(ln int) int {
 			return r.LineStart(pt)
 		}
 	}
-	return r.LineStart(r.BufferLen() - 1)
+	return r.LineEnd(r.BufferLen() - 1)
 }
 
-func (r *Buffer) ColumnForPoint(point int) (column int) {
-	start := r.LineStart(point)
-	return point - start + 1
-
-}
-
+// LineForPoint returns the line number of point (o = 1)
 func (r *Buffer) LineForPoint(point int) (line int) {
 	line = 1
 	pt := 0
@@ -331,6 +327,13 @@ func (r *Buffer) LineForPoint(point int) (line int) {
 		line--
 	}
 	return
+}
+
+// ColumnForPoint returns the column (o = 1) of pt
+func (r *Buffer) ColumnForPoint(point int) (column int) {
+	start := r.LineStart(point)
+	return point - start + 1
+
 }
 
 // XYForPoint returns the cursor location for a pt in the buffer
@@ -358,12 +361,15 @@ func (r *Buffer) SegStart(start, finish, limit int) int {
 
 	for scan < finish {
 		//p = ptr(bp, scan);
-		p, err := r.RuneAt(scan)
+		if scan >= r.BufferLen() {
+			return r.BufferLen()
+		}
+		rch, err := r.RuneAt(scan)
 		if err != nil {
 			panic(err)
 		}
 
-		if p == '\n' {
+		if rch == '\n' {
 			c = 0
 			start = scan + 1
 		} else {
@@ -373,14 +379,12 @@ func (r *Buffer) SegStart(start, finish, limit int) int {
 			}
 		}
 		scan++
-		//c += *p == '\t' ? 8 - (c & 7) : 1;
-		if p == '\t' {
-			c += 4 //8 - (c % 7)
+		if rch == '\t' {
+			c += 4
 		} else {
 			c++
 		}
 	}
-	// (c < COLS ? start : finish);
 	if c < limit {
 		return start
 	}
@@ -389,16 +393,14 @@ func (r *Buffer) SegStart(start, finish, limit int) int {
 
 /* SegNext Forward scan for start of logical line segment following 'finish' */
 func (r *Buffer) SegNext(start, finish, limit int) int {
-	// char_t *p;
-	// int c = 0;
-	//bp := e.CurrentBuffer
-	//var p rune
-	//var pptr int
 	c := 0
 
 	scan := r.SegStart(start, finish, limit)
 	for {
-		p, err := r.RuneAt(scan)
+		if scan >= r.BufferLen() {
+			return r.BufferLen()
+		}
+		rch, err := r.RuneAt(scan)
 		if err != nil {
 			panic(err)
 		}
@@ -408,11 +410,11 @@ func (r *Buffer) SegNext(start, finish, limit int) int {
 		}
 		//scan += utf8_size(*ptr(bp,scan));
 		scan++
-		if p == '\n' {
+		if rch == '\n' {
 			break
 		}
 		//c += *p == '\t' ? 8 - (c & 7) : 1;
-		if p == '\t' {
+		if rch == '\t' {
 			c += 4 //8 - (c % 7)
 		} else {
 			c++
@@ -449,7 +451,11 @@ func (r *Buffer) PointUp() {
 	l1 := r.LineStart(r.Point())
 	l1--
 	l2 := r.LineStart(l1)
-	r.SetPointAndCursor(l2 + c1 - 1)
+	npt := l2 + c1 - 1
+	if npt < r.PageStart {
+		r.Reframe = true
+	}
+	r.SetPointAndCursor(npt)
 }
 
 // PointDown move point down one line
@@ -458,7 +464,11 @@ func (r *Buffer) PointDown() {
 	l1 := r.LineEnd(r.Point())
 	l2 := r.LineStart(l1 + 1)
 	//fmt.Printf("PointDown c1 %d, l1 %d, l2 %d)\n", c1, l1, l2)
-	r.SetPoint(l2 + c1 - 1)
+	npt := l2 + c1 - 1
+	if npt > r.PageEnd {
+		r.Reframe = true
+	}
+	r.SetPointAndCursor(npt)
 	//fmt.Printf("Point %d (%d,%d)\n", r.Point(), r.PointCol, r.PointRow)
 }
 
@@ -484,27 +494,38 @@ func (r *Buffer) PointPrevious() {
 	r.postLen++
 }
 
+// UpUp Move up one screen line
+func (bp *Buffer) UpUp(pt, cc int) int {
+	//bp := e.CurrentBuffer
+	curr := bp.LineStart(pt)
+	seg := bp.SegStart(curr, pt, cc)
+	if curr < seg {
+		pt = bp.SegStart(curr, seg-1, cc)
+	} else {
+		pt = bp.SegStart(bp.LineStart(curr-1), curr-1, cc)
+	}
+	// x, y := bp.XYForPoint(pt)
+	// if (y - 1) >= 1 {
+	// 	pt = bp.PointForXY(x, y-1)
+	// }
+	return pt
+}
+
+// DownDown Move down one screen line
+func (bp *Buffer) DownDown(pt, cc int) int {
+	//bp := e.CurrentBuffer
+	return bp.SegNext(bp.LineStart(pt), pt, cc)
+	// x, y := bp.XYForPoint(pt)
+	// npt := bp.PointForXY(x, y+1)
+	// log.Printf("npt %d pt %d x %d y %d\n", npt, pt, x, y)
+	// return npt
+}
+
 /* GetLineStats scan buffer and fill in curline and lastline */
 func (r *Buffer) GetLineStats() (curline int, lastline int) {
-	ep := len(r.data) - 1
-	line := 0
-	curline = -1
-	for p := 0; p < ep; p++ {
-		if p == r.preLen {
-			p = r.postStart()
-		}
-		if r.data[p] == '\n' {
-			line++
-			lastline = line
-		}
-		if curline == -1 && p == r.preLen {
-			if r.data[p] == '\n' {
-				curline = line
-			} else {
-				curline = line + 1
-			}
-		}
-	}
+	pt := r.Point()
+	_, curline = r.XYForPoint(pt)
+	_, lastline = r.XYForPoint(r.BufferLen())
 	return curline, lastline
 }
 

@@ -2,7 +2,6 @@ package tkg
 
 import (
 	"fmt"
-	"log"
 
 	termbox "github.com/nsf/termbox-go"
 	//termbox "github.com/gdamore/tcell/termbox"
@@ -74,9 +73,9 @@ func (wp *Window) OnKey(ev *termbox.Event) {
 		// if ev.Mod&termbox.ModAlt != 0 && e.OnAltKey(ev) {
 		// 	break
 		// }
-		ch := ev.Ch
-		log.Printf("Win OnKey %#U Point is %d\n", ch, wp.Buffer.Point())
-		wp.Buffer.AddRune(ch)
+		//ch := ev.Ch
+		//log.Printf("Win OnKey %#U Point is %d\n", ch, wp.Buffer.Point())
+		wp.Buffer.AddRune(ev.Ch)
 	}
 
 }
