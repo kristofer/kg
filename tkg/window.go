@@ -2,6 +2,7 @@ package tkg
 
 import (
 	"fmt"
+	"log"
 
 	termbox "github.com/nsf/termbox-go"
 	//termbox "github.com/gdamore/tcell/termbox"
@@ -47,7 +48,8 @@ func NewWindow(e *Editor) *Window {
 
 func (wp *Window) OneWindow() {
 	wp.TopPt = 0
-	wp.Rows = wp.Editor.Lines - 2
+	wp.Rows = wp.Editor.Lines - 3
+	log.Printf("OneWindow rows %d line %d\n", wp.Rows, wp.Editor.Lines)
 	wp.Next = nil
 }
 

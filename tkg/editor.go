@@ -182,6 +182,7 @@ func (e *Editor) HandleEvent(ev *termbox.Event) bool {
 			}
 			e.CurrentWindow.OnKey(ev)
 		}
+		e.UpdateDisplay()
 	case termbox.EventResize:
 		termbox.Clear(termbox.ColorDefault, termbox.ColorDefault)
 		e.Cols, e.Lines = termbox.Size()
@@ -339,10 +340,6 @@ func (e *Editor) DisplayMsg() {
 // Display draws the window, minding the buffer pagestart/pageend
 func (e *Editor) Display(wp *Window, flag bool) {
 	termbox.Clear(termbox.ColorDefault, termbox.ColorDefault)
-
-	//i, j, k := 0, 0, 0
-	//idx := 0
-	//var rch rune
 	bp := wp.Buffer
 	// /* find start of screen, handle scroll up off page or top of file  */
 	// /* Point is always within b_page and b_epage */
@@ -350,18 +347,38 @@ func (e *Editor) Display(wp *Window, flag bool) {
 		bp.PageStart = bp.SegStart(bp.LineStart(bp.Point()), bp.Point(), e.Cols)
 	}
 	l1 := bp.LineForPoint(bp.PageStart)
-	l2 := l1 + wp.Rows - 1
-	toPrint := bp.GetTextForLines(l1, l2)
+	l2 := l1 + wp.Rows
+	l2end := bp.LineEnd(bp.PointForLine(l2))
+	bp.PageEnd = l2end
+	log.Printf("P0 lines %d %d PageStart %d Point %d, bp.PageEnd %d BufL %d", l1, l2, bp.PageStart, bp.Point(), bp.PageEnd, bp.BufferLen())
+
+	if bp.Reframe == true || (bp.Point() > bp.PageEnd && bp.Point() != bp.PageEnd) {
+		bp.Reframe = false
+		i := 0
+		/* Find end of screen plus one. */
+		bp.PageStart = bp.DownDown(bp.Point(), e.Cols)
+		log.Printf("P1 PageStart %d Point %d, bp.PageEnd %d", bp.PageStart, bp.Point(), bp.PageEnd)
+		/* if we scoll to EOF we show 1 blank line at bottom of screen */
+		if bp.PageEnd <= bp.PageStart {
+			bp.PageStart = bp.PageEnd
+			i = wp.Rows - 1
+		} else {
+			i = wp.Rows - 0
+		}
+		/* Scan backwards the required number of lines. */
+		log.Printf("Before BWscan i %d PageStart %d Point %d, bp.PageEnd %d", i, bp.PageStart, bp.Point(), bp.PageEnd)
+		for i > 0 {
+			bp.PageStart = bp.UpUp(bp.PageStart, e.Cols)
+			i--
+			log.Printf("P3 i %d PageStart %d Point %d, bp.PageEnd %d", i, bp.PageStart, bp.Point(), bp.PageEnd)
+		}
+	}
+
+	toPrint := bp.GetTextForLines(l1, l2+1)
 	runeArray := []rune(toPrint)
 	r, c := 0, 0
 	for k := 0; k < len(runeArray); k++ {
 		rch := runeArray[k]
-		// if err != nil {
-		// 	log.Println("Oops!", k)
-		// 	panic(err)
-		// }
-		//		log.Printf("Paint Page Point %d %c i %d Start %d /End %d\n", bp.Point(), rch, i, bp.PageStart, bp.PageEnd)
-		//log.Println(rch, c, r)
 		if rch != '\r' {
 			if unicode.IsPrint(rch) || rch == '\t' || rch == '\n' {
 				if rch == '\t' {
@@ -383,79 +400,6 @@ func (e *Editor) Display(wp *Window, flag bool) {
 			r++
 		}
 	}
-	// log.Printf("Disp Page %d Start %d /End %d WTop %d WRows %d\n", bp.Point(), bp.PageStart, bp.PageEnd, wp.TopPt, wp.Rows)
-	// // /* reframe when scrolled off bottom */
-	// if bp.Reframe == true || (bp.PageEnd <= bp.Point() && bp.Point() != bp.PageEnd) {
-	// 	bp.Reframe = false
-	// 	i = 0
-	// 	/* Find end of screen plus one. */
-	// 	bp.PageStart = bp.DownDown(bp.Point(), e.Cols)
-	// 	/* if we scoll to EOF we show 1 blank line at bottom of screen */
-	// 	if bp.PageEnd <= bp.PageStart {
-	// 		bp.PageStart = bp.PageEnd
-	// 		i = wp.Rows - 1
-	// 	} else {
-	// 		i = wp.Rows - 0
-	// 	}
-	// 	/* Scan backwards the required number of lines. */
-	// 	for i > 0 {
-	// 		bp.PageStart = bp.UpUp(bp.PageStart, e.Cols)
-	// 		i--
-	// 	}
-
-	// }
-	// log.Printf("Reframe Page Point %d i %d Start %d /End %d\n", bp.Point(), i, bp.PageStart, bp.PageEnd)
-
-	// // move(wp.TopPt, 0); /* start from top of window */
-	// //bp.FirstLine = bp.LineForPoint
-	// i = wp.TopPt
-	// j = 0
-	// // // bp.b_epage = bp.b_page;
-	// bp.PageEnd = bp.PageStart
-	// k = bp.PageStart
-	// // // set_parse_state(bp, bp.b_epage); /* are we in a multline comment ? */
-
-	// // // /* paint screen from top of page until we hit maxline */
-	// for {
-	// 	// 	/* reached Point - store the Point position */
-	// 	// if bp.Point() == bp.PageEnd {
-	// 	// 	bp.PointRow = i
-	// 	// 	bp.PointCol = j
-	// 	// }
-	// 	// 	p = ptr(bp, bp.b_epage);
-	// 	i = bp.PageEnd
-	// 	if wp.TopPt+wp.Rows <= i || bp.PageEnd <= i { /* maxline */
-	// 		break
-	// 	}
-	// 	rch, err := bp.RuneAt(k)
-	// 	if err != nil {
-	// 		log.Println("Oops!", k)
-	// 		panic(err)
-	// 	}
-	// 	log.Printf("Paint Page Point %d %c i %d Start %d /End %d\n", bp.Point(), rch, i, bp.PageStart, bp.PageEnd)
-	// 	//log.Println(rch, c, r)
-	// 	if rch != '\r' {
-	// 		if unicode.IsPrint(rch) || rch == '\t' || rch == '\n' {
-	// 			if rch == '\t' {
-	// 				j += 3 //? 8-(j&7) : 1;
-	// 			}
-	// 			termbox.SetCell(i, j, rch, e.FGColor, termbox.ColorDefault)
-	// 		} else {
-	// 			termbox.SetCell(i, j, rch, e.FGColor, termbox.ColorDefault)
-	// 		}
-	// 	}
-
-	// 	if rch == '\n' || e.Cols <= j {
-	// 		j -= e.Cols
-	// 		if j < 0 {
-	// 			j = 0
-	// 		}
-	// 		i++
-	// 	}
-	// 	k++
-	// 	bp.PageEnd++
-	// 	// 	bp.b_epage = bp.b_epage + nch;
-	// }
 
 	// /* replacement for clrtobot() to bottom of window */
 	// for k := idx; k < wp.TopPt+wp.Rows; k++ {
@@ -470,8 +414,6 @@ func (e *Editor) Display(wp *Window, flag bool) {
 	PushBuffer2Window(wp)
 	e.ModeLine(wp)
 	e.DisplayMsg()
-	e.SetTermCursor()
-	//termbox.Sync()
 	wp.Updated = false
 }
 
@@ -482,12 +424,13 @@ func (e *Editor) UpdateDisplay() {
 	/* only one window */
 	if e.RootWindow.Next == nil {
 		e.Display(e.CurrentWindow, true)
-		//refresh()
+		e.SetTermCursor()
 		bp.PrevSize = bp.TextSize
 		return
 	}
 
-	e.Display(e.CurrentWindow, false) /* this is key, we must call our win first to get accurate page and epage etc */
+	e.Display(e.CurrentWindow, false)
+	/* this is key, we must call our win first to get accurate page and epage etc */
 
 	/* never CurrentWin,  but same buffer in different window or update flag set*/
 	for wp := e.RootWindow; wp != nil; wp = wp.Next {
@@ -505,10 +448,12 @@ func (e *Editor) UpdateDisplay() {
 	bp.PrevSize = bp.TextSize /* now safe to save previous size for next time */
 }
 
+// SetTermCursor -
 func (e *Editor) SetTermCursor() {
-	e.CurrentWindow.CurCol, e.CurrentWindow.CurRow = e.CurrentBuffer.XYForPoint(e.CurrentBuffer.Point())
-	termbox.SetCursor(e.CurrentWindow.CurCol-1, e.CurrentWindow.CurRow-1) /* set cursor for CurrentWin */
-
+	c, r := e.CurrentBuffer.XYForPoint(e.CurrentBuffer.Point())
+	e.CurrentWindow.CurCol, e.CurrentWindow.CurRow = c, r
+	termbox.SetCursor(c-1, r-1) /* set cursor for CurrentWin */
+	log.Printf("TermCursor is (%d,%d) x,y(%d,%d)\n", c-1, r-1, c, r)
 }
 
 // ModeLine draw modeline for window
@@ -535,16 +480,19 @@ func (e *Editor) ModeLine(wp *Window) {
 	// if wp.Buffer.Flags&B_OVERWRITE != 0 {
 	// 	och = 'O'
 	// }
-
-	temp := fmt.Sprintf("%c%c%c kg: %c%c %s (h %d, w%d) 0 y %d", lch, och, mch, lch, lch,
-		e.GetBufferName(wp.Buffer), e.Lines, e.Cols, wp.TopPt+wp.Rows)
+	c, r := wp.Buffer.XYForPoint(wp.Buffer.Point())
+	temp := fmt.Sprintf("%c%c%c kg: %c%c %s C(%d,%d) (h %d, w%d) rows %d", lch, och, mch, lch, lch,
+		e.GetBufferName(wp.Buffer),
+		c, r,
+		e.Lines, e.Cols, wp.TopPt+wp.Rows)
 	//fmt.Println(temp)
 	//e.drawstring(0, e.Lines-1, termbox.ColorWhite, termbox.ColorBlack, temp)
 	x := 0
-	y := wp.TopPt + wp.Rows
+	y := wp.TopPt + wp.Rows + 1
 	//e.msg("win x %d y %d ", x, y)
 	for _, c := range temp {
 		termbox.SetCell(x, y, c, termbox.ColorBlack, e.BGColor)
+		//mch = c
 		x++
 	}
 

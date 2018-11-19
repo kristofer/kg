@@ -3,6 +3,7 @@ package tkg
 import (
 	"errors"
 	"fmt"
+	"log"
 	"testing"
 )
 
@@ -110,6 +111,10 @@ func (r *Buffer) SetPoint(np int) {
 		r.data[r.postStart()-1] = r.data[r.preLen-1]
 		r.preLen--
 		r.postLen++
+	}
+	if r.PageEnd < r.preLen {
+		log.Println("reframing!")
+		r.Reframe = true
 	}
 }
 func (r *Buffer) SetPointAndCursor(np int) {
