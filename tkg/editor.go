@@ -339,7 +339,7 @@ func (e *Editor) DisplayMsg() {
 func (e *Editor) Display(wp *Window, flag bool) {
 	termbox.Clear(termbox.ColorDefault, termbox.ColorDefault)
 
-	i, j := 0, 0
+	//i, j, k := 0, 0, 0
 	//idx := 0
 	//var rch rune
 	bp := wp.Buffer
@@ -348,80 +348,113 @@ func (e *Editor) Display(wp *Window, flag bool) {
 	if bp.Point() < bp.PageStart {
 		bp.PageStart = bp.SegStart(bp.LineStart(bp.Point()), bp.Point(), e.Cols)
 	}
-	log.Printf("Disp Page %d Start %d /End %d WTop %d WRows %d\n", bp.Point(), bp.PageStart, bp.PageEnd, wp.TopPt, wp.Rows)
-	// /* reframe when scrolled off bottom */
-	if bp.Reframe == true || (bp.PageEnd <= bp.Point() && bp.Point() != bp.PageEnd) {
-		bp.Reframe = false
-		i = 0
-		/* Find end of screen plus one. */
-		bp.PageStart = bp.DownDown(bp.Point(), e.Cols)
-		/* if we scoll to EOF we show 1 blank line at bottom of screen */
-		if bp.PageEnd <= bp.PageStart {
-			bp.PageStart = bp.PageEnd
-			i = wp.Rows - 1
-		} else {
-			i = wp.Rows - 0
-		}
-		/* Scan backwards the required number of lines. */
-		for i > 0 {
-			bp.PageStart = bp.UpUp(bp.PageStart, e.Cols)
-			i--
-		}
-
-	}
-	log.Printf("Reframe Page Point %d i %d Start %d /End %d\n", bp.Point(), i, bp.PageStart, bp.PageEnd)
-
-	// move(wp.TopPt, 0); /* start from top of window */
-	//bp.FirstLine = bp.LineForPoint
-	i = wp.TopPt
-	j = 0
-	// // bp.b_epage = bp.b_page;
-	bp.PageEnd = bp.PageStart
-	// // set_parse_state(bp, bp.b_epage); /* are we in a multline comment ? */
-
-	// // /* paint screen from top of page until we hit maxline */
-	for {
-		// 	/* reached Point - store the Point position */
-		// if bp.Point() == bp.PageEnd {
-		// 	bp.PointRow = i
-		// 	bp.PointCol = j
+	l1 := bp.LineForPoint(bp.PageStart)
+	l2 := l1 + wp.Rows - 1
+	toPrint := bp.GetTextForLines(l1, l2)
+	runeArray := []rune(toPrint)
+	r, c := 0, 0
+	for k := 0; k < len(runeArray); k++ {
+		rch := runeArray[k]
+		// if err != nil {
+		// 	log.Println("Oops!", k)
+		// 	panic(err)
 		// }
-		// 	p = ptr(bp, bp.b_epage);
-		i = bp.PageEnd
-		if wp.TopPt+wp.Rows <= i || bp.PageEnd <= i { /* maxline */
-			break
-		}
-		rch, err := bp.RuneAt(i)
-		if err != nil {
-			log.Println("Oops!", i)
-			panic(err)
-		}
-		log.Printf("Paint Page Point %d %c i %d Start %d /End %d\n", bp.Point(), rch, i, bp.PageStart, bp.PageEnd)
+		//		log.Printf("Paint Page Point %d %c i %d Start %d /End %d\n", bp.Point(), rch, i, bp.PageStart, bp.PageEnd)
 		//log.Println(rch, c, r)
 		if rch != '\r' {
 			if unicode.IsPrint(rch) || rch == '\t' || rch == '\n' {
 				if rch == '\t' {
-					j += 3 //? 8-(j&7) : 1;
+					c += 3 //? 8-(j&7) : 1;
 				}
-				termbox.SetCell(j, i, rch, e.FGColor, termbox.ColorDefault)
-				j++
-
+				termbox.SetCell(c, r, rch, termbox.ColorYellow, termbox.ColorDefault)
+				c++
 			} else {
-				termbox.SetCell(j, i, rch, e.FGColor, termbox.ColorDefault)
-				j++
+				termbox.SetCell(c, r, rch, termbox.ColorYellow, termbox.ColorDefault)
+				c++
 			}
 		}
 
-		if rch == '\n' || e.Cols <= j {
-			j -= e.Cols
-			if j < 0 {
-				j = 0
+		if rch == '\n' || e.Cols <= c {
+			c -= e.Cols
+			if c < 0 {
+				c = 0
 			}
-			i++
+			r++
 		}
-		bp.PageEnd++
-		// 	bp.b_epage = bp.b_epage + nch;
 	}
+	// log.Printf("Disp Page %d Start %d /End %d WTop %d WRows %d\n", bp.Point(), bp.PageStart, bp.PageEnd, wp.TopPt, wp.Rows)
+	// // /* reframe when scrolled off bottom */
+	// if bp.Reframe == true || (bp.PageEnd <= bp.Point() && bp.Point() != bp.PageEnd) {
+	// 	bp.Reframe = false
+	// 	i = 0
+	// 	/* Find end of screen plus one. */
+	// 	bp.PageStart = bp.DownDown(bp.Point(), e.Cols)
+	// 	/* if we scoll to EOF we show 1 blank line at bottom of screen */
+	// 	if bp.PageEnd <= bp.PageStart {
+	// 		bp.PageStart = bp.PageEnd
+	// 		i = wp.Rows - 1
+	// 	} else {
+	// 		i = wp.Rows - 0
+	// 	}
+	// 	/* Scan backwards the required number of lines. */
+	// 	for i > 0 {
+	// 		bp.PageStart = bp.UpUp(bp.PageStart, e.Cols)
+	// 		i--
+	// 	}
+
+	// }
+	// log.Printf("Reframe Page Point %d i %d Start %d /End %d\n", bp.Point(), i, bp.PageStart, bp.PageEnd)
+
+	// // move(wp.TopPt, 0); /* start from top of window */
+	// //bp.FirstLine = bp.LineForPoint
+	// i = wp.TopPt
+	// j = 0
+	// // // bp.b_epage = bp.b_page;
+	// bp.PageEnd = bp.PageStart
+	// k = bp.PageStart
+	// // // set_parse_state(bp, bp.b_epage); /* are we in a multline comment ? */
+
+	// // // /* paint screen from top of page until we hit maxline */
+	// for {
+	// 	// 	/* reached Point - store the Point position */
+	// 	// if bp.Point() == bp.PageEnd {
+	// 	// 	bp.PointRow = i
+	// 	// 	bp.PointCol = j
+	// 	// }
+	// 	// 	p = ptr(bp, bp.b_epage);
+	// 	i = bp.PageEnd
+	// 	if wp.TopPt+wp.Rows <= i || bp.PageEnd <= i { /* maxline */
+	// 		break
+	// 	}
+	// 	rch, err := bp.RuneAt(k)
+	// 	if err != nil {
+	// 		log.Println("Oops!", k)
+	// 		panic(err)
+	// 	}
+	// 	log.Printf("Paint Page Point %d %c i %d Start %d /End %d\n", bp.Point(), rch, i, bp.PageStart, bp.PageEnd)
+	// 	//log.Println(rch, c, r)
+	// 	if rch != '\r' {
+	// 		if unicode.IsPrint(rch) || rch == '\t' || rch == '\n' {
+	// 			if rch == '\t' {
+	// 				j += 3 //? 8-(j&7) : 1;
+	// 			}
+	// 			termbox.SetCell(i, j, rch, e.FGColor, termbox.ColorDefault)
+	// 		} else {
+	// 			termbox.SetCell(i, j, rch, e.FGColor, termbox.ColorDefault)
+	// 		}
+	// 	}
+
+	// 	if rch == '\n' || e.Cols <= j {
+	// 		j -= e.Cols
+	// 		if j < 0 {
+	// 			j = 0
+	// 		}
+	// 		i++
+	// 	}
+	// 	k++
+	// 	bp.PageEnd++
+	// 	// 	bp.b_epage = bp.b_epage + nch;
+	// }
 
 	// /* replacement for clrtobot() to bottom of window */
 	// for k := idx; k < wp.TopPt+wp.Rows; k++ {
