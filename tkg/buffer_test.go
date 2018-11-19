@@ -154,6 +154,87 @@ func TestLineStart2(t *testing.T) {
 	gb.DebugPrint()
 }
 
+func TestLineForPoint(t *testing.T) {
+	gb := NewBuffer()
+	//    111111 22222 3333333 444444444 555
+	s := "Lorem\nlite\nsed ut\naliqua.-\nhhh"
+	//    012345 67891 1234567 892123456 7893123456
+	//s := "fooLorem\nlite\nsed ut\naliqua.-\nhhh"
+	//      012345678 91123 4567892 123456789 3123456
+	gb.SetText(s)
+	//gb.Insert("foo")
+	// gb.AddRune('f')
+	// gb.AddRune('o')
+	// gb.AddRune('o')
+	// gb.AddRune('s')
+	assert.Equal(t, 1, gb.LineForPoint(0))
+	assert.Equal(t, 1, gb.LineForPoint(1))
+	assert.Equal(t, 1, gb.LineForPoint(4))
+	assert.Equal(t, 1, gb.LineForPoint(5))
+	assert.Equal(t, 2, gb.LineForPoint(6))
+	assert.Equal(t, 2, gb.LineForPoint(8))
+	assert.Equal(t, 2, gb.LineForPoint(9))
+	assert.Equal(t, 2, gb.LineForPoint(10))
+	assert.Equal(t, 3, gb.LineForPoint(11))
+	assert.Equal(t, 3, gb.LineForPoint(13))
+	assert.Equal(t, 3, gb.LineForPoint(14))
+	assert.Equal(t, 4, gb.LineForPoint(21))
+	assert.Equal(t, 4, gb.LineForPoint(25))
+	assert.Equal(t, 4, gb.LineForPoint(26))
+	assert.Equal(t, 5, gb.LineForPoint(27))
+	assert.Equal(t, 5, gb.LineForPoint(28))
+	assert.Equal(t, 5, gb.LineForPoint(29))
+	assert.Equal(t, 5, gb.LineForPoint(30))
+	assert.Equal(t, 5, gb.LineForPoint(31))
+	assert.Equal(t, 5, gb.LineForPoint(32))
+	assert.Equal(t, 5, gb.LineForPoint(33))
+	// assert.Equal(t, 30, gb.LineForPoint(33))
+	// assert.Equal(t, 30, gb.LineForPoint(35))
+	// assert.Equal(t, 30, gb.LineForPoint(410))
+	gb.DebugPrint()
+}
+func TestLineForPoint2(t *testing.T) {
+	gb := NewBuffer()
+	//    111111 22222 3333333 444444444 555
+	s := "Lorem\nlite\nsed ut\naliqua.-\nhhh"
+	//    012345 67891 1234567 892123456 7893123456
+	//      111111111 22222 3333333 444444444 555
+	//s := "fooLorem\nlite\nsed ut\naliqua.-\nhhh"
+	//      012345678 91123 4567892 123456789 3123456
+	gb.SetText(s)
+	gb.Insert("foo")
+	// gb.AddRune('f')
+	// gb.AddRune('o')
+	// gb.AddRune('o')
+	// gb.AddRune('s')
+	assert.Equal(t, 1, gb.LineForPoint(0))
+	assert.Equal(t, 1, gb.LineForPoint(1))
+	assert.Equal(t, 1, gb.LineForPoint(4))
+	assert.Equal(t, 1, gb.LineForPoint(5))
+	assert.Equal(t, 1, gb.LineForPoint(6))
+	assert.Equal(t, 1, gb.LineForPoint(8))
+	assert.Equal(t, 2, gb.LineForPoint(9))
+	assert.Equal(t, 2, gb.LineForPoint(10))
+	assert.Equal(t, 2, gb.LineForPoint(11))
+	assert.Equal(t, 2, gb.LineForPoint(13))
+	assert.Equal(t, 3, gb.LineForPoint(14))
+	assert.Equal(t, 4, gb.LineForPoint(21))
+	assert.Equal(t, 4, gb.LineForPoint(25))
+	assert.Equal(t, 4, gb.LineForPoint(26))
+	assert.Equal(t, 4, gb.LineForPoint(27))
+	assert.Equal(t, 4, gb.LineForPoint(28))
+	assert.Equal(t, 4, gb.LineForPoint(29))
+	assert.Equal(t, 5, gb.LineForPoint(30))
+	assert.Equal(t, 5, gb.LineForPoint(31))
+	assert.Equal(t, 5, gb.LineForPoint(32))
+	assert.Equal(t, 5, gb.LineForPoint(33))
+	assert.Equal(t, 5, gb.LineForPoint(100))
+	// assert.Equal(t, 30, gb.LineForPoint(33))
+	// assert.Equal(t, 30, gb.LineForPoint(35))
+	// assert.Equal(t, 30, gb.LineForPoint(410))
+	gb.DebugPrint()
+}
+
 func TestLineEnd(t *testing.T) {
 	gb := NewBuffer()
 	s := "Lorem\nlite\nsed ut\naliqua. \nhhh"
@@ -316,7 +397,14 @@ func TestColumnForPoint(t *testing.T) {
 	assert.Equal(t, 6, gb.ColumnForPoint(13))
 	assert.Equal(t, 1, gb.ColumnForPoint(14))
 	assert.Equal(t, 1, gb.ColumnForPoint(19))
+	assert.Equal(t, 2, gb.ColumnForPoint(27))
 	assert.Equal(t, 3, gb.ColumnForPoint(28))
+	assert.Equal(t, 4, gb.ColumnForPoint(29))
+	assert.Equal(t, 5, gb.ColumnForPoint(30))
+	assert.Equal(t, 2, gb.ColumnForPoint(36))
+	assert.Equal(t, 3, gb.ColumnForPoint(37))
+	assert.Equal(t, 3, gb.ColumnForPoint(38))
+	assert.Equal(t, 3, gb.ColumnForPoint(39))
 	// assert.Equal(t, 27, gb.ColumnForPoint(100))
 }
 
@@ -388,10 +476,6 @@ func TestXYForPoint(t *testing.T) {
 	x, y = gb.XYForPoint(5)
 	assert.Equal(t, 6, x)
 	assert.Equal(t, 1, y)
-	// assert.Equal(t, 6, gb.PointForXY(7, 1))
-	// assert.Equal(t, 4, gb.PointForXY(10, 1))
-	// assert.Equal(t, 4, gb.PointForXY(32, 1))
-	// assert.Equal(t, 8, gb.PointForXY(1, 2))
 	// assert.Equal(t, 14, gb.PointForXY(1, 3))
 	x, y = gb.XYForPoint(14)
 	assert.Equal(t, 1, x)
@@ -405,11 +489,31 @@ func TestXYForPoint(t *testing.T) {
 	assert.Equal(t, 1, x)
 	assert.Equal(t, 4, y)
 	// assert.Equal(t, 20, gb.PointForXY(2, 4))
+	//s := "fookris\nLorem\nlite\nsed ut\naliqua. \nhhh"
+	//    	01234567 891123 45678 9212345 678931234 56789412345
 	// assert.Equal(t, 21, gb.PointForXY(3, 4))
+	x, y = gb.XYForPoint(21)
+	assert.Equal(t, 3, x)
+	assert.Equal(t, 4, y)
 	//assert.Equal(t, gb.BufferLen()-1, gb.PointForXY(6, 6))
+	x, y = gb.XYForPoint(35)
+	assert.Equal(t, 1, x)
+	assert.Equal(t, 6, y)
+	x, y = gb.XYForPoint(36)
+	assert.Equal(t, 2, x)
+	assert.Equal(t, 6, y)
+	x, y = gb.XYForPoint(37)
+	assert.Equal(t, 3, x)
+	assert.Equal(t, 6, y)
+	x, y = gb.XYForPoint(38)
+	assert.Equal(t, 3, x)
+	assert.Equal(t, 6, y)
 	x, y = gb.XYForPoint(gb.BufferLen())
-	assert.Equal(t, 0, x)
-	assert.Equal(t, 0, y)
+	assert.Equal(t, 3, x)
+	assert.Equal(t, 6, y)
+	x, y = gb.XYForPoint(gb.BufferLen() + 1)
+	assert.Equal(t, 3, x)
+	assert.Equal(t, 6, y)
 
 }
 func TestSetPoint(t *testing.T) {

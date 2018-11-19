@@ -318,19 +318,35 @@ func (r *Buffer) PointForLine(ln int) int {
 func (r *Buffer) LineForPoint(point int) (line int) {
 	line = 1
 	pt := 0
+	if point >= r.BufferLen() {
+		point = r.BufferLen() - 1
+	}
+	doIncr := false
 	for pt = 1; pt <= point; pt++ {
-		if r.data[pt-1] == '\n' {
+		if doIncr {
 			line++
+			doIncr = false
+		}
+		etch, err := r.RuneAt(pt)
+		if err != nil {
+			panic(err)
+		}
+		if etch == '\n' {
+			//line++
+			doIncr = true
 		}
 	}
-	if pt == r.BufferLen() {
-		line--
-	}
+	// if pt == r.BufferLen() {
+	// 	line--
+	// }
 	return
 }
 
 // ColumnForPoint returns the column (o = 1) of pt
 func (r *Buffer) ColumnForPoint(point int) (column int) {
+	if point >= r.BufferLen() {
+		point = r.BufferLen() - 1
+	}
 	start := r.LineStart(point)
 	return point - start + 1
 
