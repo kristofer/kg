@@ -32,7 +32,7 @@ func (e *Editor) top() {
 	e.CurrentBuffer.SetPoint(0)
 }
 func (e *Editor) bottom() {
-	e.CurrentBuffer.SetPoint(e.CurrentBuffer.BufferLen() - 1)
+	e.CurrentBuffer.SetPoint(e.CurrentBuffer.BufferLen())
 	if e.CurrentBuffer.PageEnd < e.CurrentBuffer.BufferLen() {
 		e.CurrentBuffer.Reframe = true
 	}

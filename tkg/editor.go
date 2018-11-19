@@ -104,6 +104,7 @@ func (e *Editor) StartEditor(argv []string, argc int) {
 
 		e.CurrentBuffer.SetText(s)
 		e.CurrentBuffer.Insert(s)
+		//e.CurrentBuffer.Insert(s)
 		// e.CurrentBuffer.Insert(s)
 		// e.CurrentBuffer.Insert(s)
 		// e.CurrentBuffer.Insert(s)
@@ -112,7 +113,7 @@ func (e *Editor) StartEditor(argv []string, argc int) {
 		// e.CurrentBuffer.Insert(s)
 		// e.CurrentBuffer.Insert(s)
 		// e.CurrentBuffer.Insert(s)
-		// e.CurrentBuffer.Insert(s)
+		e.bottom()
 		e.CurrentBuffer.Insert("\nbottom End Of File.")
 		e.top()
 	}
@@ -366,10 +367,10 @@ func (e *Editor) Display(wp *Window, flag bool) {
 				if rch == '\t' {
 					c += 3 //? 8-(j&7) : 1;
 				}
-				termbox.SetCell(c, r, rch, termbox.ColorYellow, termbox.ColorDefault)
+				termbox.SetCell(c, r, rch, e.FGColor, termbox.ColorDefault)
 				c++
 			} else {
-				termbox.SetCell(c, r, rch, termbox.ColorYellow, termbox.ColorDefault)
+				termbox.SetCell(c, r, rch, e.FGColor, termbox.ColorDefault)
 				c++
 			}
 		}

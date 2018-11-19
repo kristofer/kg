@@ -319,6 +319,7 @@ func TestColumnForPoint(t *testing.T) {
 	assert.Equal(t, 3, gb.ColumnForPoint(28))
 	// assert.Equal(t, 27, gb.ColumnForPoint(100))
 }
+
 func TestPointForXY(t *testing.T) {
 	gb := NewBuffer()
 	s := "Lorem\nlite\nsed ut\naliqua.-\nhhh"
@@ -352,6 +353,65 @@ func TestPointForXY(t *testing.T) {
 
 }
 
+func TestXYForPoint(t *testing.T) {
+	gb := NewBuffer()
+	s := "Lorem\nlite\nsed ut\naliqua.-\nhhh"
+	//    01234 56789 1123456 789212345 67893
+	//s := "fookris\nLorem\nlite\nsed ut\naliqua. \nhhh"
+	//    	01234567 891123 45678 9212345 678931234 56789412345
+	gb.SetText(s)
+	gb.Insert("foo")
+	gb.AddRune('k')
+	gb.AddRune('r')
+	gb.AddRune('i')
+	gb.AddRune('s')
+	gb.AddRune('\n')
+	gb.DebugPrint()
+	x, y := 0, 0
+	//assert.Equal(t, "1, 1)", fmt.Sprint("%d, %d", gb.TestXYForPoint(0))
+	x, y = gb.XYForPoint(0)
+	assert.Equal(t, 1, x)
+	assert.Equal(t, 1, y)
+	// assert.Equal(t, 1, gb.PointForXY(2, 1))
+	x, y = gb.XYForPoint(1)
+	assert.Equal(t, 2, x)
+	assert.Equal(t, 1, y)
+	// assert.Equal(t, 3, gb.PointForXY(4, 1))
+	x, y = gb.XYForPoint(3)
+	assert.Equal(t, 4, x)
+	assert.Equal(t, 1, y)
+	// assert.Equal(t, 4, gb.PointForXY(5, 1))
+	x, y = gb.XYForPoint(4)
+	assert.Equal(t, 5, x)
+	assert.Equal(t, 1, y)
+	// assert.Equal(t, 5, gb.PointForXY(6, 1))
+	x, y = gb.XYForPoint(5)
+	assert.Equal(t, 6, x)
+	assert.Equal(t, 1, y)
+	// assert.Equal(t, 6, gb.PointForXY(7, 1))
+	// assert.Equal(t, 4, gb.PointForXY(10, 1))
+	// assert.Equal(t, 4, gb.PointForXY(32, 1))
+	// assert.Equal(t, 8, gb.PointForXY(1, 2))
+	// assert.Equal(t, 14, gb.PointForXY(1, 3))
+	x, y = gb.XYForPoint(14)
+	assert.Equal(t, 1, x)
+	assert.Equal(t, 3, y)
+	// assert.Equal(t, 16, gb.PointForXY(3, 3))
+	x, y = gb.XYForPoint(16)
+	assert.Equal(t, 3, x)
+	assert.Equal(t, 3, y)
+	// assert.Equal(t, 19, gb.PointForXY(1, 4))
+	x, y = gb.XYForPoint(19)
+	assert.Equal(t, 1, x)
+	assert.Equal(t, 4, y)
+	// assert.Equal(t, 20, gb.PointForXY(2, 4))
+	// assert.Equal(t, 21, gb.PointForXY(3, 4))
+	//assert.Equal(t, gb.BufferLen()-1, gb.PointForXY(6, 6))
+	x, y = gb.XYForPoint(gb.BufferLen())
+	assert.Equal(t, 0, x)
+	assert.Equal(t, 0, y)
+
+}
 func TestSetPoint(t *testing.T) {
 	gb := NewBuffer()
 	s := "Lorem\nlite\nsed ut\naliqua.-\nhhh"
