@@ -82,6 +82,16 @@ func (wp *Window) OnKey(ev *termbox.Event) {
 
 }
 
+// PointForXY returns the Point location for X, Y in the WINDOW
+// used to reverse map the mouse to a Buffer Point...
+func (wp *Window) PointForXY(x, y int) (finalpt int) {
+	//10, 1
+	// lpt := bp.PointForLine(y)
+	// c := x - 1
+	// finalpt = lpt + c //bp.DataPointForBufferPoint(lpt + c)
+	return 0 //finalpt
+}
+
 // AssociateBuffer
 func (wp *Window) AssociateBuffer(bp *Buffer) {
 	if bp != nil && wp != nil {

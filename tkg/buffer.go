@@ -133,6 +133,9 @@ func (r *Buffer) PrintPoint() {
 func (r *Buffer) BufferLen() int {
 	return r.preLen + r.postLen
 }
+func (r *Buffer) EndOfBuffer(pt int) bool {
+	return pt >= (r.preLen + r.postLen - 1)
+}
 
 // ActualLen length of buffer plus gap
 func (r *Buffer) ActualLen() int {
@@ -360,6 +363,9 @@ func (r *Buffer) ColumnForPoint(point int) (column int) {
 // XYForPoint returns the cursor location for a pt in the buffer
 func (r *Buffer) XYForPoint(pt int) (x, y int) {
 	x = r.ColumnForPoint(pt)
+	if r.EndOfBuffer(pt) {
+		x = r.ColumnForPoint(r.LineEnd(pt))
+	}
 	y = r.LineForPoint(pt)
 	return
 }

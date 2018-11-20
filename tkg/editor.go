@@ -94,7 +94,7 @@ func (e *Editor) StartEditor(argv []string, argc int) {
 	if argc > 1 {
 		e.CurrentBuffer = e.FindBuffer(argv[1], true)
 		e.InsertFile(argv[1], false)
-		/* Save filename irregardless of load() success. */
+		/* Save filename regardless of load() success. */
 		e.CurrentBuffer.Filename = argv[1]
 	} else {
 		e.msg("NO file to open, creating scratch buffer")
@@ -104,8 +104,10 @@ func (e *Editor) StartEditor(argv []string, argc int) {
 
 		e.CurrentBuffer.SetText(s)
 		e.CurrentBuffer.Insert(s)
-		//e.CurrentBuffer.Insert(s)
-		// e.CurrentBuffer.Insert(s)
+		e.CurrentBuffer.Insert(" foo")
+		e.CurrentBuffer.Insert(s)
+		e.CurrentBuffer.Insert(" baz\n")
+		e.CurrentBuffer.Insert(s)
 		// e.CurrentBuffer.Insert(s)
 		// e.CurrentBuffer.Insert(s)
 		// e.CurrentBuffer.Insert(s)
@@ -114,7 +116,7 @@ func (e *Editor) StartEditor(argv []string, argc int) {
 		// e.CurrentBuffer.Insert(s)
 		// e.CurrentBuffer.Insert(s)
 		e.bottom()
-		e.CurrentBuffer.Insert("\nbottom End Of File.")
+		e.CurrentBuffer.Insert("\nbottom End Of File.\n")
 		e.top()
 	}
 	e.CurrentWindow = NewWindow(e)
@@ -191,11 +193,11 @@ func (e *Editor) HandleEvent(ev *termbox.Event) bool {
 		e.UpdateDisplay()
 	case termbox.EventMouse:
 		termbox.Clear(termbox.ColorDefault, termbox.ColorDefault)
-		e.msg("Mouse: %d,%d [%d %d]", ev.MouseX, ev.MouseY, e.Cols, e.Lines)
-		pt := e.CurrentBuffer.PointForXY(ev.MouseX+1, ev.MouseY+1)
-		e.CurrentBuffer.SetPoint(pt)
+		e.msg("Mouse: %d,%d [%d %d] not impl.", ev.MouseX, ev.MouseY, e.Cols, e.Lines)
+		// Need a hit test algo here
+		//pt := e.CurrentWindow.PointForXY(ev.MouseX+1, ev.MouseY+1)
+		//e.CurrentBuffer.SetPoint(pt)
 		e.UpdateDisplay()
-		//termbox.Flush()
 	case termbox.EventError:
 		panic(ev.Err)
 	}
@@ -346,11 +348,6 @@ func (e *Editor) Display(wp *Window, flag bool) {
 	if bp.Point() < bp.PageStart {
 		bp.PageStart = bp.SegStart(bp.LineStart(bp.Point()), bp.Point(), e.Cols)
 	}
-	l1 := bp.LineForPoint(bp.PageStart)
-	l2 := l1 + wp.Rows
-	l2end := bp.LineEnd(bp.PointForLine(l2))
-	bp.PageEnd = l2end
-	log.Printf("P0 lines %d %d PageStart %d Point %d, bp.PageEnd %d BufL %d", l1, l2, bp.PageStart, bp.Point(), bp.PageEnd, bp.BufferLen())
 
 	if bp.Reframe == true || (bp.Point() > bp.PageEnd && bp.Point() != bp.PageEnd) {
 		bp.Reframe = false
@@ -361,9 +358,9 @@ func (e *Editor) Display(wp *Window, flag bool) {
 		/* if we scoll to EOF we show 1 blank line at bottom of screen */
 		if bp.PageEnd <= bp.PageStart {
 			bp.PageStart = bp.PageEnd
-			i = wp.Rows - 1
+			i = wp.Rows - 1 // 1
 		} else {
-			i = wp.Rows - 0
+			i = wp.Rows - 1
 		}
 		/* Scan backwards the required number of lines. */
 		log.Printf("Before BWscan i %d PageStart %d Point %d, bp.PageEnd %d", i, bp.PageStart, bp.Point(), bp.PageEnd)
@@ -374,11 +371,25 @@ func (e *Editor) Display(wp *Window, flag bool) {
 		}
 	}
 
-	toPrint := bp.GetTextForLines(l1, l2+1)
-	runeArray := []rune(toPrint)
+	l1 := bp.LineForPoint(bp.PageStart)
+	l2 := l1 + wp.Rows
+	l2end := bp.LineEnd(bp.PointForLine(l2))
+	bp.PageEnd = l2end
+	log.Printf("P0 lines %d %d PageStart %d Point %d, bp.PageEnd %d BufL %d", l1, l2, bp.PageStart, bp.Point(), bp.PageEnd, bp.BufferLen())
+	//toPrint := bp.GetTextForLines(l1, l2+1)
+	//runeArray := []rune(toPrint)
 	r, c := 0, 0
-	for k := 0; k < len(runeArray); k++ {
-		rch := runeArray[k]
+	for k := bp.PageStart; k < bp.PageEnd; k++ {
+		/* reached point - store the cursor position */
+		if bp.Point() == k {
+			bp.PointCol = c
+			bp.PointRow = r
+		}
+		//rch := runeArray[k]
+		rch, err := bp.RuneAt(k)
+		if err != nil {
+			log.Println("Error on RuneAt", err)
+		}
 		if rch != '\r' {
 			if unicode.IsPrint(rch) || rch == '\t' || rch == '\n' {
 				if rch == '\t' {
@@ -413,8 +424,21 @@ func (e *Editor) Display(wp *Window, flag bool) {
 
 	PushBuffer2Window(wp)
 	e.ModeLine(wp)
-	e.DisplayMsg()
+	if wp == e.CurrentWindow && flag {
+		e.DisplayMsg()
+		//move(bp->b_row, bp->b_col); /* set cursor */
+		e.SetTermCursor(bp.PointCol, bp.PointRow)
+		termbox.Flush() //refresh();
+	}
 	wp.Updated = false
+	// b2w(wp); /* save buffer stuff on window */
+	// modeline(wp);
+	// if (wp == curwp && flag) {
+	// 	dispmsg();
+	// 	move(bp->b_row, bp->b_col); /* set cursor */
+	// 	refresh();
+	// }
+	// wp->w_update = FALSE;
 }
 
 func (e *Editor) UpdateDisplay() {
@@ -424,7 +448,7 @@ func (e *Editor) UpdateDisplay() {
 	/* only one window */
 	if e.RootWindow.Next == nil {
 		e.Display(e.CurrentWindow, true)
-		e.SetTermCursor()
+		//e.SetTermCursor()
 		bp.PrevSize = bp.TextSize
 		return
 	}
@@ -440,7 +464,7 @@ func (e *Editor) UpdateDisplay() {
 		}
 	}
 
-	e.SetTermCursor()
+	//e.SetTermCursor()
 	/* now display our window and buffer */
 	SyncBuffer(e.CurrentWindow)
 	//e.DisplayMsg()
@@ -449,16 +473,14 @@ func (e *Editor) UpdateDisplay() {
 }
 
 // SetTermCursor -
-func (e *Editor) SetTermCursor() {
-	c, r := e.CurrentBuffer.XYForPoint(e.CurrentBuffer.Point())
-	// if r > e.CurrentWindow.TopPt+e.CurrentWindow.Rows+1 {
-	// 	c = e.CurrentBuffer.ColumnForPoint(
-	// 		e.CurrentBuffer.LineEnd(
-	// 			e.CurrentBuffer.PointForLine(r)))
-	// }
-	e.CurrentWindow.CurCol, e.CurrentWindow.CurRow = c, r
-	termbox.SetCursor(c-1, r-1) /* set cursor for CurrentWin */
-	log.Printf("TermCursor is (%d,%d) x,y(%d,%d)\n", c-1, r-1, c, r)
+func (e *Editor) SetTermCursor(c, r int) {
+	wp := e.CurrentWindow
+	log.Println("wp t,p", wp.TopPt, wp.Rows)
+	if r > wp.Rows {
+		r = wp.Rows + 1
+	}
+	wp.CurCol, wp.CurRow = c, r
+	termbox.SetCursor(c, r) /* set cursor for CurrentWin */
 }
 
 // ModeLine draw modeline for window
@@ -476,17 +498,13 @@ func (e *Editor) ModeLine(wp *Window) {
 		mch = '*'
 	}
 	och = lch
-	// if wp.Buffer.Flags&B_OVERWRITE != 0 {
-	c, r := wp.Buffer.XYForPoint(wp.Buffer.Point())
-	temp := fmt.Sprintf("%c%c%c kg: %c%c %s C(%d,%d) (h %d, w%d) rows %d", lch, och, mch, lch, lch,
+	temp := fmt.Sprintf("%c%c%c kg: %c%c %s wp(%d,%d) (h %d, w%d) rows %d", lch, och, mch, lch, lch,
 		e.GetBufferName(wp.Buffer),
-		c, r,
+		wp.CurCol, wp.CurRow,
+		//c, r,
 		e.Lines, e.Cols, wp.TopPt+wp.Rows)
-	//fmt.Println(temp)
-	//e.drawstring(0, e.Lines-1, termbox.ColorWhite, termbox.ColorBlack, temp)
 	x := 0
 	y := wp.TopPt + wp.Rows + 1
-	//e.msg("win x %d y %d ", x, y)
 	for _, c := range temp {
 		termbox.SetCell(x, y, c, termbox.ColorBlack, e.BGColor)
 		//mch = c
