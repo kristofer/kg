@@ -135,6 +135,6 @@ func PushBuffer2Window(w *Window) { // b2w
 	w.WinStart = b.PageStart
 	w.WinEnd = b.PageEnd
 	w.CurRow = b.PointRow
-	w.CurCol = b.PointRow
+	w.CurCol = b.PointCol
 	b.TextSize = b.BufferLen()
 }

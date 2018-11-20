@@ -100,7 +100,7 @@ func (e *Editor) StartEditor(argv []string, argc int) {
 		e.msg("NO file to open, creating scratch buffer")
 		e.CurrentBuffer = e.FindBuffer("*scratch*", true)
 		e.CurrentBuffer.Buffername = "*scratch*"
-		s := "Lorem ipsum dolor sit amet,\nconsectetur adipiscing elit,\nsed do eiusmod tempor incididunt ut\nlabore et dolore magna aliqua. "
+		s := "Lorem ipsum dolor sit amet,\nconsectetur adipiscing elit,\nsed do eiusmod tempor incididunt ut\nlabore et dolore magna aliqua. \n"
 
 		e.CurrentBuffer.SetText(s)
 		e.CurrentBuffer.Insert(s)
@@ -360,7 +360,7 @@ func (e *Editor) Display(wp *Window, flag bool) {
 			bp.PageStart = bp.PageEnd
 			i = wp.Rows - 1 // 1
 		} else {
-			i = wp.Rows - 1
+			i = wp.Rows - 0
 		}
 		/* Scan backwards the required number of lines. */
 		log.Printf("Before BWscan i %d PageStart %d Point %d, bp.PageEnd %d", i, bp.PageStart, bp.Point(), bp.PageEnd)
@@ -475,7 +475,7 @@ func (e *Editor) UpdateDisplay() {
 // SetTermCursor -
 func (e *Editor) SetTermCursor(c, r int) {
 	wp := e.CurrentWindow
-	log.Println("wp t,p", wp.TopPt, wp.Rows)
+	//log.Println("wp t,p", wp.TopPt, wp.Rows)
 	if r > wp.Rows {
 		r = wp.Rows + 1
 	}

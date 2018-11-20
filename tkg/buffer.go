@@ -73,6 +73,7 @@ func (r *Buffer) RuneAt(pt int) (rune, error) {
 	if npt := r.dataPointForBufferPoint(pt); npt < len(r.data) {
 		return r.data[npt], nil
 	}
+	log.Println("RuneAt", pt, r.BufferLen(), r.ActualLen())
 	return 0, errors.New("Ran over end of data buffer in RuneAt")
 }
 
@@ -319,7 +320,7 @@ func (r *Buffer) PointForLine(ln int) int {
 			return r.LineStart(pt)
 		}
 	}
-	return r.LineEnd(r.BufferLen() - 1)
+	return r.LineEnd(r.BufferLen()) // -1
 }
 
 // LineForPoint returns the line number of point (o = 1)

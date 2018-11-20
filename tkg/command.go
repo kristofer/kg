@@ -216,10 +216,7 @@ func (e *Editor) iblock() {
 }
 
 func (e *Editor) toggle_overwrite_mode() {
-	// if (curbp->b_flags & B_OVERWRITE)
-	// 	curbp->b_flags &= ~B_OVERWRITE;
-	// else
-	// 	curbp->b_flags |= B_OVERWRITE;
+	// NEVER!!
 }
 
 func (e *Editor) killtoeol() {
