@@ -451,6 +451,11 @@ func (e *Editor) UpdateDisplay() {
 // SetTermCursor -
 func (e *Editor) SetTermCursor() {
 	c, r := e.CurrentBuffer.XYForPoint(e.CurrentBuffer.Point())
+	// if r > e.CurrentWindow.TopPt+e.CurrentWindow.Rows+1 {
+	// 	c = e.CurrentBuffer.ColumnForPoint(
+	// 		e.CurrentBuffer.LineEnd(
+	// 			e.CurrentBuffer.PointForLine(r)))
+	// }
 	e.CurrentWindow.CurCol, e.CurrentWindow.CurRow = c, r
 	termbox.SetCursor(c-1, r-1) /* set cursor for CurrentWin */
 	log.Printf("TermCursor is (%d,%d) x,y(%d,%d)\n", c-1, r-1, c, r)
@@ -458,28 +463,20 @@ func (e *Editor) SetTermCursor() {
 
 // ModeLine draw modeline for window
 func (e *Editor) ModeLine(wp *Window) {
-	//i := 0
 	var lch, mch, och rune
 	e.Cols, e.Lines = termbox.Size()
 
-	//standout();
-	//move(wp.TopPt+wp.Rows, 0)
-	// lch = (wp == CurrentWin ? '=' : '-')
 	if wp == e.CurrentWindow {
 		lch = '='
 	} else {
 		lch = '-'
 	}
-	// mch = ((wp.Buffer.Flags & B_MODIFIED) ? '*' : lch);
 	mch = lch
 	if wp.Buffer.modified {
 		mch = '*'
 	}
-	// och = ((wp.Buffer.Flags & B_OVERWRITE) ? 'O' : lch);
 	och = lch
 	// if wp.Buffer.Flags&B_OVERWRITE != 0 {
-	// 	och = 'O'
-	// }
 	c, r := wp.Buffer.XYForPoint(wp.Buffer.Point())
 	temp := fmt.Sprintf("%c%c%c kg: %c%c %s C(%d,%d) (h %d, w%d) rows %d", lch, och, mch, lch, lch,
 		e.GetBufferName(wp.Buffer),

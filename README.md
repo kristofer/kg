@@ -1,18 +1,18 @@
-# Atto Emacs
+# kg Emacs
 
-The smallest functional Emacs in less than 2000 lines of C.
+The smallest functional Emacs in less than 2000 lines of Go
 
-Atto Emacs is inspired by MicroEmacs, Nano, Pico and my earlier project known as Perfect Emacs [1].
-
-
-![Atto screenshot](https://github.com/hughbarney/atto/blob/master/screenshots/atto.png)
+kg Emacs is inspired by Atto Emacs, MicroEmacs, Nano, Pico and my earlier project known as Perfect Emacs [1].
 
 
 > A designer knows he has achieved perfection not when there is nothing left to add, but when there is nothing left to take away.
 > -- <cite>Antoine de Saint-Exupery</cite>
 
-## Goals of Atto Emacs
+## Goals of kg Emacs
 
+* Mine own, finally.
+* no damn Overwrite mode. Too bad.
+* ...
 * Be the smallest fuctional Emacs in less than 2000 lines of C.
 * Provide a rich level of functionality in the smallest amount of code
 * Be easy to understand without extensive study (to encourage further experimentation).
@@ -20,15 +20,9 @@ Atto Emacs is inspired by MicroEmacs, Nano, Pico and my earlier project known as
 In Defining Atto as the lowest functional Emacs I have had to consider the essential feature set that makes Emacs, 'Emacs'.  I have defined this point as a basic Emacs command set and key bindings; the ability to edit multiple files (buffers), and switch between them; edit the buffers in mutliple windows, cut, copy and paste; forward and reverse searching, a replace function, basic syntax hilighting and UTF8 support. The proviso being that all this will fit in less than 2000 lines of C.
 
 
-## Why the name Atto?
-
-The small Emacs naming scheme appears to use sub-unit prefixes in decending order with each further reduction of functionality.  Atto means 10 to the power of minus 18.   Logically Femto (10^-15) comes after Pico (10^-12). However choosing Atto allows for the potential for **Femto** to be an Atto based Emacs with a scripting language.
-
-* As of November 2017 Atto's big brother **Femto** can be found [here](https://github.com/hughbarney/femto)
-
 ## Derivation
 
-Atto is based on the public domain code of Anthony Howe's editor (commonly known as Anthony's Editor or AE, [2]).  Rather than representing a file as a linked list of lines, the AE Editor uses the concept of a Buffer-Gap [4,5,6].  A Buffer-Gap editor stores the file in a single piece of contiguous memory with some extra unused space known as the buffer gap.  On character insertion and deletion the gap is first moved to the current point.  A character deletion then extends the gap by moving the gap pointer back by 1 OR the gap is reduced by 1 when a character is inserted.  The Buffer-Gap technique is elegant and significantly reduces the amount of code required to load a file, modify it and redraw the display.  The proof of this is seen when you consider that Atto supports almost the same command set that Pico supports,  but Pico requires almost 17 times the amount of code.
+kg is based on the design of Atto Emacs which is based on the public domain code of Anthony Howe's editor (commonly known as Anthony's Editor or AE, [2]).  Rather than representing a file as a linked list of lines, the AE Editor uses the concept of a Buffer-Gap [4,5,6].  A Buffer-Gap editor stores the file in a single piece of contiguous memory with some extra unused space known as the buffer gap.  On character insertion and deletion the gap is first moved to the current point.  A character deletion then extends the gap by moving the gap pointer back by 1 OR the gap is reduced by 1 when a character is inserted.  The Buffer-Gap technique is elegant and significantly reduces the amount of code required to load a file, modify it and redraw the display.  The proof of this is seen when you consider that Atto supports almost the same command set that Pico supports,  but Pico requires almost 17 times the amount of code.
 
 ## Comparisons with Other Emacs Implementations
 
