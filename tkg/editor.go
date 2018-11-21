@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"strings"
+	"time"
 	"unicode"
 
 	termbox "github.com/nsf/termbox-go"
@@ -43,6 +44,7 @@ const (
 
 type Editor struct {
 	EventChan     chan termbox.Event
+	MiniBufChan   chan termbox.Event
 	CurrentBuffer *Buffer /* current buffer */
 	RootBuffer    *Buffer /* head of list of buffers */
 	CurrentWindow *Window
@@ -61,12 +63,13 @@ type Editor struct {
 	Keymap     []Keymapt
 	KeysMapMap map[string]*Keymapt
 	//
-	Lines      int
-	Cols       int
-	FGColor    termbox.Attribute
-	BGColor    termbox.Attribute
-	EscapeFlag bool
-	CtrlXFlag  bool
+	Lines         int
+	Cols          int
+	FGColor       termbox.Attribute
+	BGColor       termbox.Attribute
+	EscapeFlag    bool
+	CtrlXFlag     bool
+	MiniBufActive bool
 }
 
 // StartEditor is the old C main function
@@ -150,13 +153,23 @@ func (e *Editor) StartEditor(argv []string, argc int) {
 		select {
 		case ev := <-e.EventChan:
 			//log.Printf("%#v\n", ev)
+			log.Println(">>\n ", time.Now().Unix(), "\n>>")
+			// if e.MiniBufActive {
+			// 	log.Printf("MB %#v\n", ev)
+			// 	e.MiniBufChan <- ev
+			// 	if ev.Key == termbox.KeyCtrlQ {
+			// 		return
+			// 	}
+			// } else {
+			// log.Printf("Normal %#v\n", ev)
 			ok := e.HandleEvent(&ev)
 			if !ok {
 				return
 			}
-			e.ConsumeMoreEvents()
+			//e.ConsumeMoreEvents()
 			e.UpdateDisplay()
 			termbox.Flush()
+			// }
 		}
 	}
 	return
@@ -354,7 +367,7 @@ func (e *Editor) Display(wp *Window, flag bool) {
 		i := 0
 		/* Find end of screen plus one. */
 		bp.PageStart = bp.DownDown(bp.Point(), e.Cols)
-		log.Printf("P1 PageStart %d Point %d, bp.PageEnd %d", bp.PageStart, bp.Point(), bp.PageEnd)
+		//log.Printf("P1 PageStart %d Point %d, bp.PageEnd %d", bp.PageStart, bp.Point(), bp.PageEnd)
 		/* if we scoll to EOF we show 1 blank line at bottom of screen */
 		if bp.PageEnd <= bp.PageStart {
 			bp.PageStart = bp.PageEnd
@@ -363,11 +376,11 @@ func (e *Editor) Display(wp *Window, flag bool) {
 			i = wp.Rows - 0
 		}
 		/* Scan backwards the required number of lines. */
-		log.Printf("Before BWscan i %d PageStart %d Point %d, bp.PageEnd %d", i, bp.PageStart, bp.Point(), bp.PageEnd)
+		//log.Printf("Before BWscan i %d PageStart %d Point %d, bp.PageEnd %d", i, bp.PageStart, bp.Point(), bp.PageEnd)
 		for i > 0 {
 			bp.PageStart = bp.UpUp(bp.PageStart, e.Cols)
 			i--
-			log.Printf("P3 i %d PageStart %d Point %d, bp.PageEnd %d", i, bp.PageStart, bp.Point(), bp.PageEnd)
+			//log.Printf("P3 i %d PageStart %d Point %d, bp.PageEnd %d", i, bp.PageStart, bp.Point(), bp.PageEnd)
 		}
 	}
 
@@ -379,7 +392,7 @@ func (e *Editor) Display(wp *Window, flag bool) {
 	//toPrint := bp.GetTextForLines(l1, l2+1)
 	//runeArray := []rune(toPrint)
 	r, c := 0, 0
-	for k := bp.PageStart; k < bp.PageEnd; k++ {
+	for k := bp.PageStart; k <= bp.PageEnd; k++ {
 		/* reached point - store the cursor position */
 		if bp.Point() == k {
 			bp.PointCol = c
@@ -448,7 +461,6 @@ func (e *Editor) UpdateDisplay() {
 	/* only one window */
 	if e.RootWindow.Next == nil {
 		e.Display(e.CurrentWindow, true)
-		//e.SetTermCursor()
 		bp.PrevSize = bp.TextSize
 		return
 	}
@@ -464,11 +476,9 @@ func (e *Editor) UpdateDisplay() {
 		}
 	}
 
-	//e.SetTermCursor()
 	/* now display our window and buffer */
 	SyncBuffer(e.CurrentWindow)
-	//e.DisplayMsg()
-	//refresh()
+	e.DisplayMsg()
 	bp.PrevSize = bp.TextSize /* now safe to save previous size for next time */
 }
 
@@ -479,8 +489,16 @@ func (e *Editor) SetTermCursor(c, r int) {
 	if r > wp.Rows {
 		r = wp.Rows + 1
 	}
+	pt := wp.Buffer.Point()
+	wp.Buffer.logBufferEOB(pt)
 	wp.CurCol, wp.CurRow = c, r
-	termbox.SetCursor(c, r) /* set cursor for CurrentWin */
+	termbox.SetCursor(c, r)
+	if wp.Buffer.EndOfBuffer(pt) == true {
+		eol := wp.Buffer.ColumnForPoint(wp.Buffer.LineEnd(pt)) - 1
+		wp.CurCol, wp.CurRow = eol, r-1
+		termbox.SetCursor(eol, r-1)
+	}
+	/* set cursor for CurrentWin */
 }
 
 // ModeLine draw modeline for window
@@ -522,7 +540,26 @@ func (e *Editor) DisplayPromptAndResponse(prompt string, response string) {
 	if response != "" {
 		e.drawstring(len(prompt), e.Lines-1, e.FGColor, termbox.ColorDefault, response)
 	}
+	termbox.SetCursor(len(prompt)+len(response)+1, e.Lines-1)
+	termbox.Flush()
+}
 
+func (e *Editor) GetFilename(prompt string) string {
+	fname := ""
+	var ev termbox.Event
+	e.DisplayPromptAndResponse(prompt, "")
+	e.MiniBufActive = true
+	for {
+		ev = <-e.MiniBufChan
+		ch := ev.Ch
+		if ch == '\r' || ch == '\n' {
+			break
+		}
+		fname = fname + string(ch)
+		e.DisplayPromptAndResponse(prompt, fname)
+	}
+	e.MiniBufActive = false
+	return fname
 }
 
 // DeleteBuffer unlink from the list of buffers, free associated memory,
@@ -721,4 +758,14 @@ func (e *Editor) FreeOtherWindows() {
 	editor.RootWindow = winp
 	editor.CurrentWindow = winp
 	winp.OneWindow()
+}
+
+// attempt for new PointUp
+func (e *Editor) PointUp() {
+	// urbp->b_point = lncolumn(curbp, upup(curbp, curbp->b_point),curbp->b_col);
+	bp := e.CurrentBuffer
+	pt := bp.Point()
+	c1 := bp.ColumnForPoint(pt)
+	npt := bp.UpUp(pt, c1)
+	bp.SetPointAndCursor(npt)
 }

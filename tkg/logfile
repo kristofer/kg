@@ -1,331 +1,67 @@
-2018/11/20 16:11:04 Start of Log...
-2018/11/20 16:11:04 reframing!
-2018/11/20 16:11:04 OneWindow rows 21 line 24
-2018/11/20 16:11:04 P1 PageStart 28 Point 0, bp.PageEnd 0
-2018/11/20 16:11:04 Before BWscan i 20 PageStart 0 Point 0, bp.PageEnd 0
-2018/11/20 16:11:04 P3 i 19 PageStart 0 Point 0, bp.PageEnd 0
-2018/11/20 16:11:04 P3 i 18 PageStart 0 Point 0, bp.PageEnd 0
-2018/11/20 16:11:04 P3 i 17 PageStart 0 Point 0, bp.PageEnd 0
-2018/11/20 16:11:04 P3 i 16 PageStart 0 Point 0, bp.PageEnd 0
-2018/11/20 16:11:04 P3 i 15 PageStart 0 Point 0, bp.PageEnd 0
-2018/11/20 16:11:04 P3 i 14 PageStart 0 Point 0, bp.PageEnd 0
-2018/11/20 16:11:04 P3 i 13 PageStart 0 Point 0, bp.PageEnd 0
-2018/11/20 16:11:04 P3 i 12 PageStart 0 Point 0, bp.PageEnd 0
-2018/11/20 16:11:04 P3 i 11 PageStart 0 Point 0, bp.PageEnd 0
-2018/11/20 16:11:04 P3 i 10 PageStart 0 Point 0, bp.PageEnd 0
-2018/11/20 16:11:04 P3 i 9 PageStart 0 Point 0, bp.PageEnd 0
-2018/11/20 16:11:04 P3 i 8 PageStart 0 Point 0, bp.PageEnd 0
-2018/11/20 16:11:04 P3 i 7 PageStart 0 Point 0, bp.PageEnd 0
-2018/11/20 16:11:04 P3 i 6 PageStart 0 Point 0, bp.PageEnd 0
-2018/11/20 16:11:04 P3 i 5 PageStart 0 Point 0, bp.PageEnd 0
-2018/11/20 16:11:04 P3 i 4 PageStart 0 Point 0, bp.PageEnd 0
-2018/11/20 16:11:04 P3 i 3 PageStart 0 Point 0, bp.PageEnd 0
-2018/11/20 16:11:04 P3 i 2 PageStart 0 Point 0, bp.PageEnd 0
-2018/11/20 16:11:04 P3 i 1 PageStart 0 Point 0, bp.PageEnd 0
-2018/11/20 16:11:04 P3 i 0 PageStart 0 Point 0, bp.PageEnd 0
-2018/11/20 16:11:04 P0 lines 1 22 PageStart 0 Point 0, bp.PageEnd 529 BufL 530
-2018/11/20 16:11:05 P0 lines 1 22 PageStart 0 Point 28, bp.PageEnd 529 BufL 530
-2018/11/20 16:11:05 P0 lines 1 22 PageStart 0 Point 28, bp.PageEnd 529 BufL 530
-2018/11/20 16:11:05 P0 lines 1 22 PageStart 0 Point 57, bp.PageEnd 529 BufL 530
-2018/11/20 16:11:05 P0 lines 1 22 PageStart 0 Point 57, bp.PageEnd 529 BufL 530
-2018/11/20 16:11:06 P0 lines 1 22 PageStart 0 Point 93, bp.PageEnd 529 BufL 530
-2018/11/20 16:11:06 P0 lines 1 22 PageStart 0 Point 93, bp.PageEnd 529 BufL 530
-2018/11/20 16:11:06 P0 lines 1 22 PageStart 0 Point 125, bp.PageEnd 529 BufL 530
-2018/11/20 16:11:06 P0 lines 1 22 PageStart 0 Point 125, bp.PageEnd 529 BufL 530
-2018/11/20 16:11:06 P0 lines 1 22 PageStart 0 Point 157, bp.PageEnd 529 BufL 530
-2018/11/20 16:11:06 P0 lines 1 22 PageStart 0 Point 157, bp.PageEnd 529 BufL 530
-2018/11/20 16:11:06 P0 lines 1 22 PageStart 0 Point 186, bp.PageEnd 529 BufL 530
-2018/11/20 16:11:06 P0 lines 1 22 PageStart 0 Point 186, bp.PageEnd 529 BufL 530
-2018/11/20 16:11:06 P0 lines 1 22 PageStart 0 Point 222, bp.PageEnd 529 BufL 530
-2018/11/20 16:11:06 P0 lines 1 22 PageStart 0 Point 222, bp.PageEnd 529 BufL 530
-2018/11/20 16:11:07 P0 lines 1 22 PageStart 0 Point 254, bp.PageEnd 529 BufL 530
-2018/11/20 16:11:07 P0 lines 1 22 PageStart 0 Point 254, bp.PageEnd 529 BufL 530
-2018/11/20 16:11:07 P0 lines 1 22 PageStart 0 Point 259, bp.PageEnd 529 BufL 530
-2018/11/20 16:11:07 P0 lines 1 22 PageStart 0 Point 259, bp.PageEnd 529 BufL 530
-2018/11/20 16:11:07 P0 lines 1 22 PageStart 0 Point 287, bp.PageEnd 529 BufL 530
-2018/11/20 16:11:07 P0 lines 1 22 PageStart 0 Point 287, bp.PageEnd 529 BufL 530
-2018/11/20 16:11:07 P0 lines 1 22 PageStart 0 Point 316, bp.PageEnd 529 BufL 530
-2018/11/20 16:11:07 P0 lines 1 22 PageStart 0 Point 316, bp.PageEnd 529 BufL 530
-2018/11/20 16:11:07 P0 lines 1 22 PageStart 0 Point 352, bp.PageEnd 529 BufL 530
-2018/11/20 16:11:07 P0 lines 1 22 PageStart 0 Point 352, bp.PageEnd 529 BufL 530
-2018/11/20 16:11:07 P0 lines 1 22 PageStart 0 Point 384, bp.PageEnd 529 BufL 530
-2018/11/20 16:11:07 P0 lines 1 22 PageStart 0 Point 384, bp.PageEnd 529 BufL 530
-2018/11/20 16:11:08 P0 lines 1 22 PageStart 0 Point 412, bp.PageEnd 529 BufL 530
-2018/11/20 16:11:08 P0 lines 1 22 PageStart 0 Point 412, bp.PageEnd 529 BufL 530
-2018/11/20 16:11:08 P0 lines 1 22 PageStart 0 Point 441, bp.PageEnd 529 BufL 530
-2018/11/20 16:11:08 P0 lines 1 22 PageStart 0 Point 441, bp.PageEnd 529 BufL 530
-2018/11/20 16:11:08 P0 lines 1 22 PageStart 0 Point 477, bp.PageEnd 529 BufL 530
-2018/11/20 16:11:08 P0 lines 1 22 PageStart 0 Point 477, bp.PageEnd 529 BufL 530
-2018/11/20 16:11:08 P0 lines 1 22 PageStart 0 Point 509, bp.PageEnd 529 BufL 530
-2018/11/20 16:11:08 P0 lines 1 22 PageStart 0 Point 509, bp.PageEnd 529 BufL 530
-2018/11/20 16:11:09 P0 lines 1 22 PageStart 0 Point 510, bp.PageEnd 529 BufL 530
-2018/11/20 16:11:09 P0 lines 1 22 PageStart 0 Point 510, bp.PageEnd 529 BufL 530
-2018/11/20 16:11:09 P0 lines 1 22 PageStart 0 Point 511, bp.PageEnd 529 BufL 530
-2018/11/20 16:11:09 P0 lines 1 22 PageStart 0 Point 511, bp.PageEnd 529 BufL 530
-2018/11/20 16:11:09 P0 lines 1 22 PageStart 0 Point 512, bp.PageEnd 529 BufL 530
-2018/11/20 16:11:09 P0 lines 1 22 PageStart 0 Point 512, bp.PageEnd 529 BufL 530
-2018/11/20 16:11:10 P0 lines 1 22 PageStart 0 Point 513, bp.PageEnd 529 BufL 530
-2018/11/20 16:11:10 P0 lines 1 22 PageStart 0 Point 513, bp.PageEnd 529 BufL 530
-2018/11/20 16:11:10 P0 lines 1 22 PageStart 0 Point 514, bp.PageEnd 529 BufL 530
-2018/11/20 16:11:10 P0 lines 1 22 PageStart 0 Point 514, bp.PageEnd 529 BufL 530
-2018/11/20 16:11:10 P0 lines 1 22 PageStart 0 Point 515, bp.PageEnd 529 BufL 530
-2018/11/20 16:11:10 P0 lines 1 22 PageStart 0 Point 515, bp.PageEnd 529 BufL 530
-2018/11/20 16:11:10 P0 lines 1 22 PageStart 0 Point 516, bp.PageEnd 529 BufL 530
-2018/11/20 16:11:10 P0 lines 1 22 PageStart 0 Point 516, bp.PageEnd 529 BufL 530
-2018/11/20 16:11:10 P0 lines 1 22 PageStart 0 Point 517, bp.PageEnd 529 BufL 530
-2018/11/20 16:11:10 P0 lines 1 22 PageStart 0 Point 517, bp.PageEnd 529 BufL 530
-2018/11/20 16:11:10 P0 lines 1 22 PageStart 0 Point 518, bp.PageEnd 529 BufL 530
-2018/11/20 16:11:10 P0 lines 1 22 PageStart 0 Point 518, bp.PageEnd 529 BufL 530
-2018/11/20 16:11:10 P0 lines 1 22 PageStart 0 Point 519, bp.PageEnd 529 BufL 530
-2018/11/20 16:11:10 P0 lines 1 22 PageStart 0 Point 519, bp.PageEnd 529 BufL 530
-2018/11/20 16:11:10 P0 lines 1 22 PageStart 0 Point 520, bp.PageEnd 529 BufL 530
-2018/11/20 16:11:10 P0 lines 1 22 PageStart 0 Point 520, bp.PageEnd 529 BufL 530
-2018/11/20 16:11:10 P0 lines 1 22 PageStart 0 Point 521, bp.PageEnd 529 BufL 530
-2018/11/20 16:11:10 P0 lines 1 22 PageStart 0 Point 521, bp.PageEnd 529 BufL 530
-2018/11/20 16:11:10 P0 lines 1 22 PageStart 0 Point 522, bp.PageEnd 529 BufL 530
-2018/11/20 16:11:10 P0 lines 1 22 PageStart 0 Point 522, bp.PageEnd 529 BufL 530
-2018/11/20 16:11:10 P0 lines 1 22 PageStart 0 Point 523, bp.PageEnd 529 BufL 530
-2018/11/20 16:11:10 P0 lines 1 22 PageStart 0 Point 523, bp.PageEnd 529 BufL 530
-2018/11/20 16:11:11 P0 lines 1 22 PageStart 0 Point 524, bp.PageEnd 529 BufL 530
-2018/11/20 16:11:11 P0 lines 1 22 PageStart 0 Point 524, bp.PageEnd 529 BufL 530
-2018/11/20 16:11:11 P0 lines 1 22 PageStart 0 Point 525, bp.PageEnd 529 BufL 530
-2018/11/20 16:11:11 P0 lines 1 22 PageStart 0 Point 525, bp.PageEnd 529 BufL 530
-2018/11/20 16:11:11 P0 lines 1 22 PageStart 0 Point 526, bp.PageEnd 529 BufL 530
-2018/11/20 16:11:11 P0 lines 1 22 PageStart 0 Point 526, bp.PageEnd 529 BufL 530
-2018/11/20 16:11:11 P0 lines 1 22 PageStart 0 Point 527, bp.PageEnd 529 BufL 530
-2018/11/20 16:11:11 P0 lines 1 22 PageStart 0 Point 527, bp.PageEnd 529 BufL 530
-2018/11/20 16:11:12 P0 lines 1 22 PageStart 0 Point 528, bp.PageEnd 529 BufL 530
-2018/11/20 16:11:12 P0 lines 1 22 PageStart 0 Point 528, bp.PageEnd 529 BufL 530
-2018/11/20 16:11:12 P0 lines 1 22 PageStart 0 Point 529, bp.PageEnd 529 BufL 530
-2018/11/20 16:11:12 P0 lines 1 22 PageStart 0 Point 529, bp.PageEnd 529 BufL 530
-2018/11/20 16:11:13 P1 PageStart 530 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 Before BWscan i 20 PageStart 529 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P3 i 19 PageStart 509 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P3 i 18 PageStart 477 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P3 i 17 PageStart 441 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P3 i 16 PageStart 412 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P3 i 15 PageStart 384 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P3 i 14 PageStart 352 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P3 i 13 PageStart 316 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P3 i 12 PageStart 287 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P3 i 11 PageStart 259 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P3 i 10 PageStart 254 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P3 i 9 PageStart 222 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P3 i 8 PageStart 186 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P3 i 7 PageStart 157 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P3 i 6 PageStart 125 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P3 i 5 PageStart 93 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P3 i 4 PageStart 57 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P3 i 3 PageStart 28 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P3 i 2 PageStart 0 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P3 i 1 PageStart 0 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P3 i 0 PageStart 0 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P0 lines 1 22 PageStart 0 Point 530, bp.PageEnd 529 BufL 530
-2018/11/20 16:11:13 P1 PageStart 530 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 Before BWscan i 20 PageStart 529 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P3 i 19 PageStart 509 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P3 i 18 PageStart 477 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P3 i 17 PageStart 441 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P3 i 16 PageStart 412 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P3 i 15 PageStart 384 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P3 i 14 PageStart 352 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P3 i 13 PageStart 316 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P3 i 12 PageStart 287 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P3 i 11 PageStart 259 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P3 i 10 PageStart 254 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P3 i 9 PageStart 222 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P3 i 8 PageStart 186 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P3 i 7 PageStart 157 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P3 i 6 PageStart 125 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P3 i 5 PageStart 93 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P3 i 4 PageStart 57 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P3 i 3 PageStart 28 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P3 i 2 PageStart 0 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P3 i 1 PageStart 0 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P3 i 0 PageStart 0 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P0 lines 1 22 PageStart 0 Point 530, bp.PageEnd 529 BufL 530
-2018/11/20 16:11:13 P1 PageStart 530 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 Before BWscan i 20 PageStart 529 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P3 i 19 PageStart 509 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P3 i 18 PageStart 477 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P3 i 17 PageStart 441 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P3 i 16 PageStart 412 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P3 i 15 PageStart 384 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P3 i 14 PageStart 352 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P3 i 13 PageStart 316 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P3 i 12 PageStart 287 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P3 i 11 PageStart 259 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P3 i 10 PageStart 254 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P3 i 9 PageStart 222 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P3 i 8 PageStart 186 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P3 i 7 PageStart 157 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P3 i 6 PageStart 125 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P3 i 5 PageStart 93 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P3 i 4 PageStart 57 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P3 i 3 PageStart 28 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P3 i 2 PageStart 0 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P3 i 1 PageStart 0 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P3 i 0 PageStart 0 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P0 lines 1 22 PageStart 0 Point 530, bp.PageEnd 529 BufL 530
-2018/11/20 16:11:13 P1 PageStart 530 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 Before BWscan i 20 PageStart 529 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P3 i 19 PageStart 509 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P3 i 18 PageStart 477 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P3 i 17 PageStart 441 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P3 i 16 PageStart 412 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P3 i 15 PageStart 384 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P3 i 14 PageStart 352 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P3 i 13 PageStart 316 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P3 i 12 PageStart 287 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P3 i 11 PageStart 259 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P3 i 10 PageStart 254 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P3 i 9 PageStart 222 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P3 i 8 PageStart 186 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P3 i 7 PageStart 157 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P3 i 6 PageStart 125 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P3 i 5 PageStart 93 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P3 i 4 PageStart 57 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P3 i 3 PageStart 28 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P3 i 2 PageStart 0 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P3 i 1 PageStart 0 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P3 i 0 PageStart 0 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P0 lines 1 22 PageStart 0 Point 530, bp.PageEnd 529 BufL 530
-2018/11/20 16:11:13 reframing!
-2018/11/20 16:11:13 P1 PageStart 530 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 Before BWscan i 20 PageStart 529 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P3 i 19 PageStart 509 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P3 i 18 PageStart 477 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P3 i 17 PageStart 441 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P3 i 16 PageStart 412 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P3 i 15 PageStart 384 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P3 i 14 PageStart 352 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P3 i 13 PageStart 316 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P3 i 12 PageStart 287 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P3 i 11 PageStart 259 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P3 i 10 PageStart 254 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P3 i 9 PageStart 222 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P3 i 8 PageStart 186 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P3 i 7 PageStart 157 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P3 i 6 PageStart 125 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P3 i 5 PageStart 93 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P3 i 4 PageStart 57 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P3 i 3 PageStart 28 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P3 i 2 PageStart 0 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P3 i 1 PageStart 0 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P3 i 0 PageStart 0 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P0 lines 1 22 PageStart 0 Point 530, bp.PageEnd 529 BufL 530
-2018/11/20 16:11:13 P1 PageStart 530 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 Before BWscan i 20 PageStart 529 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P3 i 19 PageStart 509 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P3 i 18 PageStart 477 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P3 i 17 PageStart 441 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P3 i 16 PageStart 412 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P3 i 15 PageStart 384 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P3 i 14 PageStart 352 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P3 i 13 PageStart 316 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P3 i 12 PageStart 287 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P3 i 11 PageStart 259 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P3 i 10 PageStart 254 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P3 i 9 PageStart 222 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P3 i 8 PageStart 186 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P3 i 7 PageStart 157 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P3 i 6 PageStart 125 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P3 i 5 PageStart 93 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P3 i 4 PageStart 57 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P3 i 3 PageStart 28 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P3 i 2 PageStart 0 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P3 i 1 PageStart 0 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P3 i 0 PageStart 0 Point 530, bp.PageEnd 529
-2018/11/20 16:11:13 P0 lines 1 22 PageStart 0 Point 530, bp.PageEnd 529 BufL 530
-2018/11/20 16:12:21 P1 PageStart 530 Point 530, bp.PageEnd 529
-2018/11/20 16:12:21 Before BWscan i 20 PageStart 529 Point 530, bp.PageEnd 529
-2018/11/20 16:12:21 P3 i 19 PageStart 509 Point 530, bp.PageEnd 529
-2018/11/20 16:12:21 P3 i 18 PageStart 477 Point 530, bp.PageEnd 529
-2018/11/20 16:12:21 P3 i 17 PageStart 441 Point 530, bp.PageEnd 529
-2018/11/20 16:12:21 P3 i 16 PageStart 412 Point 530, bp.PageEnd 529
-2018/11/20 16:12:21 P3 i 15 PageStart 384 Point 530, bp.PageEnd 529
-2018/11/20 16:12:21 P3 i 14 PageStart 352 Point 530, bp.PageEnd 529
-2018/11/20 16:12:21 P3 i 13 PageStart 316 Point 530, bp.PageEnd 529
-2018/11/20 16:12:21 P3 i 12 PageStart 287 Point 530, bp.PageEnd 529
-2018/11/20 16:12:21 P3 i 11 PageStart 259 Point 530, bp.PageEnd 529
-2018/11/20 16:12:21 P3 i 10 PageStart 254 Point 530, bp.PageEnd 529
-2018/11/20 16:12:21 P3 i 9 PageStart 222 Point 530, bp.PageEnd 529
-2018/11/20 16:12:21 P3 i 8 PageStart 186 Point 530, bp.PageEnd 529
-2018/11/20 16:12:21 P3 i 7 PageStart 157 Point 530, bp.PageEnd 529
-2018/11/20 16:12:21 P3 i 6 PageStart 125 Point 530, bp.PageEnd 529
-2018/11/20 16:12:21 P3 i 5 PageStart 93 Point 530, bp.PageEnd 529
-2018/11/20 16:12:21 P3 i 4 PageStart 57 Point 530, bp.PageEnd 529
-2018/11/20 16:12:21 P3 i 3 PageStart 28 Point 530, bp.PageEnd 529
-2018/11/20 16:12:21 P3 i 2 PageStart 0 Point 530, bp.PageEnd 529
-2018/11/20 16:12:21 P3 i 1 PageStart 0 Point 530, bp.PageEnd 529
-2018/11/20 16:12:21 P3 i 0 PageStart 0 Point 530, bp.PageEnd 529
-2018/11/20 16:12:21 P0 lines 1 22 PageStart 0 Point 530, bp.PageEnd 529 BufL 530
-2018/11/20 16:12:21 P1 PageStart 530 Point 530, bp.PageEnd 529
-2018/11/20 16:12:21 Before BWscan i 20 PageStart 529 Point 530, bp.PageEnd 529
-2018/11/20 16:12:21 P3 i 19 PageStart 509 Point 530, bp.PageEnd 529
-2018/11/20 16:12:21 P3 i 18 PageStart 477 Point 530, bp.PageEnd 529
-2018/11/20 16:12:21 P3 i 17 PageStart 441 Point 530, bp.PageEnd 529
-2018/11/20 16:12:21 P3 i 16 PageStart 412 Point 530, bp.PageEnd 529
-2018/11/20 16:12:21 P3 i 15 PageStart 384 Point 530, bp.PageEnd 529
-2018/11/20 16:12:21 P3 i 14 PageStart 352 Point 530, bp.PageEnd 529
-2018/11/20 16:12:21 P3 i 13 PageStart 316 Point 530, bp.PageEnd 529
-2018/11/20 16:12:21 P3 i 12 PageStart 287 Point 530, bp.PageEnd 529
-2018/11/20 16:12:21 P3 i 11 PageStart 259 Point 530, bp.PageEnd 529
-2018/11/20 16:12:21 P3 i 10 PageStart 254 Point 530, bp.PageEnd 529
-2018/11/20 16:12:21 P3 i 9 PageStart 222 Point 530, bp.PageEnd 529
-2018/11/20 16:12:21 P3 i 8 PageStart 186 Point 530, bp.PageEnd 529
-2018/11/20 16:12:21 P3 i 7 PageStart 157 Point 530, bp.PageEnd 529
-2018/11/20 16:12:21 P3 i 6 PageStart 125 Point 530, bp.PageEnd 529
-2018/11/20 16:12:21 P3 i 5 PageStart 93 Point 530, bp.PageEnd 529
-2018/11/20 16:12:21 P3 i 4 PageStart 57 Point 530, bp.PageEnd 529
-2018/11/20 16:12:21 P3 i 3 PageStart 28 Point 530, bp.PageEnd 529
-2018/11/20 16:12:21 P3 i 2 PageStart 0 Point 530, bp.PageEnd 529
-2018/11/20 16:12:21 P3 i 1 PageStart 0 Point 530, bp.PageEnd 529
-2018/11/20 16:12:21 P3 i 0 PageStart 0 Point 530, bp.PageEnd 529
-2018/11/20 16:12:21 P0 lines 1 22 PageStart 0 Point 530, bp.PageEnd 529 BufL 530
-2018/11/20 16:12:21 P1 PageStart 530 Point 530, bp.PageEnd 529
-2018/11/20 16:12:21 Before BWscan i 20 PageStart 529 Point 530, bp.PageEnd 529
-2018/11/20 16:12:21 P3 i 19 PageStart 509 Point 530, bp.PageEnd 529
-2018/11/20 16:12:21 P3 i 18 PageStart 477 Point 530, bp.PageEnd 529
-2018/11/20 16:12:21 P3 i 17 PageStart 441 Point 530, bp.PageEnd 529
-2018/11/20 16:12:21 P3 i 16 PageStart 412 Point 530, bp.PageEnd 529
-2018/11/20 16:12:21 P3 i 15 PageStart 384 Point 530, bp.PageEnd 529
-2018/11/20 16:12:21 P3 i 14 PageStart 352 Point 530, bp.PageEnd 529
-2018/11/20 16:12:21 P3 i 13 PageStart 316 Point 530, bp.PageEnd 529
-2018/11/20 16:12:21 P3 i 12 PageStart 287 Point 530, bp.PageEnd 529
-2018/11/20 16:12:21 P3 i 11 PageStart 259 Point 530, bp.PageEnd 529
-2018/11/20 16:12:21 P3 i 10 PageStart 254 Point 530, bp.PageEnd 529
-2018/11/20 16:12:21 P3 i 9 PageStart 222 Point 530, bp.PageEnd 529
-2018/11/20 16:12:21 P3 i 8 PageStart 186 Point 530, bp.PageEnd 529
-2018/11/20 16:12:21 P3 i 7 PageStart 157 Point 530, bp.PageEnd 529
-2018/11/20 16:12:21 P3 i 6 PageStart 125 Point 530, bp.PageEnd 529
-2018/11/20 16:12:21 P3 i 5 PageStart 93 Point 530, bp.PageEnd 529
-2018/11/20 16:12:21 P3 i 4 PageStart 57 Point 530, bp.PageEnd 529
-2018/11/20 16:12:21 P3 i 3 PageStart 28 Point 530, bp.PageEnd 529
-2018/11/20 16:12:21 P3 i 2 PageStart 0 Point 530, bp.PageEnd 529
-2018/11/20 16:12:21 P3 i 1 PageStart 0 Point 530, bp.PageEnd 529
-2018/11/20 16:12:21 P3 i 0 PageStart 0 Point 530, bp.PageEnd 529
-2018/11/20 16:12:21 P0 lines 1 22 PageStart 0 Point 530, bp.PageEnd 529 BufL 530
-2018/11/20 16:12:21 P1 PageStart 530 Point 530, bp.PageEnd 529
-2018/11/20 16:12:21 Before BWscan i 20 PageStart 529 Point 530, bp.PageEnd 529
-2018/11/20 16:12:21 P3 i 19 PageStart 509 Point 530, bp.PageEnd 529
-2018/11/20 16:12:21 P3 i 18 PageStart 477 Point 530, bp.PageEnd 529
-2018/11/20 16:12:21 P3 i 17 PageStart 441 Point 530, bp.PageEnd 529
-2018/11/20 16:12:21 P3 i 16 PageStart 412 Point 530, bp.PageEnd 529
-2018/11/20 16:12:21 P3 i 15 PageStart 384 Point 530, bp.PageEnd 529
-2018/11/20 16:12:21 P3 i 14 PageStart 352 Point 530, bp.PageEnd 529
-2018/11/20 16:12:21 P3 i 13 PageStart 316 Point 530, bp.PageEnd 529
-2018/11/20 16:12:21 P3 i 12 PageStart 287 Point 530, bp.PageEnd 529
-2018/11/20 16:12:21 P3 i 11 PageStart 259 Point 530, bp.PageEnd 529
-2018/11/20 16:12:21 P3 i 10 PageStart 254 Point 530, bp.PageEnd 529
-2018/11/20 16:12:21 P3 i 9 PageStart 222 Point 530, bp.PageEnd 529
-2018/11/20 16:12:21 P3 i 8 PageStart 186 Point 530, bp.PageEnd 529
-2018/11/20 16:12:21 P3 i 7 PageStart 157 Point 530, bp.PageEnd 529
-2018/11/20 16:12:21 P3 i 6 PageStart 125 Point 530, bp.PageEnd 529
-2018/11/20 16:12:21 P3 i 5 PageStart 93 Point 530, bp.PageEnd 529
-2018/11/20 16:12:21 P3 i 4 PageStart 57 Point 530, bp.PageEnd 529
-2018/11/20 16:12:21 P3 i 3 PageStart 28 Point 530, bp.PageEnd 529
-2018/11/20 16:12:21 P3 i 2 PageStart 0 Point 530, bp.PageEnd 529
-2018/11/20 16:12:21 P3 i 1 PageStart 0 Point 530, bp.PageEnd 529
-2018/11/20 16:12:21 P3 i 0 PageStart 0 Point 530, bp.PageEnd 529
-2018/11/20 16:12:21 P0 lines 1 22 PageStart 0 Point 530, bp.PageEnd 529 BufL 530
+2018/11/21 12:58:55 Start of Log...
+2018/11/21 12:58:55 >>Called from github.com/kristofer/kg/tkg.(*Buffer).SetPoint
+>> /Users/kristofer/GitHub/go/src/github.com/kristofer/kg/tkg/buffer.go Ln# 121
+2018/11/21 12:58:55 >>Setting Point to EOB 509 509
+2018/11/21 12:58:55 reframing!
+2018/11/21 12:58:55 OneWindow rows 21 line 24
+2018/11/21 12:58:55 P0 lines 1 22 PageStart 0 Point 0, bp.PageEnd 529 BufL 530
+2018/11/21 12:59:00 >>
+  1542823140 
+>>
+2018/11/21 12:59:00 Normal termbox.Event{Type:0x0, Mod:0x0, Key:0xffec, Ch:0, Width:0, Height:0, Err:error(nil), MouseX:0, MouseY:0, N:3}
+2018/11/21 12:59:00 P0 lines 1 22 PageStart 0 Point 28, bp.PageEnd 529 BufL 530
+2018/11/21 12:59:00 P0 lines 1 22 PageStart 0 Point 28, bp.PageEnd 529 BufL 530
+2018/11/21 12:59:00 >>
+  1542823140 
+>>
+2018/11/21 12:59:00 Normal termbox.Event{Type:0x0, Mod:0x0, Key:0xffec, Ch:0, Width:0, Height:0, Err:error(nil), MouseX:0, MouseY:0, N:3}
+2018/11/21 12:59:00 P0 lines 1 22 PageStart 0 Point 57, bp.PageEnd 529 BufL 530
+2018/11/21 12:59:00 P0 lines 1 22 PageStart 0 Point 57, bp.PageEnd 529 BufL 530
+2018/11/21 12:59:00 >>
+  1542823140 
+>>
+2018/11/21 12:59:00 Normal termbox.Event{Type:0x0, Mod:0x0, Key:0xffec, Ch:0, Width:0, Height:0, Err:error(nil), MouseX:0, MouseY:0, N:3}
+2018/11/21 12:59:00 P0 lines 1 22 PageStart 0 Point 93, bp.PageEnd 529 BufL 530
+2018/11/21 12:59:00 P0 lines 1 22 PageStart 0 Point 93, bp.PageEnd 529 BufL 530
+2018/11/21 12:59:00 >>
+  1542823140 
+>>
+2018/11/21 12:59:00 Normal termbox.Event{Type:0x0, Mod:0x0, Key:0xffec, Ch:0, Width:0, Height:0, Err:error(nil), MouseX:0, MouseY:0, N:3}
+2018/11/21 12:59:00 P0 lines 1 22 PageStart 0 Point 125, bp.PageEnd 529 BufL 530
+2018/11/21 12:59:00 P0 lines 1 22 PageStart 0 Point 125, bp.PageEnd 529 BufL 530
+2018/11/21 12:59:01 >>
+  1542823141 
+>>
+2018/11/21 12:59:01 Normal termbox.Event{Type:0x0, Mod:0x0, Key:0xffec, Ch:0, Width:0, Height:0, Err:error(nil), MouseX:0, MouseY:0, N:3}
+2018/11/21 12:59:01 P0 lines 1 22 PageStart 0 Point 157, bp.PageEnd 529 BufL 530
+2018/11/21 12:59:01 P0 lines 1 22 PageStart 0 Point 157, bp.PageEnd 529 BufL 530
+2018/11/21 12:59:01 >>
+  1542823141 
+>>
+2018/11/21 12:59:01 Normal termbox.Event{Type:0x0, Mod:0x0, Key:0xffec, Ch:0, Width:0, Height:0, Err:error(nil), MouseX:0, MouseY:0, N:3}
+2018/11/21 12:59:01 P0 lines 1 22 PageStart 0 Point 186, bp.PageEnd 529 BufL 530
+2018/11/21 12:59:01 P0 lines 1 22 PageStart 0 Point 186, bp.PageEnd 529 BufL 530
+2018/11/21 12:59:05 >>
+  1542823145 
+>>
+2018/11/21 12:59:05 Normal termbox.Event{Type:0x0, Mod:0x0, Key:0x18, Ch:0, Width:0, Height:0, Err:error(nil), MouseX:0, MouseY:0, N:1}
+2018/11/21 12:59:05 P0 lines 1 22 PageStart 0 Point 186, bp.PageEnd 529 BufL 530
+2018/11/21 12:59:05 P0 lines 1 22 PageStart 0 Point 186, bp.PageEnd 529 BufL 530
+2018/11/21 12:59:05 >>
+  1542823145 
+>>
+2018/11/21 12:59:05 Normal termbox.Event{Type:0x0, Mod:0x0, Key:0x0, Ch:99, Width:0, Height:0, Err:error(nil), MouseX:0, MouseY:0, N:1}
+2018/11/21 12:59:05 lookfor c
+2018/11/21 12:59:05 P0 lines 1 22 PageStart 0 Point 186, bp.PageEnd 529 BufL 530
+2018/11/21 12:59:05 P0 lines 1 22 PageStart 0 Point 186, bp.PageEnd 529 BufL 530
+2018/11/21 12:59:07 >>
+  1542823147 
+>>
+2018/11/21 12:59:07 Normal termbox.Event{Type:0x0, Mod:0x0, Key:0x18, Ch:0, Width:0, Height:0, Err:error(nil), MouseX:0, MouseY:0, N:1}
+2018/11/21 12:59:07 P0 lines 1 22 PageStart 0 Point 186, bp.PageEnd 529 BufL 530
+2018/11/21 12:59:07 P0 lines 1 22 PageStart 0 Point 186, bp.PageEnd 529 BufL 530
+2018/11/21 12:59:08 >>
+  1542823148 
+>>
+2018/11/21 12:59:08 Normal termbox.Event{Type:0x0, Mod:0x0, Key:0x3, Ch:0, Width:0, Height:0, Err:error(nil), MouseX:0, MouseY:0, N:1}
+2018/11/21 12:59:08 lookfor 

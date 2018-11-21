@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"runtime"
 	"testing"
 )
 
@@ -62,8 +63,20 @@ func (r *Buffer) GetText() string {
 	return string(ret)
 }
 
+func (r *Buffer) logBufferEOB(pt int) {
+	if r.EndOfBuffer(pt) == true {
+		pc, file, no, ok := runtime.Caller(1)
+		details := runtime.FuncForPC(pc)
+		if ok && details != nil {
+			log.Printf(">>Called from %s\n>> %s Ln# %d\n", details.Name(), file, no)
+		}
+		log.Println(">>Setting Point to EOB", pt, r.BufferLen())
+	}
+}
+
 // RuneAt finally have a reliable!!
 func (r *Buffer) RuneAt(pt int) (rune, error) {
+	r.logBufferEOB(pt)
 	if pt >= len(r.data) {
 		return 0, errors.New("Beyond data buffer in RuneAt")
 	}
@@ -95,6 +108,7 @@ func (r *Buffer) AddRune(ch rune) {
 	}
 	r.data[r.preLen] = ch
 	r.preLen++
+	r.MarkModified()
 }
 
 // Point return point
@@ -104,6 +118,7 @@ func (r *Buffer) Point() int {
 
 // SetPoint set the current point to np
 func (r *Buffer) SetPoint(np int) {
+	r.logBufferEOB(np)
 	// 	slade gap to end
 	r.CollapseGap()
 	// move gap <-(left) by np chars
@@ -135,7 +150,7 @@ func (r *Buffer) BufferLen() int {
 	return r.preLen + r.postLen
 }
 func (r *Buffer) EndOfBuffer(pt int) bool {
-	return pt >= (r.preLen + r.postLen - 1)
+	return pt >= (r.preLen + r.postLen)
 }
 
 // ActualLen length of buffer plus gap
@@ -180,6 +195,7 @@ func (r *Buffer) Insert(s string) {
 	copy(r.data[r.gapStart():], []rune(s))
 	r.preLen += len(s)
 	//fmt.Println("G", len(r.data)-r.postLen-r.preLen, "S", r.preLen, "E", r.postLen)
+	r.MarkModified()
 }
 
 // GetTextForLines return string for [l1, l2) (l2 not included)
@@ -491,13 +507,12 @@ func (r *Buffer) PointDown() {
 	c1 := r.ColumnForPoint(r.Point())
 	l1 := r.LineEnd(r.Point())
 	l2 := r.LineStart(l1 + 1)
-	//fmt.Printf("PointDown c1 %d, l1 %d, l2 %d)\n", c1, l1, l2)
 	npt := l2 + c1 - 1
+	r.logBufferEOB(npt)
 	if npt > r.PageEnd {
 		r.Reframe = true
 	}
 	r.SetPointAndCursor(npt)
-	//fmt.Printf("Point %d (%d,%d)\n", r.Point(), r.PointCol, r.PointRow)
 }
 
 // PointNext move point left one

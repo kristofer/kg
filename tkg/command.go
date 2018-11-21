@@ -2,6 +2,7 @@ package tkg
 
 import (
 	"log"
+	"unicode"
 
 	termbox "github.com/nsf/termbox-go"
 )
@@ -16,6 +17,7 @@ func (e *Editor) quitquit() {
 }
 func (e *Editor) up() {
 	e.CurrentBuffer.PointUp()
+	//e.PointUp()
 }
 func (e *Editor) down() {
 	e.CurrentBuffer.PointDown()
@@ -52,27 +54,31 @@ func (e *Editor) resize_terminal() {
 
 func (e *Editor) quit_ask() {
 	if e.ModifiedBuffers() == true {
-		// mvaddstr(MSGLINE, 0, "Modified buffers exist; really exit (y/n) ?")
-		// clrtoeol()
-		// if !yesno(false) {
-		// 	return
-		// }
-	} else {
-		e.quit()
+		prompt := "Modified buffers exist; really exit (y/n) ?"
+		if !e.yesno(false, prompt) {
+			return
+		}
 	}
+	e.quit()
 }
 
 /* flag = default answer, FALSE=n, TRUE=y */
-func (e *Editor) yesno(flag bool) bool {
+func (e *Editor) yesno(flag bool, prompt string) bool {
 	//var ch rune
 
-	// addstr(flag ? " y\b" : " n\b");
-	// refresh();
+	e.DisplayPromptAndResponse(prompt, "")
+	e.MiniBufActive = true
+	defer func() { e.MiniBufActive = false }()
+	ev := <-e.MiniBufChan
+	log.Println("Mini ev", ev)
+	// := e.HandleEvent(&ev)
 	// ch = getch();
-	// if (ch == '\r' || ch == '\n')
-	// 	return (flag);
-	// return (tolower(ch) == 'y');
-	return true
+	ch := ev.Ch
+	if ch == '\r' || ch == '\n' {
+		return flag
+
+	}
+	return unicode.ToLower(ch) == 'y'
 }
 
 func (e *Editor) redraw() {
@@ -138,8 +144,13 @@ func (e *Editor) gotoline() {
 }
 
 func (e *Editor) insertfile() {
-	// if (getfilename("Insert file: ", temp, NAME_MAX))
-	// 	(void)insert_file(temp, TRUE);
+	fname := e.GetFilename("Insert file: ")
+	if fname != "" {
+		res := e.InsertFile(fname, false)
+		if res {
+			e.msg("Loaded file %s", fname)
+		}
+	}
 }
 
 func (e *Editor) readfile() {
@@ -168,19 +179,22 @@ func (e *Editor) readfile() {
 
 func (e *Editor) savebuffer() {
 	// if (curbp->b_fname[0] != '\0') {
-	// 	save(curbp->b_fname);
-	// 	return;
+	if e.CurrentBuffer.Filename != "" {
+		e.Save(e.CurrentBuffer.Filename)
+		return
+	}
 	// } else {
 	// 	writefile();
 	// }
-	// refresh();
+	e.Refresh()
 }
 
 func (e *Editor) writefile() {
-	// strncpy(temp, curbp->b_fname, NAME_MAX);
 	// if (getinput("Write file: ", temp, NAME_MAX, F_NONE))
-	// 	if (save(temp) == TRUE)
-	// 		strncpy(curbp->b_fname, temp, NAME_MAX);
+	fname := e.GetFilename("Write file: ")
+	if e.Save(fname) == true {
+		e.CurrentBuffer.Filename = fname
+	}
 }
 
 func (e *Editor) killbuffer() {

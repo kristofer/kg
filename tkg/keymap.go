@@ -36,7 +36,7 @@ var keymap = []Keymapt{
 	{"C-x 2 split-window       ", "\x18\x32", (*Editor).SplitWindow},
 	{"C-x o other-window       ", "\x18\x6F", (*Editor).NextWindow},
 	{"C-x = cursor-position    ", "\x18\x3D", (*Editor).showpos},
-	//	{"C-x i insert-file        ", "\x18\x69", (*Editor).InsertFile},
+	{"C-x i insert-file        ", "\x18\x69", (*Editor).insertfile},
 	{"C-x k kill-buffer        ", "\x18\x6B", (*Editor).killbuffer},
 	{"C-x C-n next-buffer      ", "\x18\x0E", (*Editor).NextBuffer},
 	{"C-x n next-buffer        ", "\x18\x6E", (*Editor).NextBuffer},
