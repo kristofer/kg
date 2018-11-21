@@ -69,7 +69,7 @@ func (e *Editor) yesno(flag bool, prompt string) bool {
 	e.DisplayPromptAndResponse(prompt, "")
 	e.MiniBufActive = true
 	defer func() { e.MiniBufActive = false }()
-	ev := <-e.MiniBufChan
+	ev := <-e.EventChan
 	log.Println("Mini ev", ev)
 	// := e.HandleEvent(&ev)
 	// ch = getch();
@@ -148,7 +148,7 @@ func (e *Editor) insertfile() {
 	if fname != "" {
 		res := e.InsertFile(fname, false)
 		if res {
-			e.msg("Loaded file %s", fname)
+			//e.msg("Loaded file %s", fname)
 		}
 	}
 }
@@ -178,7 +178,6 @@ func (e *Editor) readfile() {
 }
 
 func (e *Editor) savebuffer() {
-	// if (curbp->b_fname[0] != '\0') {
 	if e.CurrentBuffer.Filename != "" {
 		e.Save(e.CurrentBuffer.Filename)
 		return

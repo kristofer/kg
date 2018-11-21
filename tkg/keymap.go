@@ -19,7 +19,7 @@ var keymap = []Keymapt{
 	{"C-f forward-char         ", "\u0006", (*Editor).right},
 	{"ArrowRight forward-char  ", "\uFFEA", (*Editor).right},
 	{"C-h backspace            ", "\x08", (*Editor).backsp},
-	{"C-g backspace            ", "\x07", (*Editor).quitquit},
+	{"C-g quit-quit            ", "\x07", (*Editor).quitquit},
 	{"C-k kill-to-eol          ", "\x0B", (*Editor).killtoeol},
 	{"C-l refresh              ", "\x0C", (*Editor).redraw},
 	{"C-n next-line            ", "\x0E", (*Editor).down},

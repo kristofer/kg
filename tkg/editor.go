@@ -540,7 +540,7 @@ func (e *Editor) DisplayPromptAndResponse(prompt string, response string) {
 	if response != "" {
 		e.drawstring(len(prompt), e.Lines-1, e.FGColor, termbox.ColorDefault, response)
 	}
-	termbox.SetCursor(len(prompt)+len(response)+1, e.Lines-1)
+	termbox.SetCursor(len(prompt)+len(response), e.Lines-1)
 	termbox.Flush()
 }
 
@@ -549,13 +549,28 @@ func (e *Editor) GetFilename(prompt string) string {
 	var ev termbox.Event
 	e.DisplayPromptAndResponse(prompt, "")
 	e.MiniBufActive = true
+loop:
 	for {
-		ev = <-e.MiniBufChan
-		ch := ev.Ch
-		if ch == '\r' || ch == '\n' {
-			break
+		ev = <-e.EventChan
+		if ev.Ch != 0 {
+			ch := ev.Ch
+			if (ch != '\x08') && (ch != '\x7f') {
+				fname = fname + string(ch)
+			} else {
+				fname = fname[:len(fname)-1]
+			}
+
 		}
-		fname = fname + string(ch)
+		if ev.Ch == 0 {
+			switch ev.Key {
+			case termbox.KeyEnter, termbox.KeyCtrlR:
+				break loop
+			case termbox.KeyCtrlG:
+				return ""
+			default:
+
+			}
+		}
 		e.DisplayPromptAndResponse(prompt, fname)
 	}
 	e.MiniBufActive = false
