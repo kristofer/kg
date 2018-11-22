@@ -1,798 +1,265 @@
-2018/11/22 12:36:22 Start of Log...
-2018/11/22 12:36:22 >>Called from tioga.co/kristofer/kg/tkg.(*Buffer).SetPoint
->> /home/kristofer/go/src/tioga.co/kristofer/kg/tkg/buffer.go Ln# 120
-2018/11/22 12:36:22 >>Setting Point to EOB 509 509
-2018/11/22 12:36:22 reframing!
-2018/11/22 12:36:22 OneWindow rows 21 line 24
-2018/11/22 12:36:22 P0 lines 1 22 PageStart 0 Point 0, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:24 >>
-  1542908184 
->>
-2018/11/22 12:36:24 P0 lines 1 22 PageStart 0 Point 28, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:24 P0 lines 1 22 PageStart 0 Point 28, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:24 >>
-  1542908184 
->>
-2018/11/22 12:36:24 P0 lines 1 22 PageStart 0 Point 57, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:24 P0 lines 1 22 PageStart 0 Point 57, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:24 >>
-  1542908184 
->>
-2018/11/22 12:36:24 P0 lines 1 22 PageStart 0 Point 93, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:24 P0 lines 1 22 PageStart 0 Point 93, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:25 >>
-  1542908185 
->>
-2018/11/22 12:36:25 P0 lines 1 22 PageStart 0 Point 125, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:25 P0 lines 1 22 PageStart 0 Point 125, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:25 >>
-  1542908185 
->>
-2018/11/22 12:36:25 P0 lines 1 22 PageStart 0 Point 157, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:25 P0 lines 1 22 PageStart 0 Point 157, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:25 >>
-  1542908185 
->>
-2018/11/22 12:36:25 P0 lines 1 22 PageStart 0 Point 186, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:25 P0 lines 1 22 PageStart 0 Point 186, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:25 >>
-  1542908185 
->>
-2018/11/22 12:36:25 P0 lines 1 22 PageStart 0 Point 222, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:25 P0 lines 1 22 PageStart 0 Point 222, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:25 >>
-  1542908185 
->>
-2018/11/22 12:36:25 P0 lines 1 22 PageStart 0 Point 254, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:25 P0 lines 1 22 PageStart 0 Point 254, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:26 >>
-  1542908186 
->>
-2018/11/22 12:36:26 P0 lines 1 22 PageStart 0 Point 259, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:26 P0 lines 1 22 PageStart 0 Point 259, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:26 >>
-  1542908186 
->>
-2018/11/22 12:36:26 P0 lines 1 22 PageStart 0 Point 287, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:26 P0 lines 1 22 PageStart 0 Point 287, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:26 >>
-  1542908186 
->>
-2018/11/22 12:36:26 P0 lines 1 22 PageStart 0 Point 316, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:26 P0 lines 1 22 PageStart 0 Point 316, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:26 >>
-  1542908186 
->>
-2018/11/22 12:36:26 P0 lines 1 22 PageStart 0 Point 352, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:26 P0 lines 1 22 PageStart 0 Point 352, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:26 >>
-  1542908186 
->>
-2018/11/22 12:36:26 P0 lines 1 22 PageStart 0 Point 384, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:26 P0 lines 1 22 PageStart 0 Point 384, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:27 >>
-  1542908187 
->>
-2018/11/22 12:36:27 P0 lines 1 22 PageStart 0 Point 412, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:27 P0 lines 1 22 PageStart 0 Point 412, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:27 >>
-  1542908187 
->>
-2018/11/22 12:36:27 P0 lines 1 22 PageStart 0 Point 441, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:27 P0 lines 1 22 PageStart 0 Point 441, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:27 >>
-  1542908187 
->>
-2018/11/22 12:36:27 P0 lines 1 22 PageStart 0 Point 477, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:27 P0 lines 1 22 PageStart 0 Point 477, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:27 >>
-  1542908187 
->>
-2018/11/22 12:36:27 P0 lines 1 22 PageStart 0 Point 509, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:27 P0 lines 1 22 PageStart 0 Point 509, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:28 >>
-  1542908188 
->>
-2018/11/22 12:36:28 P0 lines 1 22 PageStart 0 Point 510, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:28 P0 lines 1 22 PageStart 0 Point 510, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:28 >>
-  1542908188 
->>
-2018/11/22 12:36:28 >>Called from tioga.co/kristofer/kg/tkg.(*Buffer).PointDown
->> /home/kristofer/go/src/tioga.co/kristofer/kg/tkg/buffer.go Ln# 510
-2018/11/22 12:36:28 >>Setting Point to EOB 530 530
-2018/11/22 12:36:28 >>Called from tioga.co/kristofer/kg/tkg.(*Buffer).SetPoint
->> /home/kristofer/go/src/tioga.co/kristofer/kg/tkg/buffer.go Ln# 120
-2018/11/22 12:36:28 >>Setting Point to EOB 530 530
-2018/11/22 12:36:28 reframing!
-2018/11/22 12:36:28 P0 lines 1 22 PageStart 0 Point 530, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:28 >>Called from tioga.co/kristofer/kg/tkg.(*Editor).SetTermCursor
->> /home/kristofer/go/src/tioga.co/kristofer/kg/tkg/editor.go Ln# 493
-2018/11/22 12:36:28 >>Setting Point to EOB 530 530
-2018/11/22 12:36:28 P0 lines 1 22 PageStart 0 Point 530, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:28 >>Called from tioga.co/kristofer/kg/tkg.(*Editor).SetTermCursor
->> /home/kristofer/go/src/tioga.co/kristofer/kg/tkg/editor.go Ln# 493
-2018/11/22 12:36:28 >>Setting Point to EOB 530 530
-2018/11/22 12:36:28 >>
-  1542908188 
->>
-2018/11/22 12:36:28 >>Called from tioga.co/kristofer/kg/tkg.(*Buffer).PointDown
->> /home/kristofer/go/src/tioga.co/kristofer/kg/tkg/buffer.go Ln# 510
-2018/11/22 12:36:28 >>Setting Point to EOB 549 530
-2018/11/22 12:36:28 >>Called from tioga.co/kristofer/kg/tkg.(*Buffer).SetPoint
->> /home/kristofer/go/src/tioga.co/kristofer/kg/tkg/buffer.go Ln# 120
-2018/11/22 12:36:28 >>Setting Point to EOB 549 530
-2018/11/22 12:36:28 reframing!
-2018/11/22 12:36:28 P0 lines 1 22 PageStart 0 Point 530, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:28 >>Called from tioga.co/kristofer/kg/tkg.(*Editor).SetTermCursor
->> /home/kristofer/go/src/tioga.co/kristofer/kg/tkg/editor.go Ln# 493
-2018/11/22 12:36:28 >>Setting Point to EOB 530 530
-2018/11/22 12:36:28 P0 lines 1 22 PageStart 0 Point 530, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:28 >>Called from tioga.co/kristofer/kg/tkg.(*Editor).SetTermCursor
->> /home/kristofer/go/src/tioga.co/kristofer/kg/tkg/editor.go Ln# 493
-2018/11/22 12:36:28 >>Setting Point to EOB 530 530
-2018/11/22 12:36:29 >>
-  1542908189 
->>
-2018/11/22 12:36:29 >>Called from tioga.co/kristofer/kg/tkg.(*Buffer).PointDown
->> /home/kristofer/go/src/tioga.co/kristofer/kg/tkg/buffer.go Ln# 510
-2018/11/22 12:36:29 >>Setting Point to EOB 549 530
-2018/11/22 12:36:29 >>Called from tioga.co/kristofer/kg/tkg.(*Buffer).SetPoint
->> /home/kristofer/go/src/tioga.co/kristofer/kg/tkg/buffer.go Ln# 120
-2018/11/22 12:36:29 >>Setting Point to EOB 549 530
-2018/11/22 12:36:29 reframing!
-2018/11/22 12:36:29 P0 lines 1 22 PageStart 0 Point 530, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:29 >>Called from tioga.co/kristofer/kg/tkg.(*Editor).SetTermCursor
->> /home/kristofer/go/src/tioga.co/kristofer/kg/tkg/editor.go Ln# 493
-2018/11/22 12:36:29 >>Setting Point to EOB 530 530
-2018/11/22 12:36:29 P0 lines 1 22 PageStart 0 Point 530, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:29 >>Called from tioga.co/kristofer/kg/tkg.(*Editor).SetTermCursor
->> /home/kristofer/go/src/tioga.co/kristofer/kg/tkg/editor.go Ln# 493
-2018/11/22 12:36:29 >>Setting Point to EOB 530 530
-2018/11/22 12:36:29 >>
-  1542908189 
->>
-2018/11/22 12:36:29 P0 lines 1 22 PageStart 0 Point 529, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:29 P0 lines 1 22 PageStart 0 Point 529, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:30 >>
-  1542908190 
->>
-2018/11/22 12:36:30 P0 lines 1 22 PageStart 0 Point 528, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:30 P0 lines 1 22 PageStart 0 Point 528, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:30 >>
-  1542908190 
->>
-2018/11/22 12:36:30 P0 lines 1 22 PageStart 0 Point 527, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:30 P0 lines 1 22 PageStart 0 Point 527, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:31 >>
-  1542908191 
->>
-2018/11/22 12:36:31 P0 lines 1 22 PageStart 0 Point 526, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:31 P0 lines 1 22 PageStart 0 Point 526, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:31 >>
-  1542908191 
->>
-2018/11/22 12:36:31 P0 lines 1 22 PageStart 0 Point 525, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:31 P0 lines 1 22 PageStart 0 Point 525, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:34 >>
-  1542908194 
->>
-2018/11/22 12:36:34 P0 lines 1 22 PageStart 0 Point 524, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:34 P0 lines 1 22 PageStart 0 Point 524, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:35 >>
-  1542908195 
->>
-2018/11/22 12:36:35 P0 lines 1 22 PageStart 0 Point 523, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:35 P0 lines 1 22 PageStart 0 Point 523, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:35 >>
-  1542908195 
->>
-2018/11/22 12:36:35 P0 lines 1 22 PageStart 0 Point 522, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:35 P0 lines 1 22 PageStart 0 Point 522, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:36 >>
-  1542908196 
->>
-2018/11/22 12:36:36 P0 lines 1 22 PageStart 0 Point 521, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:36 P0 lines 1 22 PageStart 0 Point 521, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:36 >>
-  1542908196 
->>
-2018/11/22 12:36:36 P0 lines 1 22 PageStart 0 Point 520, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:36 P0 lines 1 22 PageStart 0 Point 520, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:36 >>
-  1542908196 
->>
-2018/11/22 12:36:36 P0 lines 1 22 PageStart 0 Point 519, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:36 P0 lines 1 22 PageStart 0 Point 519, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:36 >>
-  1542908196 
->>
-2018/11/22 12:36:36 P0 lines 1 22 PageStart 0 Point 518, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:36 P0 lines 1 22 PageStart 0 Point 518, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:37 >>
-  1542908197 
->>
-2018/11/22 12:36:37 P0 lines 1 22 PageStart 0 Point 517, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:37 P0 lines 1 22 PageStart 0 Point 517, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:37 >>
-  1542908197 
->>
-2018/11/22 12:36:37 P0 lines 1 22 PageStart 0 Point 516, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:37 P0 lines 1 22 PageStart 0 Point 516, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:37 >>
-  1542908197 
->>
-2018/11/22 12:36:37 P0 lines 1 22 PageStart 0 Point 515, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:37 P0 lines 1 22 PageStart 0 Point 515, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:37 >>
-  1542908197 
->>
-2018/11/22 12:36:37 P0 lines 1 22 PageStart 0 Point 514, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:37 P0 lines 1 22 PageStart 0 Point 514, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:38 >>
-  1542908198 
->>
-2018/11/22 12:36:38 P0 lines 1 22 PageStart 0 Point 513, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:38 P0 lines 1 22 PageStart 0 Point 513, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:38 >>
-  1542908198 
->>
-2018/11/22 12:36:38 P0 lines 1 22 PageStart 0 Point 512, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:38 P0 lines 1 22 PageStart 0 Point 512, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:39 >>
-  1542908199 
->>
-2018/11/22 12:36:39 P0 lines 1 22 PageStart 0 Point 511, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:39 P0 lines 1 22 PageStart 0 Point 511, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:39 >>
-  1542908199 
->>
-2018/11/22 12:36:39 P0 lines 1 22 PageStart 0 Point 510, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:39 P0 lines 1 22 PageStart 0 Point 510, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:39 >>
-  1542908199 
->>
-2018/11/22 12:36:39 P0 lines 1 22 PageStart 0 Point 509, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:39 P0 lines 1 22 PageStart 0 Point 509, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:39 >>
-  1542908199 
->>
-2018/11/22 12:36:39 P0 lines 1 22 PageStart 0 Point 508, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:39 P0 lines 1 22 PageStart 0 Point 508, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:40 >>
-  1542908200 
->>
-2018/11/22 12:36:40 P0 lines 1 22 PageStart 0 Point 472, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:40 P0 lines 1 22 PageStart 0 Point 472, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:41 >>
-  1542908201 
->>
-2018/11/22 12:36:41 P0 lines 1 22 PageStart 0 Point 443, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:41 P0 lines 1 22 PageStart 0 Point 443, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:41 >>
-  1542908201 
->>
-2018/11/22 12:36:41 P0 lines 1 22 PageStart 0 Point 414, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:41 P0 lines 1 22 PageStart 0 Point 414, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:41 >>
-  1542908201 
->>
-2018/11/22 12:36:41 P0 lines 1 22 PageStart 0 Point 386, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:41 P0 lines 1 22 PageStart 0 Point 386, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:41 >>
-  1542908201 
->>
-2018/11/22 12:36:41 P0 lines 1 22 PageStart 0 Point 354, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:41 P0 lines 1 22 PageStart 0 Point 354, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:42 >>
-  1542908202 
->>
-2018/11/22 12:36:42 P0 lines 1 22 PageStart 0 Point 318, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:42 P0 lines 1 22 PageStart 0 Point 318, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:42 >>
-  1542908202 
->>
-2018/11/22 12:36:42 P0 lines 1 22 PageStart 0 Point 289, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:42 P0 lines 1 22 PageStart 0 Point 289, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:42 >>
-  1542908202 
->>
-2018/11/22 12:36:42 P0 lines 1 22 PageStart 0 Point 318, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:42 P0 lines 1 22 PageStart 0 Point 318, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:42 >>
-  1542908202 
->>
-2018/11/22 12:36:42 P0 lines 1 22 PageStart 0 Point 354, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:42 P0 lines 1 22 PageStart 0 Point 354, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:42 >>
-  1542908202 
->>
-2018/11/22 12:36:42 P0 lines 1 22 PageStart 0 Point 386, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:42 P0 lines 1 22 PageStart 0 Point 386, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:43 >>
-  1542908203 
->>
-2018/11/22 12:36:43 P0 lines 1 22 PageStart 0 Point 414, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:43 P0 lines 1 22 PageStart 0 Point 414, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:43 >>
-  1542908203 
->>
-2018/11/22 12:36:43 P0 lines 1 22 PageStart 0 Point 443, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:43 P0 lines 1 22 PageStart 0 Point 443, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:43 >>
-  1542908203 
->>
-2018/11/22 12:36:43 P0 lines 1 22 PageStart 0 Point 479, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:43 P0 lines 1 22 PageStart 0 Point 479, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:44 >>
-  1542908204 
->>
-2018/11/22 12:36:44 P0 lines 1 22 PageStart 0 Point 443, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:44 P0 lines 1 22 PageStart 0 Point 443, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:44 >>
-  1542908204 
->>
-2018/11/22 12:36:44 P0 lines 1 22 PageStart 0 Point 414, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:44 P0 lines 1 22 PageStart 0 Point 414, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:44 >>
-  1542908204 
->>
-2018/11/22 12:36:44 P0 lines 1 22 PageStart 0 Point 386, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:44 P0 lines 1 22 PageStart 0 Point 386, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:44 >>
-  1542908204 
->>
-2018/11/22 12:36:44 P0 lines 1 22 PageStart 0 Point 354, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:44 P0 lines 1 22 PageStart 0 Point 354, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:44 >>
-  1542908204 
->>
-2018/11/22 12:36:44 P0 lines 1 22 PageStart 0 Point 318, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:44 P0 lines 1 22 PageStart 0 Point 318, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:44 >>
-  1542908204 
->>
-2018/11/22 12:36:44 P0 lines 1 22 PageStart 0 Point 289, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:44 P0 lines 1 22 PageStart 0 Point 289, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:44 >>
-  1542908204 
->>
-2018/11/22 12:36:44 P0 lines 1 22 PageStart 0 Point 261, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:44 P0 lines 1 22 PageStart 0 Point 261, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:44 >>
-  1542908204 
->>
-2018/11/22 12:36:44 P0 lines 1 22 PageStart 0 Point 256, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:44 P0 lines 1 22 PageStart 0 Point 256, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:45 >>
-  1542908205 
->>
-2018/11/22 12:36:45 P0 lines 1 22 PageStart 0 Point 224, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:45 P0 lines 1 22 PageStart 0 Point 224, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:45 >>
-  1542908205 
->>
-2018/11/22 12:36:45 P0 lines 1 22 PageStart 0 Point 188, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:45 P0 lines 1 22 PageStart 0 Point 188, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:45 >>
-  1542908205 
->>
-2018/11/22 12:36:45 P0 lines 1 22 PageStart 0 Point 159, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:45 P0 lines 1 22 PageStart 0 Point 159, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:45 >>
-  1542908205 
->>
-2018/11/22 12:36:45 P0 lines 1 22 PageStart 0 Point 127, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:45 P0 lines 1 22 PageStart 0 Point 127, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:45 >>
-  1542908205 
->>
-2018/11/22 12:36:45 P0 lines 1 22 PageStart 0 Point 95, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:45 P0 lines 1 22 PageStart 0 Point 95, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:45 >>
-  1542908205 
->>
-2018/11/22 12:36:45 P0 lines 1 22 PageStart 0 Point 59, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:45 P0 lines 1 22 PageStart 0 Point 59, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:45 >>
-  1542908205 
->>
-2018/11/22 12:36:45 P0 lines 1 22 PageStart 0 Point 30, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:45 P0 lines 1 22 PageStart 0 Point 30, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:45 >>
-  1542908205 
->>
-2018/11/22 12:36:45 P0 lines 1 22 PageStart 0 Point 2, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:45 P0 lines 1 22 PageStart 0 Point 2, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:45 >>
-  1542908205 
->>
-2018/11/22 12:36:45 P0 lines 1 22 PageStart 0 Point 2, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:45 P0 lines 1 22 PageStart 0 Point 2, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:45 >>
-  1542908205 
->>
-2018/11/22 12:36:45 P0 lines 1 22 PageStart 0 Point 2, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:45 P0 lines 1 22 PageStart 0 Point 2, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:45 >>
-  1542908205 
->>
-2018/11/22 12:36:45 P0 lines 1 22 PageStart 0 Point 2, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:45 P0 lines 1 22 PageStart 0 Point 2, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:45 >>
-  1542908205 
->>
-2018/11/22 12:36:45 P0 lines 1 22 PageStart 0 Point 2, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:45 P0 lines 1 22 PageStart 0 Point 2, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:45 >>
-  1542908205 
->>
-2018/11/22 12:36:45 P0 lines 1 22 PageStart 0 Point 2, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:45 P0 lines 1 22 PageStart 0 Point 2, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:45 >>
-  1542908205 
->>
-2018/11/22 12:36:45 P0 lines 1 22 PageStart 0 Point 2, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:45 P0 lines 1 22 PageStart 0 Point 2, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:45 >>
-  1542908205 
->>
-2018/11/22 12:36:45 P0 lines 1 22 PageStart 0 Point 2, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:45 P0 lines 1 22 PageStart 0 Point 2, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:45 >>
-  1542908205 
->>
-2018/11/22 12:36:45 P0 lines 1 22 PageStart 0 Point 2, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:45 P0 lines 1 22 PageStart 0 Point 2, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:45 >>
-  1542908205 
->>
-2018/11/22 12:36:45 P0 lines 1 22 PageStart 0 Point 2, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:45 P0 lines 1 22 PageStart 0 Point 2, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:45 >>
-  1542908205 
->>
-2018/11/22 12:36:45 P0 lines 1 22 PageStart 0 Point 2, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:45 P0 lines 1 22 PageStart 0 Point 2, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:46 >>
-  1542908206 
->>
-2018/11/22 12:36:46 P0 lines 1 22 PageStart 0 Point 30, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:46 P0 lines 1 22 PageStart 0 Point 30, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:46 >>
-  1542908206 
->>
-2018/11/22 12:36:46 P0 lines 1 22 PageStart 0 Point 59, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:46 P0 lines 1 22 PageStart 0 Point 59, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:46 >>
-  1542908206 
->>
-2018/11/22 12:36:46 P0 lines 1 22 PageStart 0 Point 95, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:46 P0 lines 1 22 PageStart 0 Point 95, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:46 >>
-  1542908206 
->>
-2018/11/22 12:36:46 P0 lines 1 22 PageStart 0 Point 127, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:46 P0 lines 1 22 PageStart 0 Point 127, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:46 >>
-  1542908206 
->>
-2018/11/22 12:36:46 P0 lines 1 22 PageStart 0 Point 159, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:46 P0 lines 1 22 PageStart 0 Point 159, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:46 >>
-  1542908206 
->>
-2018/11/22 12:36:46 P0 lines 1 22 PageStart 0 Point 188, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:46 P0 lines 1 22 PageStart 0 Point 188, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:46 >>
-  1542908206 
->>
-2018/11/22 12:36:46 P0 lines 1 22 PageStart 0 Point 224, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:46 P0 lines 1 22 PageStart 0 Point 224, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:46 >>
-  1542908206 
->>
-2018/11/22 12:36:46 P0 lines 1 22 PageStart 0 Point 256, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:46 P0 lines 1 22 PageStart 0 Point 256, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:46 >>
-  1542908206 
->>
-2018/11/22 12:36:46 P0 lines 1 22 PageStart 0 Point 261, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:46 P0 lines 1 22 PageStart 0 Point 261, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:46 >>
-  1542908206 
->>
-2018/11/22 12:36:46 P0 lines 1 22 PageStart 0 Point 289, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:46 P0 lines 1 22 PageStart 0 Point 289, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:46 >>
-  1542908206 
->>
-2018/11/22 12:36:46 P0 lines 1 22 PageStart 0 Point 318, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:46 P0 lines 1 22 PageStart 0 Point 318, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:46 >>
-  1542908206 
->>
-2018/11/22 12:36:46 P0 lines 1 22 PageStart 0 Point 354, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:46 P0 lines 1 22 PageStart 0 Point 354, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:46 >>
-  1542908206 
->>
-2018/11/22 12:36:46 P0 lines 1 22 PageStart 0 Point 386, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:46 P0 lines 1 22 PageStart 0 Point 386, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:46 >>
-  1542908206 
->>
-2018/11/22 12:36:46 P0 lines 1 22 PageStart 0 Point 414, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:46 P0 lines 1 22 PageStart 0 Point 414, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:46 >>
-  1542908206 
->>
-2018/11/22 12:36:46 P0 lines 1 22 PageStart 0 Point 443, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:46 P0 lines 1 22 PageStart 0 Point 443, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:47 >>
-  1542908207 
->>
-2018/11/22 12:36:47 P0 lines 1 22 PageStart 0 Point 479, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:47 P0 lines 1 22 PageStart 0 Point 479, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:47 >>
-  1542908207 
->>
-2018/11/22 12:36:47 P0 lines 1 22 PageStart 0 Point 511, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:47 P0 lines 1 22 PageStart 0 Point 511, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:47 >>
-  1542908207 
->>
-2018/11/22 12:36:47 >>Called from tioga.co/kristofer/kg/tkg.(*Buffer).PointDown
->> /home/kristofer/go/src/tioga.co/kristofer/kg/tkg/buffer.go Ln# 510
-2018/11/22 12:36:47 >>Setting Point to EOB 531 530
-2018/11/22 12:36:47 >>Called from tioga.co/kristofer/kg/tkg.(*Buffer).SetPoint
->> /home/kristofer/go/src/tioga.co/kristofer/kg/tkg/buffer.go Ln# 120
-2018/11/22 12:36:47 >>Setting Point to EOB 531 530
-2018/11/22 12:36:47 reframing!
-2018/11/22 12:36:47 P0 lines 1 22 PageStart 0 Point 530, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:47 >>Called from tioga.co/kristofer/kg/tkg.(*Editor).SetTermCursor
->> /home/kristofer/go/src/tioga.co/kristofer/kg/tkg/editor.go Ln# 493
-2018/11/22 12:36:47 >>Setting Point to EOB 530 530
-2018/11/22 12:36:47 P0 lines 1 22 PageStart 0 Point 530, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:47 >>Called from tioga.co/kristofer/kg/tkg.(*Editor).SetTermCursor
->> /home/kristofer/go/src/tioga.co/kristofer/kg/tkg/editor.go Ln# 493
-2018/11/22 12:36:47 >>Setting Point to EOB 530 530
-2018/11/22 12:36:47 >>
-  1542908207 
->>
-2018/11/22 12:36:47 >>Called from tioga.co/kristofer/kg/tkg.(*Buffer).PointDown
->> /home/kristofer/go/src/tioga.co/kristofer/kg/tkg/buffer.go Ln# 510
-2018/11/22 12:36:47 >>Setting Point to EOB 549 530
-2018/11/22 12:36:47 >>Called from tioga.co/kristofer/kg/tkg.(*Buffer).SetPoint
->> /home/kristofer/go/src/tioga.co/kristofer/kg/tkg/buffer.go Ln# 120
-2018/11/22 12:36:47 >>Setting Point to EOB 549 530
-2018/11/22 12:36:47 reframing!
-2018/11/22 12:36:47 P0 lines 1 22 PageStart 0 Point 530, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:47 >>Called from tioga.co/kristofer/kg/tkg.(*Editor).SetTermCursor
->> /home/kristofer/go/src/tioga.co/kristofer/kg/tkg/editor.go Ln# 493
-2018/11/22 12:36:47 >>Setting Point to EOB 530 530
-2018/11/22 12:36:47 P0 lines 1 22 PageStart 0 Point 530, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:47 >>Called from tioga.co/kristofer/kg/tkg.(*Editor).SetTermCursor
->> /home/kristofer/go/src/tioga.co/kristofer/kg/tkg/editor.go Ln# 493
-2018/11/22 12:36:47 >>Setting Point to EOB 530 530
-2018/11/22 12:36:47 >>
-  1542908207 
->>
-2018/11/22 12:36:47 >>Called from tioga.co/kristofer/kg/tkg.(*Buffer).PointDown
->> /home/kristofer/go/src/tioga.co/kristofer/kg/tkg/buffer.go Ln# 510
-2018/11/22 12:36:47 >>Setting Point to EOB 549 530
-2018/11/22 12:36:47 >>Called from tioga.co/kristofer/kg/tkg.(*Buffer).SetPoint
->> /home/kristofer/go/src/tioga.co/kristofer/kg/tkg/buffer.go Ln# 120
-2018/11/22 12:36:47 >>Setting Point to EOB 549 530
-2018/11/22 12:36:47 reframing!
-2018/11/22 12:36:47 P0 lines 1 22 PageStart 0 Point 530, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:47 >>Called from tioga.co/kristofer/kg/tkg.(*Editor).SetTermCursor
->> /home/kristofer/go/src/tioga.co/kristofer/kg/tkg/editor.go Ln# 493
-2018/11/22 12:36:47 >>Setting Point to EOB 530 530
-2018/11/22 12:36:47 P0 lines 1 22 PageStart 0 Point 530, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:47 >>Called from tioga.co/kristofer/kg/tkg.(*Editor).SetTermCursor
->> /home/kristofer/go/src/tioga.co/kristofer/kg/tkg/editor.go Ln# 493
-2018/11/22 12:36:47 >>Setting Point to EOB 530 530
-2018/11/22 12:36:47 >>
-  1542908207 
->>
-2018/11/22 12:36:47 >>Called from tioga.co/kristofer/kg/tkg.(*Buffer).PointDown
->> /home/kristofer/go/src/tioga.co/kristofer/kg/tkg/buffer.go Ln# 510
-2018/11/22 12:36:47 >>Setting Point to EOB 549 530
-2018/11/22 12:36:47 >>Called from tioga.co/kristofer/kg/tkg.(*Buffer).SetPoint
->> /home/kristofer/go/src/tioga.co/kristofer/kg/tkg/buffer.go Ln# 120
-2018/11/22 12:36:47 >>Setting Point to EOB 549 530
-2018/11/22 12:36:47 reframing!
-2018/11/22 12:36:47 P0 lines 1 22 PageStart 0 Point 530, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:47 >>Called from tioga.co/kristofer/kg/tkg.(*Editor).SetTermCursor
->> /home/kristofer/go/src/tioga.co/kristofer/kg/tkg/editor.go Ln# 493
-2018/11/22 12:36:47 >>Setting Point to EOB 530 530
-2018/11/22 12:36:47 P0 lines 1 22 PageStart 0 Point 530, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:47 >>Called from tioga.co/kristofer/kg/tkg.(*Editor).SetTermCursor
->> /home/kristofer/go/src/tioga.co/kristofer/kg/tkg/editor.go Ln# 493
-2018/11/22 12:36:47 >>Setting Point to EOB 530 530
-2018/11/22 12:36:47 >>
-  1542908207 
->>
-2018/11/22 12:36:47 >>Called from tioga.co/kristofer/kg/tkg.(*Buffer).PointDown
->> /home/kristofer/go/src/tioga.co/kristofer/kg/tkg/buffer.go Ln# 510
-2018/11/22 12:36:47 >>Setting Point to EOB 549 530
-2018/11/22 12:36:47 >>Called from tioga.co/kristofer/kg/tkg.(*Buffer).SetPoint
->> /home/kristofer/go/src/tioga.co/kristofer/kg/tkg/buffer.go Ln# 120
-2018/11/22 12:36:47 >>Setting Point to EOB 549 530
-2018/11/22 12:36:47 reframing!
-2018/11/22 12:36:47 P0 lines 1 22 PageStart 0 Point 530, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:47 >>Called from tioga.co/kristofer/kg/tkg.(*Editor).SetTermCursor
->> /home/kristofer/go/src/tioga.co/kristofer/kg/tkg/editor.go Ln# 493
-2018/11/22 12:36:47 >>Setting Point to EOB 530 530
-2018/11/22 12:36:47 P0 lines 1 22 PageStart 0 Point 530, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:47 >>Called from tioga.co/kristofer/kg/tkg.(*Editor).SetTermCursor
->> /home/kristofer/go/src/tioga.co/kristofer/kg/tkg/editor.go Ln# 493
-2018/11/22 12:36:47 >>Setting Point to EOB 530 530
-2018/11/22 12:36:47 >>
-  1542908207 
->>
-2018/11/22 12:36:47 >>Called from tioga.co/kristofer/kg/tkg.(*Buffer).PointDown
->> /home/kristofer/go/src/tioga.co/kristofer/kg/tkg/buffer.go Ln# 510
-2018/11/22 12:36:47 >>Setting Point to EOB 549 530
-2018/11/22 12:36:47 >>Called from tioga.co/kristofer/kg/tkg.(*Buffer).SetPoint
->> /home/kristofer/go/src/tioga.co/kristofer/kg/tkg/buffer.go Ln# 120
-2018/11/22 12:36:47 >>Setting Point to EOB 549 530
-2018/11/22 12:36:47 reframing!
-2018/11/22 12:36:47 P0 lines 1 22 PageStart 0 Point 530, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:47 >>Called from tioga.co/kristofer/kg/tkg.(*Editor).SetTermCursor
->> /home/kristofer/go/src/tioga.co/kristofer/kg/tkg/editor.go Ln# 493
-2018/11/22 12:36:47 >>Setting Point to EOB 530 530
-2018/11/22 12:36:47 P0 lines 1 22 PageStart 0 Point 530, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:47 >>Called from tioga.co/kristofer/kg/tkg.(*Editor).SetTermCursor
->> /home/kristofer/go/src/tioga.co/kristofer/kg/tkg/editor.go Ln# 493
-2018/11/22 12:36:47 >>Setting Point to EOB 530 530
-2018/11/22 12:36:47 >>
-  1542908207 
->>
-2018/11/22 12:36:47 >>Called from tioga.co/kristofer/kg/tkg.(*Buffer).PointDown
->> /home/kristofer/go/src/tioga.co/kristofer/kg/tkg/buffer.go Ln# 510
-2018/11/22 12:36:47 >>Setting Point to EOB 549 530
-2018/11/22 12:36:47 >>Called from tioga.co/kristofer/kg/tkg.(*Buffer).SetPoint
->> /home/kristofer/go/src/tioga.co/kristofer/kg/tkg/buffer.go Ln# 120
-2018/11/22 12:36:47 >>Setting Point to EOB 549 530
-2018/11/22 12:36:47 reframing!
-2018/11/22 12:36:47 P0 lines 1 22 PageStart 0 Point 530, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:47 >>Called from tioga.co/kristofer/kg/tkg.(*Editor).SetTermCursor
->> /home/kristofer/go/src/tioga.co/kristofer/kg/tkg/editor.go Ln# 493
-2018/11/22 12:36:47 >>Setting Point to EOB 530 530
-2018/11/22 12:36:47 P0 lines 1 22 PageStart 0 Point 530, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:47 >>Called from tioga.co/kristofer/kg/tkg.(*Editor).SetTermCursor
->> /home/kristofer/go/src/tioga.co/kristofer/kg/tkg/editor.go Ln# 493
-2018/11/22 12:36:47 >>Setting Point to EOB 530 530
-2018/11/22 12:36:47 >>
-  1542908207 
->>
-2018/11/22 12:36:47 >>Called from tioga.co/kristofer/kg/tkg.(*Buffer).PointDown
->> /home/kristofer/go/src/tioga.co/kristofer/kg/tkg/buffer.go Ln# 510
-2018/11/22 12:36:47 >>Setting Point to EOB 549 530
-2018/11/22 12:36:47 >>Called from tioga.co/kristofer/kg/tkg.(*Buffer).SetPoint
->> /home/kristofer/go/src/tioga.co/kristofer/kg/tkg/buffer.go Ln# 120
-2018/11/22 12:36:47 >>Setting Point to EOB 549 530
-2018/11/22 12:36:47 reframing!
-2018/11/22 12:36:47 P0 lines 1 22 PageStart 0 Point 530, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:47 >>Called from tioga.co/kristofer/kg/tkg.(*Editor).SetTermCursor
->> /home/kristofer/go/src/tioga.co/kristofer/kg/tkg/editor.go Ln# 493
-2018/11/22 12:36:47 >>Setting Point to EOB 530 530
-2018/11/22 12:36:47 P0 lines 1 22 PageStart 0 Point 530, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:47 >>Called from tioga.co/kristofer/kg/tkg.(*Editor).SetTermCursor
->> /home/kristofer/go/src/tioga.co/kristofer/kg/tkg/editor.go Ln# 493
-2018/11/22 12:36:47 >>Setting Point to EOB 530 530
-2018/11/22 12:36:47 >>
-  1542908207 
->>
-2018/11/22 12:36:47 >>Called from tioga.co/kristofer/kg/tkg.(*Buffer).PointDown
->> /home/kristofer/go/src/tioga.co/kristofer/kg/tkg/buffer.go Ln# 510
-2018/11/22 12:36:47 >>Setting Point to EOB 549 530
-2018/11/22 12:36:47 >>Called from tioga.co/kristofer/kg/tkg.(*Buffer).SetPoint
->> /home/kristofer/go/src/tioga.co/kristofer/kg/tkg/buffer.go Ln# 120
-2018/11/22 12:36:47 >>Setting Point to EOB 549 530
-2018/11/22 12:36:47 reframing!
-2018/11/22 12:36:47 P0 lines 1 22 PageStart 0 Point 530, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:47 >>Called from tioga.co/kristofer/kg/tkg.(*Editor).SetTermCursor
->> /home/kristofer/go/src/tioga.co/kristofer/kg/tkg/editor.go Ln# 493
-2018/11/22 12:36:47 >>Setting Point to EOB 530 530
-2018/11/22 12:36:47 P0 lines 1 22 PageStart 0 Point 530, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:47 >>Called from tioga.co/kristofer/kg/tkg.(*Editor).SetTermCursor
->> /home/kristofer/go/src/tioga.co/kristofer/kg/tkg/editor.go Ln# 493
-2018/11/22 12:36:47 >>Setting Point to EOB 530 530
-2018/11/22 12:36:47 >>
-  1542908207 
->>
-2018/11/22 12:36:47 >>Called from tioga.co/kristofer/kg/tkg.(*Buffer).PointDown
->> /home/kristofer/go/src/tioga.co/kristofer/kg/tkg/buffer.go Ln# 510
-2018/11/22 12:36:47 >>Setting Point to EOB 549 530
-2018/11/22 12:36:47 >>Called from tioga.co/kristofer/kg/tkg.(*Buffer).SetPoint
->> /home/kristofer/go/src/tioga.co/kristofer/kg/tkg/buffer.go Ln# 120
-2018/11/22 12:36:47 >>Setting Point to EOB 549 530
-2018/11/22 12:36:47 reframing!
-2018/11/22 12:36:47 P0 lines 1 22 PageStart 0 Point 530, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:47 >>Called from tioga.co/kristofer/kg/tkg.(*Editor).SetTermCursor
->> /home/kristofer/go/src/tioga.co/kristofer/kg/tkg/editor.go Ln# 493
-2018/11/22 12:36:47 >>Setting Point to EOB 530 530
-2018/11/22 12:36:47 P0 lines 1 22 PageStart 0 Point 530, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:47 >>Called from tioga.co/kristofer/kg/tkg.(*Editor).SetTermCursor
->> /home/kristofer/go/src/tioga.co/kristofer/kg/tkg/editor.go Ln# 493
-2018/11/22 12:36:47 >>Setting Point to EOB 530 530
-2018/11/22 12:36:47 >>
-  1542908207 
->>
-2018/11/22 12:36:47 >>Called from tioga.co/kristofer/kg/tkg.(*Buffer).PointDown
->> /home/kristofer/go/src/tioga.co/kristofer/kg/tkg/buffer.go Ln# 510
-2018/11/22 12:36:47 >>Setting Point to EOB 549 530
-2018/11/22 12:36:47 >>Called from tioga.co/kristofer/kg/tkg.(*Buffer).SetPoint
->> /home/kristofer/go/src/tioga.co/kristofer/kg/tkg/buffer.go Ln# 120
-2018/11/22 12:36:47 >>Setting Point to EOB 549 530
-2018/11/22 12:36:47 reframing!
-2018/11/22 12:36:47 P0 lines 1 22 PageStart 0 Point 530, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:47 >>Called from tioga.co/kristofer/kg/tkg.(*Editor).SetTermCursor
->> /home/kristofer/go/src/tioga.co/kristofer/kg/tkg/editor.go Ln# 493
-2018/11/22 12:36:47 >>Setting Point to EOB 530 530
-2018/11/22 12:36:47 P0 lines 1 22 PageStart 0 Point 530, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:47 >>Called from tioga.co/kristofer/kg/tkg.(*Editor).SetTermCursor
->> /home/kristofer/go/src/tioga.co/kristofer/kg/tkg/editor.go Ln# 493
-2018/11/22 12:36:47 >>Setting Point to EOB 530 530
-2018/11/22 12:36:47 >>
-  1542908207 
->>
-2018/11/22 12:36:47 >>Called from tioga.co/kristofer/kg/tkg.(*Buffer).PointDown
->> /home/kristofer/go/src/tioga.co/kristofer/kg/tkg/buffer.go Ln# 510
-2018/11/22 12:36:47 >>Setting Point to EOB 549 530
-2018/11/22 12:36:47 >>Called from tioga.co/kristofer/kg/tkg.(*Buffer).SetPoint
->> /home/kristofer/go/src/tioga.co/kristofer/kg/tkg/buffer.go Ln# 120
-2018/11/22 12:36:47 >>Setting Point to EOB 549 530
-2018/11/22 12:36:47 reframing!
-2018/11/22 12:36:47 P0 lines 1 22 PageStart 0 Point 530, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:47 >>Called from tioga.co/kristofer/kg/tkg.(*Editor).SetTermCursor
->> /home/kristofer/go/src/tioga.co/kristofer/kg/tkg/editor.go Ln# 493
-2018/11/22 12:36:47 >>Setting Point to EOB 530 530
-2018/11/22 12:36:47 P0 lines 1 22 PageStart 0 Point 530, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:47 >>Called from tioga.co/kristofer/kg/tkg.(*Editor).SetTermCursor
->> /home/kristofer/go/src/tioga.co/kristofer/kg/tkg/editor.go Ln# 493
-2018/11/22 12:36:47 >>Setting Point to EOB 530 530
-2018/11/22 12:36:47 >>
-  1542908207 
->>
-2018/11/22 12:36:47 >>Called from tioga.co/kristofer/kg/tkg.(*Buffer).PointDown
->> /home/kristofer/go/src/tioga.co/kristofer/kg/tkg/buffer.go Ln# 510
-2018/11/22 12:36:47 >>Setting Point to EOB 549 530
-2018/11/22 12:36:47 >>Called from tioga.co/kristofer/kg/tkg.(*Buffer).SetPoint
->> /home/kristofer/go/src/tioga.co/kristofer/kg/tkg/buffer.go Ln# 120
-2018/11/22 12:36:47 >>Setting Point to EOB 549 530
-2018/11/22 12:36:47 reframing!
-2018/11/22 12:36:47 P0 lines 1 22 PageStart 0 Point 530, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:47 >>Called from tioga.co/kristofer/kg/tkg.(*Editor).SetTermCursor
->> /home/kristofer/go/src/tioga.co/kristofer/kg/tkg/editor.go Ln# 493
-2018/11/22 12:36:47 >>Setting Point to EOB 530 530
-2018/11/22 12:36:47 P0 lines 1 22 PageStart 0 Point 530, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:47 >>Called from tioga.co/kristofer/kg/tkg.(*Editor).SetTermCursor
->> /home/kristofer/go/src/tioga.co/kristofer/kg/tkg/editor.go Ln# 493
-2018/11/22 12:36:47 >>Setting Point to EOB 530 530
-2018/11/22 12:36:47 >>
-  1542908207 
->>
-2018/11/22 12:36:47 P0 lines 1 22 PageStart 0 Point 529, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:47 P0 lines 1 22 PageStart 0 Point 529, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:50 >>
-  1542908210 
->>
-2018/11/22 12:36:50 P0 lines 1 22 PageStart 0 Point 528, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:50 P0 lines 1 22 PageStart 0 Point 528, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:52 >>
-  1542908212 
->>
-2018/11/22 12:36:52 P0 lines 1 22 PageStart 0 Point 527, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:52 P0 lines 1 22 PageStart 0 Point 527, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:52 >>
-  1542908212 
->>
-2018/11/22 12:36:52 P0 lines 1 22 PageStart 0 Point 526, bp.PageEnd 529 BufL 530
-2018/11/22 12:36:52 P0 lines 1 22 PageStart 0 Point 526, bp.PageEnd 529 BufL 530
-2018/11/22 12:37:02 >>
-  1542908222 
+2018/11/22 13:44:10 Start of Log...
+2018/11/22 13:44:10 >>Called from tioga.co/kristofer/kg/tkg.(*Buffer).SetPoint
+>> /home/kristofer/go/src/tioga.co/kristofer/kg/tkg/buffer.go Ln# 124
+2018/11/22 13:44:10 >>Setting Point to EOB 509 509
+2018/11/22 13:44:10 reframing!
+2018/11/22 13:44:10 OneWindow rows 21 line 24
+2018/11/22 13:44:10 P0 lines 1 22 PageStart 0 Point 0, bp.PageEnd 529 BufL 530
+2018/11/22 13:44:11 >>
+  1542912251 
+>>
+2018/11/22 13:44:11 P0 lines 1 22 PageStart 0 Point 28, bp.PageEnd 529 BufL 530
+2018/11/22 13:44:11 P0 lines 1 22 PageStart 0 Point 28, bp.PageEnd 529 BufL 530
+2018/11/22 13:44:11 >>
+  1542912251 
+>>
+2018/11/22 13:44:11 P0 lines 1 22 PageStart 0 Point 57, bp.PageEnd 529 BufL 530
+2018/11/22 13:44:11 P0 lines 1 22 PageStart 0 Point 57, bp.PageEnd 529 BufL 530
+2018/11/22 13:44:13 >>
+  1542912253 
+>>
+2018/11/22 13:44:13 P0 lines 1 22 PageStart 0 Point 58, bp.PageEnd 530 BufL 531
+2018/11/22 13:44:13 P0 lines 1 22 PageStart 0 Point 58, bp.PageEnd 530 BufL 531
+2018/11/22 13:44:14 >>
+  1542912254 
+>>
+2018/11/22 13:44:14 P0 lines 1 22 PageStart 0 Point 59, bp.PageEnd 531 BufL 532
+2018/11/22 13:44:14 P0 lines 1 22 PageStart 0 Point 59, bp.PageEnd 531 BufL 532
+2018/11/22 13:44:15 >>
+  1542912255 
+>>
+2018/11/22 13:44:15 P0 lines 1 22 PageStart 0 Point 58, bp.PageEnd 530 BufL 531
+2018/11/22 13:44:15 P0 lines 1 22 PageStart 0 Point 58, bp.PageEnd 530 BufL 531
+2018/11/22 13:44:16 >>
+  1542912256 
+>>
+2018/11/22 13:44:16 P0 lines 1 22 PageStart 0 Point 57, bp.PageEnd 529 BufL 530
+2018/11/22 13:44:16 P0 lines 1 22 PageStart 0 Point 57, bp.PageEnd 529 BufL 530
+2018/11/22 13:44:17 >>
+  1542912257 
+>>
+2018/11/22 13:44:17 P0 lines 1 22 PageStart 0 Point 57, bp.PageEnd 529 BufL 530
+2018/11/22 13:44:17 P0 lines 1 22 PageStart 0 Point 57, bp.PageEnd 529 BufL 530
+2018/11/22 13:44:17 >>
+  1542912257 
+>>
+2018/11/22 13:44:20 P0 lines 1 22 PageStart 0 Point 259, bp.PageEnd 529 BufL 530
+2018/11/22 13:44:20 P0 lines 1 22 PageStart 0 Point 259, bp.PageEnd 529 BufL 530
+2018/11/22 13:44:27 >>
+  1542912267 
+>>
+2018/11/22 13:44:27 P0 lines 1 22 PageStart 0 Point 254, bp.PageEnd 529 BufL 530
+2018/11/22 13:44:27 P0 lines 1 22 PageStart 0 Point 254, bp.PageEnd 529 BufL 530
+2018/11/22 13:44:27 >>
+  1542912267 
+>>
+2018/11/22 13:44:27 P0 lines 1 22 PageStart 0 Point 222, bp.PageEnd 529 BufL 530
+2018/11/22 13:44:27 P0 lines 1 22 PageStart 0 Point 222, bp.PageEnd 529 BufL 530
+2018/11/22 13:44:27 >>
+  1542912267 
+>>
+2018/11/22 13:44:27 P0 lines 1 22 PageStart 0 Point 186, bp.PageEnd 529 BufL 530
+2018/11/22 13:44:27 P0 lines 1 22 PageStart 0 Point 186, bp.PageEnd 529 BufL 530
+2018/11/22 13:44:28 >>
+  1542912268 
+>>
+2018/11/22 13:44:28 P0 lines 1 22 PageStart 0 Point 157, bp.PageEnd 529 BufL 530
+2018/11/22 13:44:28 P0 lines 1 22 PageStart 0 Point 157, bp.PageEnd 529 BufL 530
+2018/11/22 13:44:28 >>
+  1542912268 
+>>
+2018/11/22 13:44:28 P0 lines 1 22 PageStart 0 Point 125, bp.PageEnd 529 BufL 530
+2018/11/22 13:44:28 P0 lines 1 22 PageStart 0 Point 125, bp.PageEnd 529 BufL 530
+2018/11/22 13:44:28 >>
+  1542912268 
+>>
+2018/11/22 13:44:28 P0 lines 1 22 PageStart 0 Point 93, bp.PageEnd 529 BufL 530
+2018/11/22 13:44:28 P0 lines 1 22 PageStart 0 Point 93, bp.PageEnd 529 BufL 530
+2018/11/22 13:44:28 >>
+  1542912268 
+>>
+2018/11/22 13:44:28 P0 lines 1 22 PageStart 0 Point 57, bp.PageEnd 529 BufL 530
+2018/11/22 13:44:28 P0 lines 1 22 PageStart 0 Point 57, bp.PageEnd 529 BufL 530
+2018/11/22 13:44:28 >>
+  1542912268 
+>>
+2018/11/22 13:44:28 P0 lines 1 22 PageStart 0 Point 28, bp.PageEnd 529 BufL 530
+2018/11/22 13:44:28 P0 lines 1 22 PageStart 0 Point 28, bp.PageEnd 529 BufL 530
+2018/11/22 13:44:28 >>
+  1542912268 
+>>
+2018/11/22 13:44:28 P0 lines 1 22 PageStart 0 Point 0, bp.PageEnd 529 BufL 530
+2018/11/22 13:44:28 P0 lines 1 22 PageStart 0 Point 0, bp.PageEnd 529 BufL 530
+2018/11/22 13:44:29 >>
+  1542912269 
+>>
+2018/11/22 13:44:29 P0 lines 1 22 PageStart 0 Point 28, bp.PageEnd 529 BufL 530
+2018/11/22 13:44:29 P0 lines 1 22 PageStart 0 Point 28, bp.PageEnd 529 BufL 530
+2018/11/22 13:44:30 >>
+  1542912270 
+>>
+2018/11/22 13:44:30 P0 lines 1 22 PageStart 0 Point 57, bp.PageEnd 529 BufL 530
+2018/11/22 13:44:30 P0 lines 1 22 PageStart 0 Point 57, bp.PageEnd 529 BufL 530
+2018/11/22 13:44:30 >>
+  1542912270 
+>>
+2018/11/22 13:44:30 P0 lines 1 22 PageStart 0 Point 93, bp.PageEnd 529 BufL 530
+2018/11/22 13:44:30 P0 lines 1 22 PageStart 0 Point 93, bp.PageEnd 529 BufL 530
+2018/11/22 13:44:30 >>
+  1542912270 
+>>
+2018/11/22 13:44:30 P0 lines 1 22 PageStart 0 Point 125, bp.PageEnd 529 BufL 530
+2018/11/22 13:44:30 P0 lines 1 22 PageStart 0 Point 125, bp.PageEnd 529 BufL 530
+2018/11/22 13:44:30 >>
+  1542912270 
+>>
+2018/11/22 13:44:30 P0 lines 1 22 PageStart 0 Point 157, bp.PageEnd 529 BufL 530
+2018/11/22 13:44:30 P0 lines 1 22 PageStart 0 Point 157, bp.PageEnd 529 BufL 530
+2018/11/22 13:44:30 >>
+  1542912270 
+>>
+2018/11/22 13:44:30 P0 lines 1 22 PageStart 0 Point 186, bp.PageEnd 529 BufL 530
+2018/11/22 13:44:30 P0 lines 1 22 PageStart 0 Point 186, bp.PageEnd 529 BufL 530
+2018/11/22 13:44:30 >>
+  1542912270 
+>>
+2018/11/22 13:44:30 P0 lines 1 22 PageStart 0 Point 222, bp.PageEnd 529 BufL 530
+2018/11/22 13:44:30 P0 lines 1 22 PageStart 0 Point 222, bp.PageEnd 529 BufL 530
+2018/11/22 13:44:31 >>
+  1542912271 
+>>
+2018/11/22 13:44:31 P0 lines 1 22 PageStart 0 Point 254, bp.PageEnd 529 BufL 530
+2018/11/22 13:44:31 P0 lines 1 22 PageStart 0 Point 254, bp.PageEnd 529 BufL 530
+2018/11/22 13:44:36 >>
+  1542912276 
+>>
+2018/11/22 13:44:36 P0 lines 1 22 PageStart 0 Point 254, bp.PageEnd 529 BufL 530
+2018/11/22 13:44:36 P0 lines 1 22 PageStart 0 Point 254, bp.PageEnd 529 BufL 530
+2018/11/22 13:44:36 >>
+  1542912276 
+>>
+2018/11/22 13:44:38 P0 lines 1 22 PageStart 0 Point 529, bp.PageEnd 529 BufL 530
+2018/11/22 13:44:38 P0 lines 1 22 PageStart 0 Point 529, bp.PageEnd 529 BufL 530
+2018/11/22 13:44:41 >>
+  1542912281 
+>>
+2018/11/22 13:44:41 P0 lines 1 22 PageStart 0 Point 528, bp.PageEnd 529 BufL 530
+2018/11/22 13:44:41 P0 lines 1 22 PageStart 0 Point 528, bp.PageEnd 529 BufL 530
+2018/11/22 13:44:42 >>
+  1542912282 
+>>
+2018/11/22 13:44:42 P0 lines 1 22 PageStart 0 Point 527, bp.PageEnd 529 BufL 530
+2018/11/22 13:44:42 P0 lines 1 22 PageStart 0 Point 527, bp.PageEnd 529 BufL 530
+2018/11/22 13:44:42 >>
+  1542912282 
+>>
+2018/11/22 13:44:42 P0 lines 1 22 PageStart 0 Point 526, bp.PageEnd 529 BufL 530
+2018/11/22 13:44:42 P0 lines 1 22 PageStart 0 Point 526, bp.PageEnd 529 BufL 530
+2018/11/22 13:44:42 >>
+  1542912282 
+>>
+2018/11/22 13:44:42 P0 lines 1 22 PageStart 0 Point 525, bp.PageEnd 529 BufL 530
+2018/11/22 13:44:42 P0 lines 1 22 PageStart 0 Point 525, bp.PageEnd 529 BufL 530
+2018/11/22 13:44:42 >>
+  1542912282 
+>>
+2018/11/22 13:44:42 P0 lines 1 22 PageStart 0 Point 524, bp.PageEnd 529 BufL 530
+2018/11/22 13:44:42 P0 lines 1 22 PageStart 0 Point 524, bp.PageEnd 529 BufL 530
+2018/11/22 13:44:42 >>
+  1542912282 
+>>
+2018/11/22 13:44:42 P0 lines 1 22 PageStart 0 Point 523, bp.PageEnd 529 BufL 530
+2018/11/22 13:44:42 P0 lines 1 22 PageStart 0 Point 523, bp.PageEnd 529 BufL 530
+2018/11/22 13:44:43 >>
+  1542912283 
+>>
+2018/11/22 13:44:43 P0 lines 1 22 PageStart 0 Point 522, bp.PageEnd 529 BufL 530
+2018/11/22 13:44:43 P0 lines 1 22 PageStart 0 Point 522, bp.PageEnd 529 BufL 530
+2018/11/22 13:44:43 >>
+  1542912283 
+>>
+2018/11/22 13:44:43 P0 lines 1 22 PageStart 0 Point 521, bp.PageEnd 529 BufL 530
+2018/11/22 13:44:43 P0 lines 1 22 PageStart 0 Point 521, bp.PageEnd 529 BufL 530
+2018/11/22 13:44:43 >>
+  1542912283 
+>>
+2018/11/22 13:44:43 P0 lines 1 22 PageStart 0 Point 520, bp.PageEnd 529 BufL 530
+2018/11/22 13:44:43 P0 lines 1 22 PageStart 0 Point 520, bp.PageEnd 529 BufL 530
+2018/11/22 13:44:44 >>
+  1542912284 
+>>
+2018/11/22 13:44:44 P0 lines 1 22 PageStart 0 Point 519, bp.PageEnd 529 BufL 530
+2018/11/22 13:44:44 P0 lines 1 22 PageStart 0 Point 519, bp.PageEnd 529 BufL 530
+2018/11/22 13:44:44 >>
+  1542912284 
+>>
+2018/11/22 13:44:44 P0 lines 1 22 PageStart 0 Point 518, bp.PageEnd 529 BufL 530
+2018/11/22 13:44:44 P0 lines 1 22 PageStart 0 Point 518, bp.PageEnd 529 BufL 530
+2018/11/22 13:44:44 >>
+  1542912284 
+>>
+2018/11/22 13:44:44 P0 lines 1 22 PageStart 0 Point 517, bp.PageEnd 529 BufL 530
+2018/11/22 13:44:44 P0 lines 1 22 PageStart 0 Point 517, bp.PageEnd 529 BufL 530
+2018/11/22 13:44:44 >>
+  1542912284 
+>>
+2018/11/22 13:44:44 P0 lines 1 22 PageStart 0 Point 516, bp.PageEnd 529 BufL 530
+2018/11/22 13:44:44 P0 lines 1 22 PageStart 0 Point 516, bp.PageEnd 529 BufL 530
+2018/11/22 13:44:44 >>
+  1542912284 
+>>
+2018/11/22 13:44:44 P0 lines 1 22 PageStart 0 Point 515, bp.PageEnd 529 BufL 530
+2018/11/22 13:44:44 P0 lines 1 22 PageStart 0 Point 515, bp.PageEnd 529 BufL 530
+2018/11/22 13:44:44 >>
+  1542912284 
+>>
+2018/11/22 13:44:44 P0 lines 1 22 PageStart 0 Point 514, bp.PageEnd 529 BufL 530
+2018/11/22 13:44:44 P0 lines 1 22 PageStart 0 Point 514, bp.PageEnd 529 BufL 530
+2018/11/22 13:44:44 >>
+  1542912284 
+>>
+2018/11/22 13:44:44 P0 lines 1 22 PageStart 0 Point 513, bp.PageEnd 529 BufL 530
+2018/11/22 13:44:44 P0 lines 1 22 PageStart 0 Point 513, bp.PageEnd 529 BufL 530
+2018/11/22 13:44:44 >>
+  1542912284 
+>>
+2018/11/22 13:44:44 P0 lines 1 22 PageStart 0 Point 512, bp.PageEnd 529 BufL 530
+2018/11/22 13:44:44 P0 lines 1 22 PageStart 0 Point 512, bp.PageEnd 529 BufL 530
+2018/11/22 13:44:44 >>
+  1542912284 
+>>
+2018/11/22 13:44:44 P0 lines 1 22 PageStart 0 Point 511, bp.PageEnd 529 BufL 530
+2018/11/22 13:44:44 P0 lines 1 22 PageStart 0 Point 511, bp.PageEnd 529 BufL 530
+2018/11/22 13:44:44 >>
+  1542912284 
+>>
+2018/11/22 13:44:44 P0 lines 1 22 PageStart 0 Point 510, bp.PageEnd 529 BufL 530
+2018/11/22 13:44:44 P0 lines 1 22 PageStart 0 Point 510, bp.PageEnd 529 BufL 530
+2018/11/22 13:44:44 >>
+  1542912284 
+>>
+2018/11/22 13:44:44 P0 lines 1 22 PageStart 0 Point 509, bp.PageEnd 529 BufL 530
+2018/11/22 13:44:44 P0 lines 1 22 PageStart 0 Point 509, bp.PageEnd 529 BufL 530
+2018/11/22 13:44:44 >>
+  1542912284 
+>>
+2018/11/22 13:44:44 P0 lines 1 22 PageStart 0 Point 508, bp.PageEnd 529 BufL 530
+2018/11/22 13:44:44 P0 lines 1 22 PageStart 0 Point 508, bp.PageEnd 529 BufL 530
+2018/11/22 13:44:45 >>
+  1542912285 
+>>
+2018/11/22 13:44:45 P0 lines 1 22 PageStart 0 Point 507, bp.PageEnd 529 BufL 530
+2018/11/22 13:44:45 P0 lines 1 22 PageStart 0 Point 507, bp.PageEnd 529 BufL 530
+2018/11/22 13:44:45 >>
+  1542912285 
+>>
+2018/11/22 13:44:45 P0 lines 1 22 PageStart 0 Point 506, bp.PageEnd 529 BufL 530
+2018/11/22 13:44:45 P0 lines 1 22 PageStart 0 Point 506, bp.PageEnd 529 BufL 530
+2018/11/22 13:44:45 >>
+  1542912285 
+>>
+2018/11/22 13:44:45 P0 lines 1 22 PageStart 0 Point 505, bp.PageEnd 529 BufL 530
+2018/11/22 13:44:45 P0 lines 1 22 PageStart 0 Point 505, bp.PageEnd 529 BufL 530
+2018/11/22 13:44:51 >>
+  1542912291 
 >>

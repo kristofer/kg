@@ -66,15 +66,11 @@ func (wp *Window) OnKey(ev *termbox.Event) {
 		wp.Buffer.AddRune('\n')
 	case termbox.KeyTab:
 		wp.Buffer.AddRune('\t')
-		//g.set_overlay_mode(init_extended_mode(g))
-	// case termbox.KeyCtrlS:
-	// 	g.set_overlay_mode(init_isearch_mode(g, false))
-	// case termbox.KeyCtrlR:
-	// 	g.set_overlay_mode(init_isearch_mode(g, true))
 	default:
-		// if ev.Mod&termbox.ModAlt != 0 && e.OnAltKey(ev) {
-		// 	break
-		// }
+		if ev.Mod&termbox.ModAlt != 0 && wp.Editor.OnAltKey(ev) {
+			log.Println("Alt!", ev.Key, ev.Ch)
+			break
+		}
 		//ch := ev.Ch
 		//log.Printf("Win OnKey %#U Point is %d\n", ch, wp.Buffer.Point())
 		wp.Buffer.AddRune(ev.Ch)
@@ -102,8 +98,6 @@ func (wp *Window) AssociateBuffer(bp *Buffer) {
 
 // DisassociateBuffer xxx
 func (wp *Window) DisassociateBuffer() {
-	// assert(wp != NULL);
-	// assert(wp->Buffer != NULL);
 	if wp != nil && wp.Buffer != nil {
 		wp.Buffer.WinCount--
 		wp.Buffer = nil
@@ -134,7 +128,7 @@ func PushBuffer2Window(w *Window) { // b2w
 	w.Point = b.Point()
 	w.WinStart = b.PageStart
 	w.WinEnd = b.PageEnd
-	w.Row = b.PointRow
-	w.Col = b.PointCol
+	// w.Row = b.PointRow
+	// w.Col = b.PointCol
 	b.TextSize = b.BufferLen()
 }

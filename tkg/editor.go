@@ -14,6 +14,11 @@ import (
 // var LINES = 1
 // var COLS = 10
 // var MSGLINE = (LINES - 1)
+func checkErr(e error) {
+	if e != nil {
+		panic(e)
+	}
+}
 
 const (
 	VERSION     = "kg 1.0, Public Domain, November 2018, Kristofer Younger,  No warranty."
@@ -88,9 +93,7 @@ func (e *Editor) StartEditor(argv []string, argc int) {
 	e.FGColor = termbox.ColorDefault
 	e.BGColor = termbox.ColorWhite
 	err = termbox.Init()
-	if err != nil {
-		panic(err)
-	}
+	checkErr(err)
 	defer termbox.Close()
 	e.Cols, e.Lines = termbox.Size()
 
@@ -128,14 +131,14 @@ func (e *Editor) StartEditor(argv []string, argc int) {
 	e.CurrentWindow.AssociateBuffer(e.CurrentBuffer)
 
 	if !(e.CurrentBuffer.GrowGap(CHUNK)) {
-		panic("%s: Failed to allocate required memory.\n")
+		//panic("%s: Failed to allocate required memory.\n")
 	}
 	//e.Key_map = e.Keymap
 	e.Keymap = keymap
-	e.KeysMapMap = make(map[string]*Keymapt)
-	for _, k := range e.Keymap {
-		e.KeysMapMap[k.KeyBytes] = &k
-	}
+	// e.KeysMapMap = make(map[string]*Keymapt)
+	// for _, k := range e.Keymap {
+	// 	e.KeysMapMap[k.KeyBytes] = &k
+	// }
 	termbox.SetInputMode(termbox.InputAlt | termbox.InputEsc | termbox.InputMouse)
 	//termbox.SetInputMode(termbox.InputAlt)
 
@@ -192,9 +195,9 @@ func (e *Editor) HandleEvent(ev *termbox.Event) bool {
 				return false
 			}
 		} else {
-			if ev.Mod&termbox.ModAlt != 0 && e.OnAltKey(ev) {
-				break
-			}
+			// if ev.Mod&termbox.ModAlt != 0 && e.OnAltKey(ev) {
+			// 	break
+			// }
 			e.CurrentWindow.OnKey(ev)
 		}
 		e.UpdateDisplay()
@@ -389,16 +392,15 @@ func (e *Editor) Display(wp *Window, flag bool) {
 	l2end := bp.LineEnd(bp.PointForLine(l2))
 	bp.PageEnd = l2end
 	log.Printf("P0 lines %d %d PageStart %d Point %d, bp.PageEnd %d BufL %d", l1, l2, bp.PageStart, bp.Point(), bp.PageEnd, bp.BufferLen())
-	//toPrint := bp.GetTextForLines(l1, l2+1)
-	//runeArray := []rune(toPrint)
 	r, c := 0, 0
 	for k := bp.PageStart; k <= bp.PageEnd; k++ {
 		/* reached point - store the cursor position */
 		if bp.Point() == k {
 			bp.PointCol = c
+			wp.Col = c
 			bp.PointRow = r
+			wp.Row = r
 		}
-		//rch := runeArray[k]
 		rch, err := bp.RuneAt(k)
 		if err != nil {
 			log.Println("Error on RuneAt", err)
@@ -439,9 +441,8 @@ func (e *Editor) Display(wp *Window, flag bool) {
 	e.ModeLine(wp)
 	if wp == e.CurrentWindow && flag {
 		e.DisplayMsg()
-		//move(bp->b_row, bp->b_col); /* set cursor */
-		e.SetTermCursor(bp.PointCol, bp.PointRow)
-		termbox.Flush() //refresh();
+		e.SetTermCursor(wp.Col, wp.Row) //bp.PointCol, bp.PointRow)
+		termbox.Flush()                 //refresh();
 	}
 	wp.Updated = false
 	// b2w(wp); /* save buffer stuff on window */

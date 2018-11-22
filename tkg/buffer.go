@@ -208,9 +208,7 @@ func (bp *Buffer) GetTextForLines(l1, l2 int) string {
 	j := 0
 	for i := pt1; j < len(ret); i++ {
 		rch, err := bp.RuneAt(i)
-		if err != nil {
-			panic(err)
-		}
+		checkErr(err)
 		ret[j] = rch
 		j++
 	}
@@ -275,9 +273,7 @@ func (bp *Buffer) LineStart(point int) int {
 			return 0
 		}
 		p, err = bp.RuneAt(x)
-		if err != nil {
-			panic(err)
-		}
+		checkErr(err)
 		if p == '\n' {
 			//fmt.Println("Newline", x)
 			x++
@@ -298,9 +294,7 @@ func (bp *Buffer) LineEnd(point int) int {
 			return ep - 1
 		}
 		p, err := bp.RuneAt(point)
-		if err != nil {
-			panic(err)
-		}
+		checkErr(err)
 		if p == '\n' {
 			return point
 		}
@@ -329,9 +323,7 @@ func (bp *Buffer) PointForLine(ln int) int {
 	lines := 0
 	for pt := 0; pt < bp.BufferLen(); pt++ {
 		etch, err := bp.RuneAt(pt)
-		if err != nil {
-			panic(err)
-		}
+		checkErr(err)
 		if etch == '\n' {
 			lines++
 		}
@@ -356,11 +348,8 @@ func (bp *Buffer) LineForPoint(point int) (line int) {
 			doIncr = false
 		}
 		etch, err := bp.RuneAt(pt)
-		if err != nil {
-			panic(err)
-		}
+		checkErr(err)
 		if etch == '\n' {
-			//line++
 			doIncr = true
 		}
 	}
@@ -412,9 +401,7 @@ func (bp *Buffer) SegStart(start, finish, limit int) int {
 			return bp.BufferLen()
 		}
 		rch, err := bp.RuneAt(scan)
-		if err != nil {
-			panic(err)
-		}
+		checkErr(err)
 
 		if rch == '\n' {
 			c = 0
@@ -448,9 +435,7 @@ func (bp *Buffer) SegNext(start, finish, limit int) int {
 			return bp.BufferLen()
 		}
 		rch, err := bp.RuneAt(scan)
-		if err != nil {
-			panic(err)
-		}
+		checkErr(err)
 		//if (bp.b_ebuf <= p || COLS <= c)
 		if limit <= c {
 			break

@@ -16,7 +16,7 @@ func (e *Editor) PosixFile(fname string) bool {
 	}
 
 	for f := range fn {
-		if (!unicode.IsLetter(rune(f))) && f != '.' && f != '_' && f != '-' && f != '/' {
+		if (unicode.IsLetter(rune(f))) && f != '.' && f != '_' && f != '-' && f != '/' {
 			return false
 		}
 	}

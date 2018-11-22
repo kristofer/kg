@@ -2,6 +2,7 @@ package tkg
 
 import (
 	"log"
+	"strconv"
 	"unicode"
 
 	termbox "github.com/nsf/termbox-go"
@@ -24,7 +25,7 @@ func (e *Editor) down() {
 
 }
 func (e *Editor) lnbegin() {
-	e.CurrentBuffer.SetPoint(e.CurrentBuffer.LineForPoint(e.CurrentBuffer.Point()))
+	e.CurrentBuffer.SetPoint(e.CurrentBuffer.LineStart(e.CurrentBuffer.Point()))
 }
 func (e *Editor) lnend() {
 	e.CurrentBuffer.SetPoint(e.CurrentBuffer.LineEnd(e.CurrentBuffer.Point()))
@@ -128,19 +129,13 @@ func (e *Editor) delete() {
 }
 
 func (e *Editor) gotoline() {
-	// int line;
-	// point_t p;
-
-	// if (getinput("Goto line: ", temp, STRBUF_S, F_CLEAR)) {
-	// 	line = atoi(temp);
-	// 	p = line_to_point(line);
-	// 	if (p != -1) {
-	// 		curbp->b_point = p;
-	// 		msg("Line %d", line);
-	// 	} else {
-	// 		msg("Line %d, not found", line);
-	// 	}
-	// }
+	fname := e.GetFilename("Goto Line: ")
+	ln, err := strconv.Atoi(fname)
+	if err != nil {
+		e.msg("Invalid Line.")
+	}
+	pt := e.CurrentBuffer.PointForLine(ln)
+	e.CurrentBuffer.SetPoint(pt)
 }
 
 func (e *Editor) insertfile() {
@@ -148,7 +143,7 @@ func (e *Editor) insertfile() {
 	if fname != "" {
 		res := e.InsertFile(fname, false)
 		if res {
-			//e.msg("Loaded file %s", fname)
+			e.msg("Loaded file %s", fname)
 		}
 	}
 }
@@ -180,16 +175,13 @@ func (e *Editor) readfile() {
 func (e *Editor) savebuffer() {
 	if e.CurrentBuffer.Filename != "" {
 		e.Save(e.CurrentBuffer.Filename)
-		return
+	} else {
+		e.writefile()
 	}
-	// } else {
-	// 	writefile();
-	// }
 	e.Refresh()
 }
 
 func (e *Editor) writefile() {
-	// if (getinput("Write file: ", temp, NAME_MAX, F_NONE))
 	fname := e.GetFilename("Write file: ")
 	if e.Save(fname) == true {
 		e.CurrentBuffer.Filename = fname
@@ -228,20 +220,16 @@ func (e *Editor) iblock() {
 	e.msg("Mark set")
 }
 
-func (e *Editor) toggle_overwrite_mode() {
-	// NEVER!!
+func (e *Editor) toggleOverwriteMode() {
+	e.msg("NEVER!! no overwite mode, you philistine.")
 }
 
 func (e *Editor) killtoeol() {
-	//     if (curbp->b_point == pos(curbp, curbp->b_ebuf))
-	// 	return; /* do nothing if at end of file */
-	// if (*(ptr(curbp, curbp->b_point)) == 0xa) {
-	// 	delete(); /* delete CR if at start of empty line */
-	// } else {
-	// 	curbp->b_mark = curbp->b_point;
-	// 	lnend();
-	// 	if (curbp->b_mark != curbp->b_point) copy_cut(TRUE);
-	// }
+	bp := e.CurrentBuffer
+	pt := e.CurrentBuffer.Point()
+	for i := 0; i < bp.LineLenAtPoint(pt)-bp.ColumnForPoint(pt); i++ {
+		bp.Delete()
+	}
 }
 
 func (e *Editor) copy_cut(cut int) {
