@@ -5,13 +5,13 @@ import (
 	"fmt"
 	"log"
 	"runtime"
-	"testing"
 )
 
 /*
  * Buffer
  */
 
+// Buffer main struct
 type Buffer struct {
 	data    []rune
 	preLen  int
@@ -39,8 +39,9 @@ type Buffer struct {
 // var RootBuffer *Buffer = nil
 // var CurrentBuffer *Buffer = nil
 
-func (r *Buffer) MarkModified() {
-	r.modified = true
+// MarkModified xxx
+func (bp *Buffer) MarkModified() {
+	bp.modified = true
 }
 
 // NewBuffer - Create a new Buffer
@@ -48,165 +49,165 @@ func NewBuffer() *Buffer {
 	return &Buffer{}
 }
 
-func (r *Buffer) SetText(s string) {
-	r.data = []rune(s)
-	r.preLen = 0
-	r.postLen = len(r.data)
+// SetText xxx
+func (bp *Buffer) SetText(s string) {
+	bp.data = []rune(s)
+	bp.preLen = 0
+	bp.postLen = len(bp.data)
 }
 
-func (r *Buffer) GetText() string {
-	ret := make([]rune, r.preLen+r.postLen)
+// GetText  xxx
+func (bp *Buffer) GetText() string {
+	ret := make([]rune, bp.preLen+bp.postLen)
 
-	copy(ret, r.data)
-	copy(ret[r.preLen:], r.data[r.postStart():])
+	copy(ret, bp.data)
+	copy(ret[bp.preLen:], bp.data[bp.postStart():])
 
 	return string(ret)
 }
 
-func (r *Buffer) logBufferEOB(pt int) {
-	if r.EndOfBuffer(pt) == true {
+func (bp *Buffer) logBufferEOB(pt int) {
+	if bp.EndOfBuffer(pt) == true {
 		pc, file, no, ok := runtime.Caller(1)
 		details := runtime.FuncForPC(pc)
 		if ok && details != nil {
 			log.Printf(">>Called from %s\n>> %s Ln# %d\n", details.Name(), file, no)
 		}
-		log.Println(">>Setting Point to EOB", pt, r.BufferLen())
+		log.Println(">>Setting Point to EOB", pt, bp.BufferLen())
 	}
 }
 
 // RuneAt finally have a reliable!!
-func (r *Buffer) RuneAt(pt int) (rune, error) {
-	r.logBufferEOB(pt)
-	if pt >= len(r.data) {
+func (bp *Buffer) RuneAt(pt int) (rune, error) {
+	bp.logBufferEOB(pt)
+	if pt >= len(bp.data) {
 		return 0, errors.New("Beyond data buffer in RuneAt")
 	}
 	if pt < 0 {
 		return '\u0000', errors.New("negative buffer pointer in RuneAt")
 	}
-	if npt := r.dataPointForBufferPoint(pt); npt < len(r.data) {
-		return r.data[npt], nil
+	if npt := bp.dataPointForBufferPoint(pt); npt < len(bp.data) {
+		return bp.data[npt], nil
 	}
-	log.Println("RuneAt", pt, r.BufferLen(), r.ActualLen())
+	log.Println("RuneAt", pt, bp.BufferLen(), bp.ActualLen())
 	return 0, errors.New("Ran over end of data buffer in RuneAt")
 }
 
-func (r *Buffer) dataPointForBufferPoint(pt int) int {
+func (bp *Buffer) dataPointForBufferPoint(pt int) int {
 	npt := 0
-	if pt < r.preLen {
+	if pt < bp.preLen {
 		npt = pt
 	}
-	if pt >= r.preLen && pt < len(r.data) {
-		npt = pt + r.gapLen()
+	if pt >= bp.preLen && pt < len(bp.data) {
+		npt = pt + bp.gapLen()
 	}
 	return npt
 }
 
 // AddRune add a run to the buffer
-func (r *Buffer) AddRune(ch rune) {
-	if r.gapLen() == 0 {
-		_ = r.GrowGap(CHUNK)
+func (bp *Buffer) AddRune(ch rune) {
+	if bp.gapLen() == 0 {
+		_ = bp.GrowGap(CHUNK)
 	}
-	r.data[r.preLen] = ch
-	r.preLen++
-	r.MarkModified()
+	bp.data[bp.preLen] = ch
+	bp.preLen++
+	bp.MarkModified()
 }
 
 // Point return point
-func (r *Buffer) Point() int {
-	return r.preLen
+func (bp *Buffer) Point() int {
+	return bp.preLen
 }
 
 // SetPoint set the current point to np
-func (r *Buffer) SetPoint(np int) {
-	r.logBufferEOB(np)
+func (bp *Buffer) SetPoint(np int) {
+	bp.logBufferEOB(np)
 	// 	slade gap to end
-	r.CollapseGap()
+	bp.CollapseGap()
 	// move gap <-(left) by np chars
-	gs := r.gapStart()
+	gs := bp.gapStart()
 	for i := gs - np; i > 0; i-- {
-		r.data[r.postStart()-1] = r.data[r.preLen-1]
-		r.preLen--
-		r.postLen++
+		bp.data[bp.postStart()-1] = bp.data[bp.preLen-1]
+		bp.preLen--
+		bp.postLen++
 	}
-	if r.PageEnd < r.preLen {
+	if bp.PageEnd < bp.preLen {
 		log.Println("reframing!")
-		r.Reframe = true
+		bp.Reframe = true
 	}
 }
-func (r *Buffer) SetPointAndCursor(np int) {
-	r.SetPoint(np)
-	x, y := r.XYForPoint(np)
-	r.PointRow = y
-	r.PointCol = x
+
+//SetPointAndCursor xxx
+func (bp *Buffer) SetPointAndCursor(np int) {
+	bp.SetPoint(np)
+	x, y := bp.XYForPoint(np)
+	bp.PointRow = y
+	bp.PointCol = x
 }
 
 // PrintPoint print Point point
-func (r *Buffer) PrintPoint() {
-	fmt.Println("C: ", r.Point())
+func (bp *Buffer) PrintPoint() {
+	fmt.Println("C: ", bp.Point())
 }
 
 // BufferLen length of buffer
-func (r *Buffer) BufferLen() int {
-	return r.preLen + r.postLen
+func (bp *Buffer) BufferLen() int {
+	return bp.preLen + bp.postLen
 }
-func (r *Buffer) EndOfBuffer(pt int) bool {
-	return pt >= (r.preLen + r.postLen)
+
+// EndOfBuffer xxx
+func (bp *Buffer) EndOfBuffer(pt int) bool {
+	return pt >= (bp.preLen + bp.postLen)
 }
 
 // ActualLen length of buffer plus gap
-func (r *Buffer) ActualLen() int {
-	return len(r.data)
+func (bp *Buffer) ActualLen() int {
+	return len(bp.data)
 }
 
-func (r *Buffer) gapStart() int {
-	return r.preLen
-}
-func (r *Buffer) GapStart() int {
-	return r.preLen
+func (bp *Buffer) gapStart() int {
+	return bp.preLen
 }
 
-func (r *Buffer) gapLen() int {
-	return r.postStart() - r.preLen
-}
-func (r *Buffer) GapLen() int {
-	return r.postStart() - r.preLen
+func (bp *Buffer) gapLen() int {
+	return bp.postStart() - bp.preLen
 }
 
-func (r *Buffer) postStart() int {
-	return len(r.data) - r.postLen
+func (bp *Buffer) postStart() int {
+	return len(bp.data) - bp.postLen
 }
 
 // CollapseGap moves the gap to the end of the buffer for replacement
-func (r *Buffer) CollapseGap() {
-	for i := r.preLen; r.postLen > 0; i++ {
-		r.data[r.preLen] = r.data[len(r.data)-r.postLen]
-		r.preLen++
-		r.postLen--
+func (bp *Buffer) CollapseGap() {
+	for i := bp.preLen; bp.postLen > 0; i++ {
+		bp.data[bp.preLen] = bp.data[len(bp.data)-bp.postLen]
+		bp.preLen++
+		bp.postLen--
 	}
 }
 
 // Insert adds the string, growing the gap if needed.
-func (r *Buffer) Insert(s string) {
-	if r.gapLen() < len(s) {
+func (bp *Buffer) Insert(s string) {
+	if bp.gapLen() < len(s) {
 		newGap := len(s) + 32
-		_ = r.GrowGap(newGap)
+		_ = bp.GrowGap(newGap)
 	}
 
-	copy(r.data[r.gapStart():], []rune(s))
-	r.preLen += len(s)
-	//fmt.Println("G", len(r.data)-r.postLen-r.preLen, "S", r.preLen, "E", r.postLen)
-	r.MarkModified()
+	copy(bp.data[bp.gapStart():], []rune(s))
+	bp.preLen += len(s)
+	//fmt.Println("G", len(bp.data)-bp.postLen-bp.preLen, "S", bp.preLen, "E", bp.postLen)
+	bp.MarkModified()
 }
 
 // GetTextForLines return string for [l1, l2) (l2 not included)
-func (r *Buffer) GetTextForLines(l1, l2 int) string {
-	pt1 := r.PointForLine(l1)
-	pt2 := r.PointForLine(l2)
+func (bp *Buffer) GetTextForLines(l1, l2 int) string {
+	pt1 := bp.PointForLine(l1)
+	pt2 := bp.PointForLine(l2)
 	//fmt.Println(pt1, pt2)
 	ret := make([]rune, pt2-pt1)
 	j := 0
 	for i := pt1; j < len(ret); i++ {
-		rch, err := r.RuneAt(i)
+		rch, err := bp.RuneAt(i)
 		if err != nil {
 			panic(err)
 		}
@@ -218,50 +219,52 @@ func (r *Buffer) GetTextForLines(l1, l2 int) string {
 
 // GrowGap makes the gap bigger by n
 // not sure why I need this.
-func (r *Buffer) GrowGap(n int) bool {
-	newData := make([]rune, len(r.data)+n)
+func (bp *Buffer) GrowGap(n int) bool {
+	newData := make([]rune, len(bp.data)+n)
 
-	copy(newData, r.data[:r.preLen])
+	copy(newData, bp.data[:bp.preLen])
 
-	copy(newData[r.postStart()+n:],
-		r.data[r.postStart():])
+	copy(newData[bp.postStart()+n:],
+		bp.data[bp.postStart():])
 
-	r.data = newData
+	bp.data = newData
 	return true
 }
 
 // MoveGap moves the gap to a Point
-func (r *Buffer) MoveGap(offset int) int {
+func (bp *Buffer) MoveGap(offset int) int {
 
 	if offset < 0 {
-		if r.postLen == 0 {
+		if bp.postLen == 0 {
 			return 0
 		}
 		for i := 0; i < offset; i++ {
-			r.data[r.preLen] = r.data[len(r.data)-r.postLen]
-			r.preLen++
-			r.postLen--
+			bp.data[bp.preLen] = bp.data[len(bp.data)-bp.postLen]
+			bp.preLen++
+			bp.postLen--
 		}
 	}
 	if offset > 0 {
-		if r.preLen == 0 {
+		if bp.preLen == 0 {
 			return 0
 		}
 		for i := offset; i < 0; i++ {
-			r.data[r.postStart()-1] = r.data[r.preLen-1]
-			r.preLen--
-			r.postLen++
+			bp.data[bp.postStart()-1] = bp.data[bp.preLen-1]
+			bp.preLen--
+			bp.postLen++
 		}
 	}
 
 	return offset
 }
-func (r *Buffer) LineStart(point int) int {
-	if point > len(r.data)-r.gapLen() {
-		point = len(r.data) - r.gapLen()
+
+//LineStart xxx
+func (bp *Buffer) LineStart(point int) int {
+	if point > len(bp.data)-bp.gapLen() {
+		point = len(bp.data) - bp.gapLen()
 	}
 	sp := point - 1
-	p, err := r.RuneAt(sp)
+	p, err := bp.RuneAt(sp)
 	if p == '\n' {
 		//fmt.Println("Newline", x)
 		sp++
@@ -271,7 +274,7 @@ func (r *Buffer) LineStart(point int) int {
 		if x == 0 {
 			return 0
 		}
-		p, err = r.RuneAt(x)
+		p, err = bp.RuneAt(x)
 		if err != nil {
 			panic(err)
 		}
@@ -285,16 +288,16 @@ func (r *Buffer) LineStart(point int) int {
 }
 
 // LineEnd find the point at end of this line
-func (r *Buffer) LineEnd(point int) int {
+func (bp *Buffer) LineEnd(point int) int {
 	if point < 0 {
 		return 0
 	}
-	ep := len(r.data) - r.gapLen()
+	ep := len(bp.data) - bp.gapLen()
 	for {
 		if point >= ep {
 			return ep - 1
 		}
-		p, err := r.RuneAt(point)
+		p, err := bp.RuneAt(point)
 		if err != nil {
 			panic(err)
 		}
@@ -306,26 +309,26 @@ func (r *Buffer) LineEnd(point int) int {
 }
 
 // LineLenAtPoint length of line at point
-func (r *Buffer) LineLenAtPoint(point int) int {
-	if point >= len(r.data) {
-		point = len(r.data) - 1
+func (bp *Buffer) LineLenAtPoint(point int) int {
+	if point >= len(bp.data) {
+		point = len(bp.data) - 1
 	}
 	if point < 0 {
 		point = 0
 	}
-	start := r.LineStart(point) - 1
-	end := r.LineEnd(point)
+	start := bp.LineStart(point) - 1
+	end := bp.LineEnd(point)
 	return end - start
 }
 
 // PointForLine return point for beginning of line ln
-func (r *Buffer) PointForLine(ln int) int {
+func (bp *Buffer) PointForLine(ln int) int {
 	if ln <= 1 {
 		return 0
 	}
 	lines := 0
-	for pt := 0; pt < r.BufferLen(); pt++ {
-		etch, err := r.RuneAt(pt)
+	for pt := 0; pt < bp.BufferLen(); pt++ {
+		etch, err := bp.RuneAt(pt)
 		if err != nil {
 			panic(err)
 		}
@@ -333,18 +336,18 @@ func (r *Buffer) PointForLine(ln int) int {
 			lines++
 		}
 		if lines == ln {
-			return r.LineStart(pt)
+			return bp.LineStart(pt)
 		}
 	}
-	return r.LineEnd(r.BufferLen()) // -1
+	return bp.LineEnd(bp.BufferLen()) // -1
 }
 
 // LineForPoint returns the line number of point (o = 1)
-func (r *Buffer) LineForPoint(point int) (line int) {
+func (bp *Buffer) LineForPoint(point int) (line int) {
 	line = 1
 	pt := 0
-	if point >= r.BufferLen() {
-		point = r.BufferLen() - 1
+	if point >= bp.BufferLen() {
+		point = bp.BufferLen() - 1
 	}
 	doIncr := false
 	for pt = 1; pt <= point; pt++ {
@@ -352,7 +355,7 @@ func (r *Buffer) LineForPoint(point int) (line int) {
 			line++
 			doIncr = false
 		}
-		etch, err := r.RuneAt(pt)
+		etch, err := bp.RuneAt(pt)
 		if err != nil {
 			panic(err)
 		}
@@ -361,29 +364,29 @@ func (r *Buffer) LineForPoint(point int) (line int) {
 			doIncr = true
 		}
 	}
-	// if pt == r.BufferLen() {
+	// if pt == bp.BufferLen() {
 	// 	line--
 	// }
 	return
 }
 
 // ColumnForPoint returns the column (o = 1) of pt
-func (r *Buffer) ColumnForPoint(point int) (column int) {
-	if point >= r.BufferLen() {
-		point = r.BufferLen() - 1
+func (bp *Buffer) ColumnForPoint(point int) (column int) {
+	if point >= bp.BufferLen() {
+		point = bp.BufferLen() - 1
 	}
-	start := r.LineStart(point)
+	start := bp.LineStart(point)
 	return point - start + 1
 
 }
 
 // XYForPoint returns the cursor location for a pt in the buffer
-func (r *Buffer) XYForPoint(pt int) (x, y int) {
-	x = r.ColumnForPoint(pt)
-	if r.EndOfBuffer(pt) {
-		x = r.ColumnForPoint(r.LineEnd(pt))
+func (bp *Buffer) XYForPoint(pt int) (x, y int) {
+	x = bp.ColumnForPoint(pt)
+	if bp.EndOfBuffer(pt) {
+		x = bp.ColumnForPoint(bp.LineEnd(pt))
 	}
-	y = r.LineForPoint(pt)
+	y = bp.LineForPoint(pt)
 	return
 }
 
@@ -398,17 +401,17 @@ func (bp *Buffer) PointForXY(x, y int) (finalpt int) {
 
 // SegStart Forward scan for start of logical line segment
 // (corresponds to screen line)  containing 'finish'
-func (r *Buffer) SegStart(start, finish, limit int) int {
+func (bp *Buffer) SegStart(start, finish, limit int) int {
 	//var p rune
 	c := 0
 	scan := start
 
 	for scan < finish {
 		//p = ptr(bp, scan);
-		if scan >= r.BufferLen() {
-			return r.BufferLen()
+		if scan >= bp.BufferLen() {
+			return bp.BufferLen()
 		}
-		rch, err := r.RuneAt(scan)
+		rch, err := bp.RuneAt(scan)
 		if err != nil {
 			panic(err)
 		}
@@ -435,16 +438,16 @@ func (r *Buffer) SegStart(start, finish, limit int) int {
 	return finish
 }
 
-/* SegNext Forward scan for start of logical line segment following 'finish' */
-func (r *Buffer) SegNext(start, finish, limit int) int {
+// SegNext Forward scan for start of logical line segment following 'finish'
+func (bp *Buffer) SegNext(start, finish, limit int) int {
 	c := 0
 
-	scan := r.SegStart(start, finish, limit)
+	scan := bp.SegStart(start, finish, limit)
 	for {
-		if scan >= r.BufferLen() {
-			return r.BufferLen()
+		if scan >= bp.BufferLen() {
+			return bp.BufferLen()
 		}
-		rch, err := r.RuneAt(scan)
+		rch, err := bp.RuneAt(scan)
 		if err != nil {
 			panic(err)
 		}
@@ -465,76 +468,76 @@ func (r *Buffer) SegNext(start, finish, limit int) int {
 		}
 	}
 	//(p < bp.b_ebuf ? scan : );
-	if scan < r.BufferLen() {
+	if scan < bp.BufferLen() {
 		return scan
 	}
-	return r.BufferLen()
+	return bp.BufferLen()
 }
 
 // Delete remove a rune forward
-func (r *Buffer) Delete() {
-	if r.postLen == 0 {
+func (bp *Buffer) Delete() {
+	if bp.postLen == 0 {
 		return
 	}
 
-	r.postLen--
+	bp.postLen--
 }
 
 // Backspace remove a rune backward
-func (r *Buffer) Backspace() {
-	if r.preLen == 0 {
+func (bp *Buffer) Backspace() {
+	if bp.preLen == 0 {
 		return
 	}
 
-	r.preLen--
+	bp.preLen--
 }
 
 // PointUp move point up one line
-func (r *Buffer) PointUp() {
-	c1 := r.ColumnForPoint(r.Point())
-	l1 := r.LineStart(r.Point())
+func (bp *Buffer) PointUp() {
+	c1 := bp.ColumnForPoint(bp.Point())
+	l1 := bp.LineStart(bp.Point())
 	l1--
-	l2 := r.LineStart(l1)
+	l2 := bp.LineStart(l1)
 	npt := l2 + c1 - 1
-	if npt < r.PageStart {
-		r.Reframe = true
+	if npt < bp.PageStart {
+		bp.Reframe = true
 	}
-	r.SetPointAndCursor(npt)
+	bp.SetPointAndCursor(npt)
 }
 
 // PointDown move point down one line
-func (r *Buffer) PointDown() {
-	c1 := r.ColumnForPoint(r.Point())
-	l1 := r.LineEnd(r.Point())
-	l2 := r.LineStart(l1 + 1)
+func (bp *Buffer) PointDown() {
+	c1 := bp.ColumnForPoint(bp.Point())
+	l1 := bp.LineEnd(bp.Point())
+	l2 := bp.LineStart(l1 + 1)
 	npt := l2 + c1 - 1
-	r.logBufferEOB(npt)
-	if npt > r.PageEnd {
-		r.Reframe = true
+	bp.logBufferEOB(npt)
+	if npt > bp.PageEnd {
+		bp.Reframe = true
 	}
-	r.SetPointAndCursor(npt)
+	bp.SetPointAndCursor(npt)
 }
 
 // PointNext move point left one
-func (r *Buffer) PointNext() {
-	if r.postLen == 0 {
+func (bp *Buffer) PointNext() {
+	if bp.postLen == 0 {
 		return
 	}
 
-	r.data[r.preLen] = r.data[r.postStart()]
-	r.preLen++
-	r.postLen--
+	bp.data[bp.preLen] = bp.data[bp.postStart()]
+	bp.preLen++
+	bp.postLen--
 }
 
 // PointPrevious move point right one
-func (r *Buffer) PointPrevious() {
-	if r.preLen == 0 {
+func (bp *Buffer) PointPrevious() {
+	if bp.preLen == 0 {
 		return
 	}
 
-	r.data[r.postStart()-1] = r.data[r.preLen-1]
-	r.preLen--
-	r.postLen++
+	bp.data[bp.postStart()-1] = bp.data[bp.preLen-1]
+	bp.preLen--
+	bp.postLen++
 }
 
 // UpUp Move up one screen line
@@ -564,47 +567,33 @@ func (bp *Buffer) DownDown(pt, cc int) int {
 	// return npt
 }
 
-/* GetLineStats scan buffer and fill in curline and lastline */
-func (r *Buffer) GetLineStats() (curline int, lastline int) {
-	pt := r.Point()
-	_, curline = r.XYForPoint(pt)
-	_, lastline = r.XYForPoint(r.BufferLen())
+// GetLineStats scan buffer and fill in curline and lastline
+func (bp *Buffer) GetLineStats() (curline int, lastline int) {
+	pt := bp.Point()
+	_, curline = bp.XYForPoint(pt)
+	_, lastline = bp.XYForPoint(bp.BufferLen())
 	return curline, lastline
 }
 
-func (r *Buffer) DebugPrint() {
+// DebugPrint xxx
+func (bp *Buffer) DebugPrint() {
 	fmt.Printf("*********(gap)\n")
-	for i := 0; i < len(r.data); i++ {
-		if i >= r.gapStart() && i < r.gapStart()+r.gapLen() {
+	for i := 0; i < len(bp.data); i++ {
+		if i >= bp.gapStart() && i < bp.gapStart()+bp.gapLen() {
 			fmt.Printf("@")
-		} else if i < r.preLen {
-			if r.data[i] == '\n' {
+		} else if i < bp.preLen {
+			if bp.data[i] == '\n' {
 				fmt.Printf("%c\n", 0x00B6)
 			} else {
-				fmt.Printf("%c", r.data[i])
+				fmt.Printf("%c", bp.data[i])
 			}
 		} else {
-			if r.data[i] == '\n' {
+			if bp.data[i] == '\n' {
 				fmt.Printf("%c\n", 0x00B6)
 			} else {
-				fmt.Printf("%c", r.data[i])
+				fmt.Printf("%c", bp.data[i])
 			}
 		}
 	}
 	fmt.Printf("\n*********\n")
-}
-func (r *Buffer) DebugError(t *testing.T) {
-	t.Error("|-")
-	t.Errorf("*********\n")
-	for i := 0; i < len(r.data); i++ {
-		if i >= r.gapStart() && i < r.gapStart()+r.gapLen() {
-			t.Errorf("@")
-		} else if i < r.preLen {
-			t.Errorf("%c", r.data[i])
-		} else {
-			t.Errorf("%c", r.data[i])
-		}
-	}
-
-	t.Errorf("\n")
 }

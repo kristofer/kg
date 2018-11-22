@@ -491,11 +491,11 @@ func (e *Editor) SetTermCursor(c, r int) {
 	}
 	pt := wp.Buffer.Point()
 	wp.Buffer.logBufferEOB(pt)
-	wp.CurCol, wp.CurRow = c, r
+	wp.Col, wp.Row = c, r
 	termbox.SetCursor(c, r)
 	if wp.Buffer.EndOfBuffer(pt) == true {
 		eol := wp.Buffer.ColumnForPoint(wp.Buffer.LineEnd(pt)) - 1
-		wp.CurCol, wp.CurRow = eol, r-1
+		wp.Col, wp.Row = eol, r-1
 		termbox.SetCursor(eol, r-1)
 	}
 	/* set cursor for CurrentWin */
@@ -518,7 +518,7 @@ func (e *Editor) ModeLine(wp *Window) {
 	och = lch
 	temp := fmt.Sprintf("%c%c%c kg: %c%c %s wp(%d,%d) (h %d, w%d) rows %d", lch, och, mch, lch, lch,
 		e.GetBufferName(wp.Buffer),
-		wp.CurCol, wp.CurRow,
+		wp.Col, wp.Row,
 		//c, r,
 		e.Lines, e.Cols, wp.TopPt+wp.Rows)
 	x := 0

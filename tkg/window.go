@@ -22,16 +22,15 @@ type Window struct {
 	WinEnd   int    // w_epage
 	TopPt    int    /* w_top Origin 0 top row of window  on screen */
 	Rows     int    /* w_rows no. of rows of text in window */
-	CurRow   int    /* w_row cursor row */
-	CurCol   int    /* w_col cursor col */
+	Row      int    /* w_row cursor row */
+	Col      int    /* w_col cursor col */
 	Updated  bool   // int w_update
 	Name     string // w_name[STRBUF_S];
 } //window_t;
 
+// NewWindow xxx
 func NewWindow(e *Editor) *Window {
-	wp := &Window{} // new(Window) //(window_t *)malloc(sizeof(window_t));
-
-	//assert(wp != NULL); /* call fatal instead XXX */
+	wp := &Window{}
 	wp.Editor = e
 	wp.Next = nil
 	wp.Buffer = nil
@@ -40,12 +39,12 @@ func NewWindow(e *Editor) *Window {
 	wp.TopPt = 0
 	wp.Rows = 0
 	wp.Updated = false
-	//sprintf(wp->Name, "W%d", ++win_cnt);
 	winCount++
 	wp.Name = fmt.Sprintf("W%d", winCount)
 	return wp
 }
 
+// OneWindow xxx
 func (wp *Window) OneWindow() {
 	wp.TopPt = 0
 	wp.Rows = wp.Editor.Lines - 3
@@ -53,6 +52,7 @@ func (wp *Window) OneWindow() {
 	wp.Next = nil
 }
 
+// WindowResize xxx
 func (wp *Window) WindowResize() {
 	wp.Editor.CurrentWindow.OneWindow()
 }
@@ -92,7 +92,7 @@ func (wp *Window) PointForXY(x, y int) (finalpt int) {
 	return 0 //finalpt
 }
 
-// AssociateBuffer
+// AssociateBuffer xxx
 func (wp *Window) AssociateBuffer(bp *Buffer) {
 	if bp != nil && wp != nil {
 		wp.Buffer = bp
@@ -100,7 +100,7 @@ func (wp *Window) AssociateBuffer(bp *Buffer) {
 	}
 }
 
-// DisassociateBuffer
+// DisassociateBuffer xxx
 func (wp *Window) DisassociateBuffer() {
 	// assert(wp != NULL);
 	// assert(wp->Buffer != NULL);
@@ -110,14 +110,14 @@ func (wp *Window) DisassociateBuffer() {
 	}
 }
 
-// SyncBuffer
+// SyncBuffer xxx
 func SyncBuffer(w *Window) { //sync w2b win to buff
 	b := w.Buffer
 	b.SetPoint(w.Point)
 	b.PageStart = w.WinStart
 	b.PageEnd = w.WinEnd
-	b.PointRow = w.CurRow
-	b.PointCol = w.CurCol
+	b.PointRow = w.Row
+	b.PointCol = w.Col
 
 	/* fixup Pointers in other windows of the same buffer, if size of edit text changed */
 	// if b.Point() > b.OrigPoint {
@@ -134,7 +134,7 @@ func PushBuffer2Window(w *Window) { // b2w
 	w.Point = b.Point()
 	w.WinStart = b.PageStart
 	w.WinEnd = b.PageEnd
-	w.CurRow = b.PointRow
-	w.CurCol = b.PointCol
+	w.Row = b.PointRow
+	w.Col = b.PointCol
 	b.TextSize = b.BufferLen()
 }
