@@ -160,6 +160,14 @@ func (e *Editor) handleEvent(ev *termbox.Event) bool {
 			// if ev.Mod&termbox.ModAlt != 0 && e.OnAltKey(ev) {
 			// 	break
 			// }
+			if (ev.Mod & termbox.ModAlt) != 0 {
+				switch ev.Ch {
+				case 'j':
+					e.msg("FOUND ALT J")
+				// and others..
+				default:
+				}
+			}
 			e.CurrentWindow.OnKey(ev)
 		}
 		e.
@@ -202,6 +210,14 @@ func (e *Editor) handleEvent(ev *termbox.Event) bool {
 
 // OnSysKey on Ctrl key pressed
 func (e *Editor) OnSysKey(ev *termbox.Event) bool {
+	if (ev.Mod & termbox.ModAlt) != 0 {
+		switch ev.Ch {
+		case 'j':
+			e.msg("FOUND ALT J")
+		// and others..
+		default:
+		}
+	}
 	switch ev.Key {
 	case termbox.KeyCtrlX:
 		e.msg("C-X ")
