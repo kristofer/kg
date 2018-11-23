@@ -35,10 +35,12 @@ func (e *Editor) top() {
 	e.CurrentBuffer.SetPoint(0)
 }
 func (e *Editor) bottom() {
-	e.CurrentBuffer.SetPoint(e.CurrentBuffer.BufferLen())
-	if e.CurrentBuffer.PageEnd < e.CurrentBuffer.BufferLen() {
-		e.CurrentBuffer.Reframe = true
-	}
+	e.CurrentBuffer.SetPoint(e.CurrentBuffer.BufferLen() - 1)
+	e.CurrentBuffer.Reframe = true
+	e.CurrentBuffer.PageEnd = e.CurrentBuffer.BufferLen() - 1
+	// if e.CurrentBuffer.PageEnd < e.CurrentBuffer.BufferLen() {
+	// 	e.CurrentBuffer.Reframe = true
+	// }
 }
 func (e *Editor) block() {
 	e.CurrentBuffer.Mark = e.CurrentBuffer.Point()

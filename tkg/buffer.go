@@ -122,7 +122,6 @@ func (bp *Buffer) Point() int {
 // SetPoint set the current point to np
 func (bp *Buffer) SetPoint(np int) {
 	bp.logBufferEOB(np)
-	// 	slade gap to end
 	bp.CollapseGap()
 	// move gap <-(left) by np chars
 	gs := bp.gapStart()
@@ -140,7 +139,12 @@ func (bp *Buffer) SetPoint(np int) {
 //SetPointAndCursor xxx
 func (bp *Buffer) SetPointAndCursor(np int) {
 	bp.SetPoint(np)
-	x, y := bp.XYForPoint(np)
+	bp.setCursor()
+}
+
+// setCursor xxx
+func (bp *Buffer) setCursor() {
+	x, y := bp.XYForPoint(bp.preLen)
 	bp.PointRow = y
 	bp.PointCol = x
 }
@@ -481,9 +485,12 @@ func (bp *Buffer) Backspace() {
 func (bp *Buffer) PointUp() {
 	c1 := bp.ColumnForPoint(bp.Point())
 	l1 := bp.LineStart(bp.Point())
-	l1--
-	l2 := bp.LineStart(l1)
+	l2 := bp.LineStart(l1 - 1)
+	l2l := bp.LineLenAtPoint(l2)
 	npt := l2 + c1 - 1
+	if l2l < c1 {
+		npt = l2 + l2l - 1
+	}
 	if npt < bp.PageStart {
 		bp.Reframe = true
 	}
@@ -495,7 +502,11 @@ func (bp *Buffer) PointDown() {
 	c1 := bp.ColumnForPoint(bp.Point())
 	l1 := bp.LineEnd(bp.Point())
 	l2 := bp.LineStart(l1 + 1)
+	l2l := bp.LineLenAtPoint(l2)
 	npt := l2 + c1 - 1
+	if l2l < c1 {
+		npt = l2 + l2l - 1
+	}
 	bp.logBufferEOB(npt)
 	if npt > bp.PageEnd {
 		bp.Reframe = true
@@ -512,6 +523,7 @@ func (bp *Buffer) PointNext() {
 	bp.data[bp.preLen] = bp.data[bp.postStart()]
 	bp.preLen++
 	bp.postLen--
+	bp.logBufferEOB(bp.preLen)
 }
 
 // PointPrevious move point right one
@@ -523,6 +535,8 @@ func (bp *Buffer) PointPrevious() {
 	bp.data[bp.postStart()-1] = bp.data[bp.preLen-1]
 	bp.preLen--
 	bp.postLen++
+	//bp.setCursor()
+	bp.logBufferEOB(bp.preLen)
 }
 
 // UpUp Move up one screen line

@@ -209,10 +209,8 @@ func (e *Editor) HandleEvent(ev *termbox.Event) bool {
 		e.UpdateDisplay()
 	case termbox.EventMouse:
 		termbox.Clear(termbox.ColorDefault, termbox.ColorDefault)
-		e.msg("Mouse: %d,%d [%d %d] not impl.", ev.MouseX, ev.MouseY, e.Cols, e.Lines)
-		// Need a hit test algo here
-		//pt := e.CurrentWindow.PointForXY(ev.MouseX+1, ev.MouseY+1)
-		//e.CurrentBuffer.SetPoint(pt)
+		e.msg("Mouse: c %d, r %d ", ev.MouseX, ev.MouseY)
+		e.SetPointForMouse(ev.MouseX, ev.MouseY)
 		e.UpdateDisplay()
 	case termbox.EventError:
 		panic(ev.Err)
@@ -222,20 +220,20 @@ func (e *Editor) HandleEvent(ev *termbox.Event) bool {
 }
 
 // ConsumeMoreEvents handles
-func (e *Editor) ConsumeMoreEvents() bool {
-	for {
-		select {
-		case ev := <-e.EventChan:
-			ok := e.HandleEvent(&ev)
-			if !ok {
-				return false
-			}
-		default:
-			return true
-		}
-	}
-	panic("unreachable")
-}
+// func (e *Editor) ConsumeMoreEvents() bool {
+// 	for {
+// 		select {
+// 		case ev := <-e.EventChan:
+// 			ok := e.HandleEvent(&ev)
+// 			if !ok {
+// 				return false
+// 			}
+// 		default:
+// 			return true
+// 		}
+// 	}
+// 	panic("unreachable")
+// }
 
 // OnSysKey on Ctrl key pressed
 func (e *Editor) OnSysKey(ev *termbox.Event) bool {
@@ -265,14 +263,12 @@ func (e *Editor) OnSysKey(ev *termbox.Event) bool {
 }
 
 func (e *Editor) searchAndPerform(ev *termbox.Event) bool {
-	lookfor := ""
 	rch := ev.Ch
 	if ev.Ch == 0 {
 		rch = rune(ev.Key)
 	}
-	lookfor = fmt.Sprintf("%c", rch)
+	lookfor := fmt.Sprintf("%c", rch)
 	if e.CtrlXFlag {
-		log.Printf("lookfor %c\n", rch)
 		lookfor = fmt.Sprintf("\x18%c", rch)
 	}
 	if e.EscapeFlag {
@@ -281,19 +277,16 @@ func (e *Editor) searchAndPerform(ev *termbox.Event) bool {
 	for i, j := range e.Keymap {
 		if strings.Compare(lookfor, j.KeyBytes) == 0 {
 			//log.Println("SearchAndPerform FOUND ", lookfor, e.Keymap[i])
-			jj := e.Keymap[i].Do
-			e.performAction(jj)
+			do := e.Keymap[i].Do
+			if do != nil {
+				do(e) // execute function for key
+			}
 			e.CtrlXFlag = false
 			e.EscapeFlag = false
 			return true
 		}
 	}
 	return false
-}
-func (e *Editor) performAction(fn actionFunc) {
-	if fn != nil {
-		fn(e)
-	}
 }
 
 // OnAltKey on Alt key pressed
@@ -340,8 +333,7 @@ func (e *Editor) msg(fm string, args ...interface{}) {
 	e.Msgflag = true
 	return
 }
-func (e *Editor) drawstring(x, y int, fg, bg termbox.Attribute, msg string) {
-	//log.Println(msg)
+func (e *Editor) drawString(x, y int, fg, bg termbox.Attribute, msg string) {
 	for _, c := range msg {
 		termbox.SetCell(x, y, c, fg, bg)
 		x++
@@ -351,7 +343,7 @@ func (e *Editor) drawstring(x, y int, fg, bg termbox.Attribute, msg string) {
 func (e *Editor) DisplayMsg() {
 	//e.Cols, e.Lines = termbox.Size()
 	if e.Msgflag {
-		e.drawstring(0, e.Lines-1, e.FGColor, termbox.ColorDefault, e.Msgline)
+		e.drawString(0, e.Lines-1, e.FGColor, termbox.ColorDefault, e.Msgline)
 	}
 }
 
@@ -359,18 +351,19 @@ func (e *Editor) DisplayMsg() {
 func (e *Editor) Display(wp *Window, flag bool) {
 	termbox.Clear(termbox.ColorDefault, termbox.ColorDefault)
 	bp := wp.Buffer
+	pt := bp.Point()
 	// /* find start of screen, handle scroll up off page or top of file  */
 	// /* Point is always within b_page and b_epage */
-	if bp.Point() < bp.PageStart {
-		bp.PageStart = bp.SegStart(bp.LineStart(bp.Point()), bp.Point(), e.Cols)
+	if pt < bp.PageStart {
+		bp.PageStart = bp.SegStart(bp.LineStart(pt), pt, e.Cols)
 	}
 
-	if bp.Reframe == true || (bp.Point() > bp.PageEnd && bp.Point() != bp.PageEnd) {
+	if bp.Reframe == true || (pt > bp.PageEnd && pt != bp.PageEnd && !bp.EndOfBuffer(pt)) {
 		bp.Reframe = false
 		i := 0
 		/* Find end of screen plus one. */
-		bp.PageStart = bp.DownDown(bp.Point(), e.Cols)
-		//log.Printf("P1 PageStart %d Point %d, bp.PageEnd %d", bp.PageStart, bp.Point(), bp.PageEnd)
+		bp.PageStart = bp.DownDown(pt, e.Cols)
+		//log.Printf("P1 PageStart %d Point %d, bp.PageEnd %d", bp.PageStart, pt, bp.PageEnd)
 		/* if we scoll to EOF we show 1 blank line at bottom of screen */
 		if bp.PageEnd <= bp.PageStart {
 			bp.PageStart = bp.PageEnd
@@ -379,11 +372,11 @@ func (e *Editor) Display(wp *Window, flag bool) {
 			i = wp.Rows - 0
 		}
 		/* Scan backwards the required number of lines. */
-		//log.Printf("Before BWscan i %d PageStart %d Point %d, bp.PageEnd %d", i, bp.PageStart, bp.Point(), bp.PageEnd)
+		//log.Printf("Before BWscan i %d PageStart %d Point %d, bp.PageEnd %d", i, bp.PageStart, pt, bp.PageEnd)
 		for i > 0 {
 			bp.PageStart = bp.UpUp(bp.PageStart, e.Cols)
 			i--
-			//log.Printf("P3 i %d PageStart %d Point %d, bp.PageEnd %d", i, bp.PageStart, bp.Point(), bp.PageEnd)
+			//log.Printf("P3 i %d PageStart %d Point %d, bp.PageEnd %d", i, bp.PageStart, pt, bp.PageEnd)
 		}
 	}
 
@@ -391,11 +384,11 @@ func (e *Editor) Display(wp *Window, flag bool) {
 	l2 := l1 + wp.Rows
 	l2end := bp.LineEnd(bp.PointForLine(l2))
 	bp.PageEnd = l2end
-	log.Printf("P0 lines %d %d PageStart %d Point %d, bp.PageEnd %d BufL %d", l1, l2, bp.PageStart, bp.Point(), bp.PageEnd, bp.BufferLen())
+	log.Printf("P0 lines %d %d PageStart %d Point %d, bp.PageEnd %d BufL %d", l1, l2, bp.PageStart, pt, bp.PageEnd, bp.BufferLen())
 	r, c := 0, 0
 	for k := bp.PageStart; k <= bp.PageEnd; k++ {
 		/* reached point - store the cursor position */
-		if bp.Point() == k {
+		if pt == k {
 			bp.PointCol = c
 			wp.Col = c
 			bp.PointRow = r
@@ -487,19 +480,26 @@ func (e *Editor) UpdateDisplay() {
 func (e *Editor) SetTermCursor(c, r int) {
 	wp := e.CurrentWindow
 	//log.Println("wp t,p", wp.TopPt, wp.Rows)
-	if r > wp.Rows {
-		r = wp.Rows + 1
-	}
 	pt := wp.Buffer.Point()
 	wp.Buffer.logBufferEOB(pt)
 	wp.Col, wp.Row = c, r
 	termbox.SetCursor(c, r)
-	if wp.Buffer.EndOfBuffer(pt) == true {
-		eol := wp.Buffer.ColumnForPoint(wp.Buffer.LineEnd(pt)) - 1
-		wp.Col, wp.Row = eol, r-1
-		termbox.SetCursor(eol, r-1)
+}
+
+// SetPointForMouse xxx
+func (e *Editor) SetPointForMouse(mc, mr int) {
+	bp := e.CurrentBuffer
+	sl := bp.LineForPoint(bp.PageStart) // sl is startline of buffer frame
+	ml := sl + mr
+	mlpt := bp.PointForLine(ml)
+	mll := bp.LineLenAtPoint(mlpt) // how wide is line?
+	log.Printf("startline %d mouseline %d ml length %d\n", sl, ml, mll)
+	nc := mc + 1
+	if mll < mc {
+		nc = mll
 	}
-	/* set cursor for CurrentWin */
+	npt := bp.PointForXY(nc, ml)
+	bp.SetPoint(npt)
 }
 
 // ModeLine draw modeline for window
@@ -536,10 +536,10 @@ func (e *Editor) ModeLine(wp *Window) {
 }
 
 func (e *Editor) DisplayPromptAndResponse(prompt string, response string) {
-	e.drawstring(0, e.Lines-1, e.FGColor, termbox.ColorDefault, prompt)
+	e.drawString(0, e.Lines-1, e.FGColor, termbox.ColorDefault, prompt)
 	/* if we have a value print it and go to end of it */
 	if response != "" {
-		e.drawstring(len(prompt), e.Lines-1, e.FGColor, termbox.ColorDefault, response)
+		e.drawString(len(prompt), e.Lines-1, e.FGColor, termbox.ColorDefault, response)
 	}
 	termbox.SetCursor(len(prompt)+len(response), e.Lines-1)
 	termbox.Flush()
