@@ -30,6 +30,13 @@ func (e *Editor) Save(fname string) bool {
 		return false
 	}
 	d1 := []byte(e.CurrentBuffer.GetText())
+	rch := d1[len(d1)-1]
+	if rch != '\n' {
+		prompt := "Last character is not newline. Add one?"
+		if e.yesno(true, prompt) {
+			d1 = append(d1, '\n')
+		}
+	}
 	err := ioutil.WriteFile(fname, d1, 0644)
 	if err != nil {
 		e.msg("Failed to save file \"%s\".", fname)

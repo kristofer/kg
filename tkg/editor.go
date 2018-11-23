@@ -5,7 +5,6 @@ import (
 	"log"
 	"os"
 	"strings"
-	"time"
 	"unicode"
 
 	termbox "github.com/nsf/termbox-go"
@@ -21,53 +20,36 @@ func checkErr(e error) {
 }
 
 const (
-	VERSION     = "kg 1.0, Public Domain, November 2018, Kristofer Younger,  No warranty."
-	PROG_NAME   = "kg"
-	B_MODIFIED  = 0x01 /* modified buffer */
-	B_OVERWRITE = 0x02 /* overwite mode */
-	//LINES            = 24
-	NOMARK           = -1
-	CHUNK            = 16 //= 8096
-	K_BUFFER_LENGTH  = 256
-	TEMPBUF          = 512
-	STRBUF_L         = 256
-	STRBUF_M         = 64
-	STRBUF_S         = 16
-	MIN_GAP_EXPAND   = 512
-	TEMPFILE         = "/tmp/kgXXXXXX"
-	F_NONE           = 0
-	F_CLEAR          = 1
-	ID_DEFAULT       = 1
-	ID_SYMBOL        = 2
-	ID_MODELINE      = 3
-	ID_DIGITS        = 4
-	ID_LINE_COMMENT  = 5
-	ID_BLOCK_COMMENT = 6
-	ID_DOUBLE_STRING = 7
-	ID_SINGLE_STRING = 8
+	version        = "kg 1.0, Public Domain, November 2018, Kristofer Younger,  No warranty."
+	nomark         = -1
+	gapchunk       = 16 //= 8096
+	idDefault      = 1
+	idSymbol       = 2
+	idModeline     = 3
+	idDigits       = 4
+	idLineComment  = 5
+	idBlockComment = 6
+	idDoubleString = 7
+	idSingleString = 8
 )
 
+// Editor struct
 type Editor struct {
 	EventChan     chan termbox.Event
-	MiniBufChan   chan termbox.Event
 	CurrentBuffer *Buffer /* current buffer */
 	RootBuffer    *Buffer /* head of list of buffers */
 	CurrentWindow *Window
 	RootWindow    *Window
 	// status vars
-	// done int                /* Quit flag. */
-	Done       bool   /* Quit flag. */
-	Msgflag    bool   /* True if msgline should be displayed. */
-	Nscrap     int    /* Length of scrap buffer. */
-	Scrap      string /* Allocated scrap buffer. */
-	Input      rune   // RUNE?????
-	Msgline    string /* Message line input/output buffer. */
-	Temp       string /* Temporary buffer. */
-	Searchtext string
-	Replace    string
-	Keymap     []Keymapt
-	KeysMapMap map[string]*Keymapt
-	//
+	Done          bool   /* Quit flag. */
+	Msgflag       bool   /* True if msgline should be displayed. */
+	Nscrap        int    /* Length of scrap buffer. */
+	Scrap         string /* Allocated scrap buffer. */
+	Msgline       string /* Message line input/output buffer. */
+	Temp          string /* Temporary buffer. */
+	Searchtext    string
+	Replace       string
+	Keymap        []keymapt
 	Lines         int
 	Cols          int
 	FGColor       termbox.Attribute
@@ -106,23 +88,16 @@ func (e *Editor) StartEditor(argv []string, argc int) {
 		e.msg("NO file to open, creating scratch buffer")
 		e.CurrentBuffer = e.FindBuffer("*scratch*", true)
 		e.CurrentBuffer.Buffername = "*scratch*"
-		s := "Lorem ipsum dolor sit amet,\nconsectetur adipiscing elit,\nsed do eiusmod tempor incididunt ut\nlabore et dolore magna aliqua. \n"
+		//_ = e.CurrentBuffer.GrowGap(gapchunk)
+		//s := "Lorem ipsum dolor sit amet,\nconsectetur adipiscing elit,\nsed do eiusmod tempor incididunt ut\nlabore et dolore magna aliqua. \n"
 
-		e.CurrentBuffer.SetText(s)
-		e.CurrentBuffer.Insert(s)
-		e.CurrentBuffer.Insert(" foo")
-		e.CurrentBuffer.Insert(s)
-		e.CurrentBuffer.Insert(" baz\n")
-		e.CurrentBuffer.Insert(s)
+		// e.CurrentBuffer.SetText("\n")
 		// e.CurrentBuffer.Insert(s)
+		// e.CurrentBuffer.Insert(" foo")
 		// e.CurrentBuffer.Insert(s)
+		// e.CurrentBuffer.Insert(" baz 2\n")
 		// e.CurrentBuffer.Insert(s)
-		// e.CurrentBuffer.Insert(s)
-		// e.CurrentBuffer.Insert(s)
-		// e.CurrentBuffer.Insert(s)
-		// e.CurrentBuffer.Insert(s)
-		e.bottom()
-		e.CurrentBuffer.Insert("\nbottom End Of File.\n")
+		// e.CurrentBuffer.Insert(" baz 2\n")
 		e.top()
 	}
 	e.CurrentWindow = NewWindow(e)
@@ -130,20 +105,14 @@ func (e *Editor) StartEditor(argv []string, argc int) {
 	e.CurrentWindow.OneWindow()
 	e.CurrentWindow.AssociateBuffer(e.CurrentBuffer)
 
-	if !(e.CurrentBuffer.GrowGap(CHUNK)) {
-		//panic("%s: Failed to allocate required memory.\n")
+	if !(e.CurrentBuffer.GrowGap(gapchunk)) {
+		panic("%s: Failed to allocate required memory.\n")
 	}
-	//e.Key_map = e.Keymap
 	e.Keymap = keymap
-	// e.KeysMapMap = make(map[string]*Keymapt)
-	// for _, k := range e.Keymap {
-	// 	e.KeysMapMap[k.KeyBytes] = &k
-	// }
 	termbox.SetInputMode(termbox.InputAlt | termbox.InputEsc | termbox.InputMouse)
-	//termbox.SetInputMode(termbox.InputAlt)
-
 	termbox.Clear(termbox.ColorDefault, termbox.ColorDefault)
-	e.UpdateDisplay()
+	e.
+		updateDisplay()
 	termbox.Flush()
 
 	e.EventChan = make(chan termbox.Event, 20)
@@ -156,31 +125,24 @@ func (e *Editor) StartEditor(argv []string, argc int) {
 		select {
 		case ev := <-e.EventChan:
 			//log.Printf("%#v\n", ev)
-			log.Println(">>\n ", time.Now().Unix(), "\n>>")
-			// if e.MiniBufActive {
-			// 	log.Printf("MB %#v\n", ev)
-			// 	e.MiniBufChan <- ev
-			// 	if ev.Key == termbox.KeyCtrlQ {
-			// 		return
-			// 	}
-			// } else {
-			// log.Printf("Normal %#v\n", ev)
-			ok := e.HandleEvent(&ev)
+			//log.Println(">>\n ", time.Now().Unix(), "\n>>")
+
+			ok := e.handleEvent(&ev)
 			if !ok {
 				return
 			}
 			//e.ConsumeMoreEvents()
-			e.UpdateDisplay()
+			e.
+				updateDisplay()
 			termbox.Flush()
 			// }
 		}
 	}
-	return
-
+	//return
 }
 
-// HandleEvent
-func (e *Editor) HandleEvent(ev *termbox.Event) bool {
+// handleEvent
+func (e *Editor) handleEvent(ev *termbox.Event) bool {
 	e.msg("")
 	switch ev.Type {
 	case termbox.EventKey:
@@ -200,18 +162,21 @@ func (e *Editor) HandleEvent(ev *termbox.Event) bool {
 			// }
 			e.CurrentWindow.OnKey(ev)
 		}
-		e.UpdateDisplay()
+		e.
+			updateDisplay()
 	case termbox.EventResize:
 		termbox.Clear(termbox.ColorDefault, termbox.ColorDefault)
 		e.Cols, e.Lines = termbox.Size()
 		e.msg("Resize: h %d,w %d", e.Lines, e.Cols)
 		e.CurrentWindow.WindowResize()
-		e.UpdateDisplay()
+		e.
+			updateDisplay()
 	case termbox.EventMouse:
 		termbox.Clear(termbox.ColorDefault, termbox.ColorDefault)
 		e.msg("Mouse: c %d, r %d ", ev.MouseX, ev.MouseY)
 		e.SetPointForMouse(ev.MouseX, ev.MouseY)
-		e.UpdateDisplay()
+		e.
+			updateDisplay()
 	case termbox.EventError:
 		panic(ev.Err)
 	}
@@ -224,7 +189,7 @@ func (e *Editor) HandleEvent(ev *termbox.Event) bool {
 // 	for {
 // 		select {
 // 		case ev := <-e.EventChan:
-// 			ok := e.HandleEvent(&ev)
+// 			ok := e.handleEvent(&ev)
 // 			if !ok {
 // 				return false
 // 			}
@@ -259,7 +224,7 @@ func (e *Editor) OnSysKey(ev *termbox.Event) bool {
 	default:
 		return e.searchAndPerform(ev)
 	}
-	return false
+	//return false
 }
 
 func (e *Editor) searchAndPerform(ev *termbox.Event) bool {
@@ -340,7 +305,7 @@ func (e *Editor) drawString(x, y int, fg, bg termbox.Attribute, msg string) {
 	}
 }
 
-func (e *Editor) DisplayMsg() {
+func (e *Editor) displayMsg() {
 	//e.Cols, e.Lines = termbox.Size()
 	if e.Msgflag {
 		e.drawString(0, e.Lines-1, e.FGColor, termbox.ColorDefault, e.Msgline)
@@ -384,7 +349,7 @@ func (e *Editor) Display(wp *Window, flag bool) {
 	l2 := l1 + wp.Rows
 	l2end := bp.LineEnd(bp.PointForLine(l2))
 	bp.PageEnd = l2end
-	log.Printf("P0 lines %d %d PageStart %d Point %d, bp.PageEnd %d BufL %d", l1, l2, bp.PageStart, pt, bp.PageEnd, bp.BufferLen())
+	//log.Printf("P0 lines %d %d PageStart %d Point %d, bp.PageEnd %d BufL %d", l1, l2, bp.PageStart, pt, bp.PageEnd, bp.BufferLen())
 	r, c := 0, 0
 	for k := bp.PageStart; k <= bp.PageEnd; k++ {
 		/* reached point - store the cursor position */
@@ -433,7 +398,7 @@ func (e *Editor) Display(wp *Window, flag bool) {
 	PushBuffer2Window(wp)
 	e.ModeLine(wp)
 	if wp == e.CurrentWindow && flag {
-		e.DisplayMsg()
+		e.displayMsg()
 		e.SetTermCursor(wp.Col, wp.Row) //bp.PointCol, bp.PointRow)
 		termbox.Flush()                 //refresh();
 	}
@@ -448,7 +413,7 @@ func (e *Editor) Display(wp *Window, flag bool) {
 	// wp->w_update = FALSE;
 }
 
-func (e *Editor) UpdateDisplay() {
+func (e *Editor) updateDisplay() {
 	bp := e.CurrentWindow.Buffer
 	bp.OrigPoint = bp.Point() /* OrigPoint only ever set here */
 
@@ -472,7 +437,7 @@ func (e *Editor) UpdateDisplay() {
 
 	/* now display our window and buffer */
 	SyncBuffer(e.CurrentWindow)
-	e.DisplayMsg()
+	e.displayMsg()
 	bp.PrevSize = bp.TextSize /* now safe to save previous size for next time */
 }
 
@@ -480,25 +445,29 @@ func (e *Editor) UpdateDisplay() {
 func (e *Editor) SetTermCursor(c, r int) {
 	wp := e.CurrentWindow
 	//log.Println("wp t,p", wp.TopPt, wp.Rows)
-	pt := wp.Buffer.Point()
-	wp.Buffer.logBufferEOB(pt)
+	//pt := wp.Buffer.Point()
+	//wp.Buffer.logBufferEOB(pt)
 	wp.Col, wp.Row = c, r
 	termbox.SetCursor(c, r)
 }
 
 // SetPointForMouse xxx
 func (e *Editor) SetPointForMouse(mc, mr int) {
+	if mr > e.CurrentWindow.Rows {
+		mr = e.CurrentWindow.Rows
+	}
 	bp := e.CurrentBuffer
 	sl := bp.LineForPoint(bp.PageStart) // sl is startline of buffer frame
 	ml := sl + mr
 	mlpt := bp.PointForLine(ml)
 	mll := bp.LineLenAtPoint(mlpt) // how wide is line?
-	log.Printf("startline %d mouseline %d ml length %d\n", sl, ml, mll)
 	nc := mc + 1
 	if mll < mc {
 		nc = mll
 	}
 	npt := bp.PointForXY(nc, ml)
+	log.Printf("startline %d mouseline %d ml length %d\n", sl, ml, mll)
+	log.Printf("nc %d nr %d npt %d\n", nc, ml, npt)
 	bp.SetPoint(npt)
 }
 
@@ -535,7 +504,7 @@ func (e *Editor) ModeLine(wp *Window) {
 	}
 }
 
-func (e *Editor) DisplayPromptAndResponse(prompt string, response string) {
+func (e *Editor) displayPromptAndResponse(prompt string, response string) {
 	e.drawString(0, e.Lines-1, e.FGColor, termbox.ColorDefault, prompt)
 	/* if we have a value print it and go to end of it */
 	if response != "" {
@@ -545,10 +514,10 @@ func (e *Editor) DisplayPromptAndResponse(prompt string, response string) {
 	termbox.Flush()
 }
 
-func (e *Editor) GetFilename(prompt string) string {
+func (e *Editor) getFilename(prompt string) string {
 	fname := ""
 	var ev termbox.Event
-	e.DisplayPromptAndResponse(prompt, "")
+	e.displayPromptAndResponse(prompt, "")
 	e.MiniBufActive = true
 loop:
 	for {
@@ -572,7 +541,7 @@ loop:
 
 			}
 		}
-		e.DisplayPromptAndResponse(prompt, fname)
+		e.displayPromptAndResponse(prompt, fname)
 	}
 	e.MiniBufActive = false
 	return fname
@@ -580,7 +549,7 @@ loop:
 
 // DeleteBuffer unlink from the list of buffers, free associated memory,
 // assumes buffer has been saved if modified
-func (e *Editor) DeleteBuffer(bp *Buffer) bool {
+func (e *Editor) deleteBuffer(bp *Buffer) bool {
 	//editor := bp.CurrentWindow.Editor
 	var sb *Buffer
 
@@ -611,7 +580,7 @@ func (e *Editor) DeleteBuffer(bp *Buffer) bool {
 }
 
 // NextBuffer returns next buffer after current
-func (e *Editor) NextBuffer() {
+func (e *Editor) nextBuffer() {
 	if e.CurrentBuffer != nil && e.RootBuffer != nil {
 		e.CurrentWindow.DisassociateBuffer()
 		if e.CurrentBuffer.Next != nil {
@@ -655,8 +624,7 @@ func (e *Editor) ModifiedBuffers() bool {
 	return false
 }
 
-/* Buffer lists manipulation */
-/* Find a buffer by filename or create if requested */
+// FindBuffer Find a buffer by filename or create if requested
 func (e *Editor) FindBuffer(fname string, cflag bool) *Buffer {
 	var bp *Buffer
 	var sb *Buffer
@@ -698,7 +666,7 @@ func (e *Editor) FindBuffer(fname string, cflag bool) *Buffer {
 	return bp
 }
 
-func (e *Editor) SplitWindow() {
+func (e *Editor) splitWindow() {
 	var editor = e
 	var wp *Window
 	var wp2 *Window
@@ -729,7 +697,7 @@ func (e *Editor) SplitWindow() {
 }
 
 // NextWindow
-func (e *Editor) NextWindow() {
+func (e *Editor) nextWindow() {
 	var editor = e
 	editor.CurrentWindow.Updated = true /* make sure modeline gets updated */
 	//Curwp = (Curwp.Next == nil ? Wheadp : Curwp.Next)
@@ -746,17 +714,17 @@ func (e *Editor) NextWindow() {
 }
 
 // DeleteOtherWindows
-func (e *Editor) DeleteOtherWindows() {
+func (e *Editor) deleteOtherWindows() {
 	wp := e.RootWindow
 	if wp.Next == nil {
 		wp.Editor.msg("Only 1 window")
 		return
 	}
-	e.FreeOtherWindows()
+	e.freeOtherWindows()
 }
 
 // FreeOtherWindows
-func (e *Editor) FreeOtherWindows() {
+func (e *Editor) freeOtherWindows() {
 	var editor = e
 	var winp *Window
 	var wp *Window
@@ -776,7 +744,7 @@ func (e *Editor) FreeOtherWindows() {
 	winp.OneWindow()
 }
 
-// attempt for new PointUp
+// PointUp attempt for new PointUp
 func (e *Editor) PointUp() {
 	// urbp->b_point = lncolumn(curbp, upup(curbp, curbp->b_point),curbp->b_col);
 	bp := e.CurrentBuffer

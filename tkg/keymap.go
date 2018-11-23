@@ -2,7 +2,7 @@ package tkg
 
 type actionFunc func(*Editor)
 
-type Keymapt struct {
+type keymapt struct {
 	KeyDesc  string
 	KeyBytes string
 	Do       actionFunc // function to call for Keymap-ping
@@ -10,7 +10,7 @@ type Keymapt struct {
 
 /* desc, keys, func */
 //keymap_t keymap[] = {
-var keymap = []Keymapt{
+var keymap = []keymapt{
 	{"C-a beginning-of-line    ", "\x01", (*Editor).lnbegin},
 	{"C-b backward-char        ", "\x02", (*Editor).left},
 	{"ArrowLeft backward-char  ", "\uFFEB", (*Editor).left},
@@ -32,18 +32,18 @@ var keymap = []Keymapt{
 	{"C-w kill-region          ", "\x17", (*Editor).cut},
 	{"C-y yank                 ", "\x19", (*Editor).paste},
 	{"C-space set-mark         ", "\x00", (*Editor).iblock},
-	{"C-x 1 delete-other-window", "\x18\x31", (*Editor).DeleteOtherWindows},
-	{"C-x 2 split-window       ", "\x18\x32", (*Editor).SplitWindow},
-	{"C-x o other-window       ", "\x18\x6F", (*Editor).NextWindow},
+	{"C-x 1 delete-other-window", "\x18\x31", (*Editor).deleteOtherWindows},
+	{"C-x 2 split-window       ", "\x18\x32", (*Editor).splitWindow},
+	{"C-x o other-window       ", "\x18\x6F", (*Editor).nextWindow},
 	{"C-x = cursor-position    ", "\x18\x3D", (*Editor).showpos},
 	{"C-x i insert-file        ", "\x18\x69", (*Editor).insertfile},
-	{"C-x k kill-buffer        ", "\x18\x6B", (*Editor).killbuffer},
-	{"C-x C-n next-buffer      ", "\x18\x0E", (*Editor).NextBuffer},
-	{"C-x n next-buffer        ", "\x18\x6E", (*Editor).NextBuffer},
+	{"C-x k kill-buffer        ", "\x18\x6B", (*Editor).killBuffer},
+	{"C-x C-n next-buffer      ", "\x18\x0E", (*Editor).nextBuffer},
+	{"C-x n next-buffer        ", "\x18\x6E", (*Editor).nextBuffer},
 	{"C-x C-f find-file        ", "\x18\x06", (*Editor).readfile},
 	{"C-x C-s save-buffer      ", "\x18\x13", (*Editor).savebuffer},
 	{"C-x C-w write-file       ", "\x18\x17", (*Editor).writefile}, /* write and prompt for name */
-	{"C-x C-c exit             ", "\x18\x03", (*Editor).quit_ask},
+	{"C-x C-c exit             ", "\x18\x03", (*Editor).quitAsk},
 	{"esc b back-word          ", "\x1B\x62", (*Editor).wleft},
 	{"esc f forward-word       ", "\x1B\x66", (*Editor).wright},
 	{"esc g gotoline           ", "\x1B\x67", (*Editor).gotoline},
@@ -70,7 +70,7 @@ var keymap = []Keymapt{
 	{"end end-of-line          ", "\x1B\x5B\x46", (*Editor).lnend},
 	{"pgup backward-page       ", "\x1B\x5B\x35\x7E", (*Editor).pgup},   /* PgUp key */
 	{"pgdn forward-page        ", "\x1B\x5B\x36\x7E", (*Editor).pgdown}, /* PgDn key */
-	{"resize resize-terminal   ", "\x9A", (*Editor).resize_terminal},
+	{"resize resize-terminal   ", "\x9A", (*Editor).resizeTerminal},
 	{"K_ERROR                  ", "", nil},
 }
 

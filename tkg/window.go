@@ -35,7 +35,7 @@ func NewWindow(e *Editor) *Window {
 	wp.Next = nil
 	wp.Buffer = nil
 	wp.Point = 0
-	wp.Mark = NOMARK
+	wp.Mark = nomark
 	wp.TopPt = 0
 	wp.Rows = 0
 	wp.Updated = false
@@ -122,7 +122,7 @@ func SyncBuffer(w *Window) { //sync w2b win to buff
 	// }
 }
 
-// PushBuffer2Window
+// PushBuffer2Window xxx
 func PushBuffer2Window(w *Window) { // b2w
 	b := w.Buffer
 	w.Point = b.Point()

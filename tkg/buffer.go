@@ -46,7 +46,11 @@ func (bp *Buffer) MarkModified() {
 
 // NewBuffer - Create a new Buffer
 func NewBuffer() *Buffer {
-	return &Buffer{}
+	nb := Buffer{}
+	nb.data = []rune("\n")
+	nb.preLen = 0
+	nb.postLen = len(nb.data)
+	return &nb
 }
 
 // SetText xxx
@@ -106,8 +110,12 @@ func (bp *Buffer) dataPointForBufferPoint(pt int) int {
 
 // AddRune add a run to the buffer
 func (bp *Buffer) AddRune(ch rune) {
+	// if bp.data == nil {
+	// 	bp.SetText(string(ch))
+	// 	return
+	// }
 	if bp.gapLen() == 0 {
-		_ = bp.GrowGap(CHUNK)
+		_ = bp.GrowGap(gapchunk)
 	}
 	bp.data[bp.preLen] = ch
 	bp.preLen++
@@ -389,6 +397,9 @@ func (bp *Buffer) PointForXY(x, y int) (finalpt int) {
 	lpt := bp.PointForLine(y)
 	c := x - 1
 	finalpt = lpt + c //bp.DataPointForBufferPoint(lpt + c)
+	if finalpt < 0 {
+		finalpt = 0
+	}
 	return finalpt
 }
 
@@ -507,7 +518,7 @@ func (bp *Buffer) PointDown() {
 	if l2l < c1 {
 		npt = l2 + l2l - 1
 	}
-	bp.logBufferEOB(npt)
+	//bp.logBufferEOB(npt)
 	if npt > bp.PageEnd {
 		bp.Reframe = true
 	}
@@ -516,14 +527,15 @@ func (bp *Buffer) PointDown() {
 
 // PointNext move point left one
 func (bp *Buffer) PointNext() {
-	if bp.postLen == 0 {
+	// this is from the END OF BUFFER nonsense I had to fix.
+	if bp.postLen <= 1 { //== 0 {
 		return
 	}
-
+	//log.Printf("PointNext>> preLen %d postLen %d buflen %d\n", bp.preLen, bp.postLen, bp.BufferLen())
 	bp.data[bp.preLen] = bp.data[bp.postStart()]
 	bp.preLen++
 	bp.postLen--
-	bp.logBufferEOB(bp.preLen)
+	//bp.logBufferEOB(bp.preLen)
 }
 
 // PointPrevious move point right one

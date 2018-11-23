@@ -30,7 +30,7 @@ func (e *Editor) lnbegin() {
 func (e *Editor) lnend() {
 	e.CurrentBuffer.SetPoint(e.CurrentBuffer.LineEnd(e.CurrentBuffer.Point()))
 }
-func (e *Editor) version() { e.msg(VERSION) }
+func (e *Editor) version() { e.msg(version) }
 func (e *Editor) top() {
 	e.CurrentBuffer.SetPoint(0)
 }
@@ -46,16 +46,16 @@ func (e *Editor) block() {
 	e.CurrentBuffer.Mark = e.CurrentBuffer.Point()
 }
 func (e *Editor) copy() {
-	//copy_cut(false)
+	//copyCut(false)
 }
 func (e *Editor) cut() {
-	//copy_cut(true)
+	//copyCut(true)
 }
-func (e *Editor) resize_terminal() {
+func (e *Editor) resizeTerminal() {
 	e.CurrentWindow.OneWindow()
 }
 
-func (e *Editor) quit_ask() {
+func (e *Editor) quitAsk() {
 	if e.ModifiedBuffers() == true {
 		prompt := "Modified buffers exist; really exit (y/n) ?"
 		if !e.yesno(false, prompt) {
@@ -69,7 +69,7 @@ func (e *Editor) quit_ask() {
 func (e *Editor) yesno(flag bool, prompt string) bool {
 	//var ch rune
 
-	e.DisplayPromptAndResponse(prompt, "")
+	e.displayPromptAndResponse(prompt, "")
 	e.MiniBufActive = true
 	defer func() { e.MiniBufActive = false }()
 	ev := <-e.EventChan
@@ -85,10 +85,11 @@ func (e *Editor) yesno(flag bool, prompt string) bool {
 }
 
 func (e *Editor) redraw() {
-	log.Println("editor redraw")
 	termbox.Clear(termbox.ColorDefault, termbox.ColorDefault)
 	e.CurrentWindow.Updated = true
-	e.UpdateDisplay()
+	e.CurrentBuffer.Reframe = true
+	e.msg("editor redraw")
+	e.updateDisplay()
 	termbox.Flush()
 }
 
@@ -131,7 +132,7 @@ func (e *Editor) delete() {
 }
 
 func (e *Editor) gotoline() {
-	fname := e.GetFilename("Goto Line: ")
+	fname := e.getFilename("Goto Line: ")
 	ln, err := strconv.Atoi(fname)
 	if err != nil {
 		e.msg("Invalid Line.")
@@ -141,7 +142,7 @@ func (e *Editor) gotoline() {
 }
 
 func (e *Editor) insertfile() {
-	fname := e.GetFilename("Insert file: ")
+	fname := e.getFilename("Insert file: ")
 	if fname != "" {
 		res := e.InsertFile(fname, false)
 		if res {
@@ -184,13 +185,13 @@ func (e *Editor) savebuffer() {
 }
 
 func (e *Editor) writefile() {
-	fname := e.GetFilename("Write file: ")
+	fname := e.getFilename("Write file: ")
 	if e.Save(fname) == true {
 		e.CurrentBuffer.Filename = fname
 	}
 }
 
-func (e *Editor) killbuffer() {
+func (e *Editor) killBuffer() {
 	// buffer_t *kill_bp = curbp;
 	// buffer_t *bp;
 	// int bcount = count_buffers();
@@ -234,7 +235,7 @@ func (e *Editor) killtoeol() {
 	}
 }
 
-func (e *Editor) copy_cut(cut int) {
+func (e *Editor) copyCut(cut int) {
 	// char_t *p;
 	// /* if no mark or point == marker, nothing doing */
 	// if (curbp->b_mark == NOMARK || curbp->b_point == curbp->b_mark)
