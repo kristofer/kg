@@ -268,6 +268,14 @@ func (bp *Buffer) MoveGap(offset int) int {
 	return offset
 }
 
+// Remove extent runes starting at from point
+func (bp *Buffer) Remove(from int, extent int) {
+	bp.SetPoint(from)
+	for k := 0; k < extent; k++ {
+		bp.Delete()
+	}
+}
+
 //LineStart xxx
 func (bp *Buffer) LineStart(point int) int {
 	if point > len(bp.data)-bp.gapLen() {

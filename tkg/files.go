@@ -49,7 +49,7 @@ func (e *Editor) Save(fname string) bool {
 
 // LoadFile foo
 func (e *Editor) LoadFile(fname string) bool {
-	return e.InsertFile(fname, false)
+	return false
 }
 
 // InsertFile reads file into buffer at point

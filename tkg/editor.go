@@ -10,9 +10,6 @@ import (
 	termbox "github.com/nsf/termbox-go"
 )
 
-// var LINES = 1
-// var COLS = 10
-// var MSGLINE = (LINES - 1)
 func checkErr(e error) {
 	if e != nil {
 		panic(e)
@@ -43,10 +40,8 @@ type Editor struct {
 	// status vars
 	Done          bool   /* Quit flag. */
 	Msgflag       bool   /* True if msgline should be displayed. */
-	Nscrap        int    /* Length of scrap buffer. */
-	Scrap         string /* Allocated scrap buffer. */
+	PasteBuffer   string /* Allocated scrap buffer. */
 	Msgline       string /* Message line input/output buffer. */
-	Temp          string /* Temporary buffer. */
 	Searchtext    string
 	Replace       string
 	Keymap        []keymapt
