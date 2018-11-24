@@ -93,7 +93,7 @@ func (bp *Buffer) RuneAt(pt int) (rune, error) {
 	if npt := bp.dataPointForBufferPoint(pt); npt < len(bp.data) {
 		return bp.data[npt], nil
 	}
-	log.Println("RuneAt", pt, bp.BufferLen(), bp.ActualLen())
+	//log.Println("RuneAt", pt, bp.BufferLen(), bp.ActualLen())
 	return 0, errors.New("Ran over end of data buffer in RuneAt")
 }
 
@@ -139,7 +139,7 @@ func (bp *Buffer) SetPoint(np int) {
 		bp.postLen++
 	}
 	if bp.PageEnd < bp.preLen {
-		log.Println("reframing!")
+		//log.Println("reframing!")
 		bp.Reframe = true
 	}
 }

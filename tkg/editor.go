@@ -106,8 +106,7 @@ func (e *Editor) StartEditor(argv []string, argc int) {
 	e.Keymap = keymap
 	termbox.SetInputMode(termbox.InputAlt | termbox.InputEsc | termbox.InputMouse)
 	termbox.Clear(termbox.ColorDefault, termbox.ColorDefault)
-	e.
-		updateDisplay()
+	e.updateDisplay()
 	termbox.Flush()
 
 	e.EventChan = make(chan termbox.Event, 20)
@@ -127,8 +126,7 @@ func (e *Editor) StartEditor(argv []string, argc int) {
 				return
 			}
 			//e.ConsumeMoreEvents()
-			e.
-				updateDisplay()
+			e.updateDisplay()
 			termbox.Flush()
 			// }
 		}
@@ -141,6 +139,15 @@ func (e *Editor) handleEvent(ev *termbox.Event) bool {
 	e.msg("")
 	switch ev.Type {
 	case termbox.EventKey:
+		if (ev.Mod & termbox.ModAlt) != 0 {
+			e.msg("FOUND ALT...")
+			switch ev.Ch {
+			case 'j':
+				e.msg("FOUND ALT J")
+			// and others..
+			default:
+			}
+		}
 		if ev.Ch != 0 && (e.CtrlXFlag || e.EscapeFlag) {
 			_ = e.OnSysKey(ev)
 			if e.Done {
@@ -165,21 +172,18 @@ func (e *Editor) handleEvent(ev *termbox.Event) bool {
 			}
 			e.CurrentWindow.OnKey(ev)
 		}
-		e.
-			updateDisplay()
+		e.updateDisplay()
 	case termbox.EventResize:
 		termbox.Clear(termbox.ColorDefault, termbox.ColorDefault)
 		e.Cols, e.Lines = termbox.Size()
 		e.msg("Resize: h %d,w %d", e.Lines, e.Cols)
 		e.CurrentWindow.WindowResize()
-		e.
-			updateDisplay()
+		e.updateDisplay()
 	case termbox.EventMouse:
 		termbox.Clear(termbox.ColorDefault, termbox.ColorDefault)
 		e.msg("Mouse: c %d, r %d ", ev.MouseX, ev.MouseY)
 		e.SetPointForMouse(ev.MouseX, ev.MouseY)
-		e.
-			updateDisplay()
+		e.updateDisplay()
 	case termbox.EventError:
 		panic(ev.Err)
 	}
@@ -205,14 +209,6 @@ func (e *Editor) handleEvent(ev *termbox.Event) bool {
 
 // OnSysKey on Ctrl key pressed
 func (e *Editor) OnSysKey(ev *termbox.Event) bool {
-	if (ev.Mod & termbox.ModAlt) != 0 {
-		switch ev.Ch {
-		case 'j':
-			e.msg("FOUND ALT J")
-		// and others..
-		default:
-		}
-	}
 	switch ev.Key {
 	case termbox.KeyCtrlX:
 		e.msg("C-X ")
@@ -267,41 +263,8 @@ func (e *Editor) searchAndPerform(ev *termbox.Event) bool {
 
 // OnAltKey on Alt key pressed
 func (e *Editor) OnAltKey(ev *termbox.Event) bool {
-	e.msg("AltKey\n")
-	// switch ev.Ch {
-	// case 'g':
-	// 	//g.set_overlay_mode(init_line_edit_mode(g, g.goto_line_lemp()))
-	// 	return true
-	// 	e.msg("Alt G")
-	// 	e.Msgflag = true
-	// 	return true
-	// case '/':
-	// 	//g.set_overlay_mode(init_autocomplete_mode(g))
-	// 	return true
-	// 	e.msg("Alt /")
-	// 	e.Msgflag = true
-	// 	return true
-	// case 'q':
-	// 	//g.set_overlay_mode(init_fill_region_mode(g))
-	// 	e.msg("Alt Q")
-	// 	e.Msgflag = true
-	// 	return true
-	// }
+	e.msg("AltKey")
 	return false
-}
-
-// OnKey some key
-func (e *Editor) OnKey(ev *termbox.Event) {
-	// switch ev.Key {
-	// case termbox.KeyCtrlX:
-	// 	//g.set_overlay_mode(init_extended_mode(g))
-	// // case termbox.KeyCtrlS:
-	// // 	g.set_overlay_mode(init_isearch_mode(g, false))
-	// // case termbox.KeyCtrlR:
-	// // 	g.set_overlay_mode(init_isearch_mode(g, true))
-	// default:
-
-	// }
 }
 
 func (e *Editor) msg(fm string, args ...interface{}) {
@@ -317,7 +280,6 @@ func (e *Editor) drawString(x, y int, fg, bg termbox.Attribute, msg string) {
 }
 
 func (e *Editor) displayMsg() {
-	//e.Cols, e.Lines = termbox.Size()
 	if e.Msgflag {
 		e.drawString(0, e.Lines-1, e.FGColor, termbox.ColorDefault, e.Msgline)
 	}
@@ -339,7 +301,6 @@ func (e *Editor) Display(wp *Window, flag bool) {
 		i := 0
 		/* Find end of screen plus one. */
 		bp.PageStart = bp.DownDown(pt, e.Cols)
-		//log.Printf("P1 PageStart %d Point %d, bp.PageEnd %d", bp.PageStart, pt, bp.PageEnd)
 		/* if we scoll to EOF we show 1 blank line at bottom of screen */
 		if bp.PageEnd <= bp.PageStart {
 			bp.PageStart = bp.PageEnd
@@ -348,11 +309,9 @@ func (e *Editor) Display(wp *Window, flag bool) {
 			i = wp.Rows - 0
 		}
 		/* Scan backwards the required number of lines. */
-		//log.Printf("Before BWscan i %d PageStart %d Point %d, bp.PageEnd %d", i, bp.PageStart, pt, bp.PageEnd)
 		for i > 0 {
 			bp.PageStart = bp.UpUp(bp.PageStart, e.Cols)
 			i--
-			//log.Printf("P3 i %d PageStart %d Point %d, bp.PageEnd %d", i, bp.PageStart, pt, bp.PageEnd)
 		}
 	}
 
@@ -396,16 +355,6 @@ func (e *Editor) Display(wp *Window, flag bool) {
 		}
 	}
 
-	// /* replacement for clrtobot() to bottom of window */
-	// for k := idx; k < wp.TopPt+wp.Rows; k++ {
-	// 	//move(k, j) /* clear from very last char not start of line */
-	// 	//clrtoeol()
-	// 	for cc := 0; cc < e.Cols; cc++ {
-	// 		termbox.SetCell(cc, k, ' ', e.FGColor, termbox.ColorDefault)
-	// 	}
-	// 	//sc = 0 /* thereafter start of line */
-	// }
-
 	PushBuffer2Window(wp)
 	e.ModeLine(wp)
 	if wp == e.CurrentWindow && flag {
@@ -414,14 +363,6 @@ func (e *Editor) Display(wp *Window, flag bool) {
 		termbox.Flush()                 //refresh();
 	}
 	wp.Updated = false
-	// b2w(wp); /* save buffer stuff on window */
-	// modeline(wp);
-	// if (wp == curwp && flag) {
-	// 	dispmsg();
-	// 	move(bp->b_row, bp->b_col); /* set cursor */
-	// 	refresh();
-	// }
-	// wp->w_update = FALSE;
 }
 
 func (e *Editor) updateDisplay() {
@@ -455,9 +396,6 @@ func (e *Editor) updateDisplay() {
 // SetTermCursor -
 func (e *Editor) SetTermCursor(c, r int) {
 	wp := e.CurrentWindow
-	//log.Println("wp t,p", wp.TopPt, wp.Rows)
-	//pt := wp.Buffer.Point()
-	//wp.Buffer.logBufferEOB(pt)
 	wp.Col, wp.Row = c, r
 	termbox.SetCursor(c, r)
 }
@@ -477,8 +415,8 @@ func (e *Editor) SetPointForMouse(mc, mr int) {
 		nc = mll
 	}
 	npt := bp.PointForXY(nc, ml)
-	log.Printf("startline %d mouseline %d ml length %d\n", sl, ml, mll)
-	log.Printf("nc %d nr %d npt %d\n", nc, ml, npt)
+	//log.Printf("startline %d mouseline %d ml length %d\n", sl, ml, mll)
+	//log.Printf("nc %d nr %d npt %d\n", nc, ml, npt)
 	bp.SetPoint(npt)
 }
 
@@ -516,10 +454,13 @@ func (e *Editor) ModeLine(wp *Window) {
 }
 
 func (e *Editor) displayPromptAndResponse(prompt string, response string) {
+	//log.Println("dpr", prompt, response)
 	e.drawString(0, e.Lines-1, e.FGColor, termbox.ColorDefault, prompt)
 	/* if we have a value print it and go to end of it */
 	if response != "" {
 		e.drawString(len(prompt), e.Lines-1, e.FGColor, termbox.ColorDefault, response)
+		blanks := strings.Repeat(" ", e.Cols-len(prompt)+len(response))
+		e.drawString(len(prompt)+len(response), e.Lines-1, e.FGColor, termbox.ColorDefault, blanks)
 	}
 	termbox.SetCursor(len(prompt)+len(response), e.Lines-1)
 	termbox.Flush()
@@ -535,17 +476,19 @@ loop:
 		ev = <-e.EventChan
 		if ev.Ch != 0 {
 			ch := ev.Ch
-			if (ch != '\x08') && (ch != '\x7f') {
-				fname = fname + string(ch)
-			} else {
-				fname = fname[:len(fname)-1]
-			}
-
+			fname = fname + string(ch)
 		}
 		if ev.Ch == 0 {
 			switch ev.Key {
 			case termbox.KeyEnter, termbox.KeyCtrlR:
 				break loop
+			case termbox.KeyBackspace2, termbox.KeyBackspace:
+				//log.Println("delete/backspace")
+				if len(fname) > 0 {
+					fname = fname[:len(fname)-1]
+				} else {
+					fname = ""
+				}
 			case termbox.KeyCtrlG:
 				return ""
 			default:
@@ -691,6 +634,7 @@ func (e *Editor) splitWindow() {
 	wp = NewWindow(editor)
 	wp.AssociateBuffer(editor.CurrentWindow.Buffer)
 	//b2w(wp) /* inherit buffer settings */
+	PushBuffer2Window(wp)
 
 	ntru = (editor.CurrentWindow.Rows - 1) / 2    /* Upper size */
 	ntrl = (editor.CurrentWindow.Rows - 1) - ntru /* Lower size */
@@ -704,7 +648,8 @@ func (e *Editor) splitWindow() {
 	wp2 = editor.CurrentWindow.Next
 	editor.CurrentWindow.Next = wp
 	wp.Next = wp2
-	//redraw() /* mark the lot for update */
+	/* mark the lot for update */
+	e.redraw()
 }
 
 // NextWindow
@@ -736,12 +681,9 @@ func (e *Editor) deleteOtherWindows() {
 
 // FreeOtherWindows
 func (e *Editor) freeOtherWindows() {
-	var editor = e
-	var winp *Window
-	var wp *Window
-	var next *Window
-	wp = e.RootWindow
-	next = wp
+	wp := e.RootWindow
+	winp := e.CurrentWindow
+	next := wp
 	for next != nil {
 		next = wp.Next /* get next before a call to free() makes wp undefined */
 		if wp != winp {
@@ -750,8 +692,8 @@ func (e *Editor) freeOtherWindows() {
 		wp = next
 	}
 
-	editor.RootWindow = winp
-	editor.CurrentWindow = winp
+	e.RootWindow = winp
+	e.CurrentWindow = winp
 	winp.OneWindow()
 }
 

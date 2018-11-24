@@ -4,12 +4,11 @@ import (
 	"io/ioutil"
 	"log"
 	"strconv"
+	"strings"
 	"unicode"
 
 	termbox "github.com/nsf/termbox-go"
 )
-
-//type editFunc ((*Editor)func())
 
 func (e *Editor) quit() { e.Done = true }
 func (e *Editor) quitquit() {
@@ -74,9 +73,6 @@ func (e *Editor) yesno(flag bool, prompt string) bool {
 	e.MiniBufActive = true
 	defer func() { e.MiniBufActive = false }()
 	ev := <-e.EventChan
-	log.Println("Mini ev", ev)
-	// := e.HandleEvent(&ev)
-	// ch = getch();
 	ch := ev.Ch
 	if ch == '\r' || ch == '\n' {
 		return flag
@@ -85,13 +81,24 @@ func (e *Editor) yesno(flag bool, prompt string) bool {
 	return unicode.ToLower(ch) == 'y'
 }
 
+// func (e *Editor) redraw() {
+// 	termbox.Clear(termbox.ColorDefault, termbox.ColorDefault)
+// 	e.CurrentWindow.Updated = true
+// 	e.CurrentBuffer.Reframe = true
+// 	e.msg("editor redraw")
+// 	e.updateDisplay()
+// 	termbox.Sync()
+// 	termbox.Flush()
+// }
 func (e *Editor) redraw() {
+
 	termbox.Clear(termbox.ColorDefault, termbox.ColorDefault)
 	e.CurrentWindow.Updated = true
 	e.CurrentBuffer.Reframe = true
-	e.msg("editor redraw")
+	for wp := e.RootWindow; wp != nil; wp = wp.Next {
+		wp.Updated = true
+	}
 	e.updateDisplay()
-	termbox.Flush()
 }
 
 func (e *Editor) left() {
@@ -105,20 +112,15 @@ func (e *Editor) right() {
 func (e *Editor) wleft() {
 
 }
+func (e *Editor) wright() {
+
+}
 
 func (e *Editor) pgdown() {
 
 }
 
 func (e *Editor) pgup() {
-
-}
-
-func (e *Editor) wright() {
-
-}
-
-func (e *Editor) insert() {
 
 }
 
@@ -190,30 +192,30 @@ func (e *Editor) writefile() {
 }
 
 func (e *Editor) killBuffer() {
-	// buffer_t *kill_bp = curbp;
-	// buffer_t *bp;
-	// int bcount = count_buffers();
+	killbp := e.CurrentBuffer
+	bcount := e.CountBuffers()
 
-	// /* do nothing if only buffer left is the scratch buffer */
-	// if (bcount == 1 && 0 == strcmp(get_buffer_name(curbp), "*scratch*"))
-	// 	return;
+	// do nothing if only buffer left is the scratch buffer
+	if bcount == 1 && strings.Compare(e.GetBufferName(e.CurrentBuffer), "*scratch*") == 0 {
+		return
+	}
 
-	// if (curbp->b_flags & B_MODIFIED) {
-	// 	mvaddstr(MSGLINE, 0, "Discard changes (y/n) ?");
-	// 	clrtoeol();
-	// 	if (!yesno(FALSE))
-	// 		return;
-	// }
+	if e.CurrentBuffer.modified == true {
+		q := "Discard changes (y/n) ?"
+		if !e.yesno(false, q) {
+			return
+		}
+	}
 
-	// if (bcount == 1) {
-	// 	/* create a scratch buffer */
-	// 	bp = find_buffer("*scratch*", TRUE);
-	// 	strcpy(bp->b_bname, "*scratch*");
-	// }
+	if bcount == 1 {
+		bp := e.FindBuffer("*scratch*", true)
+		bp.Filename = "*scratch*"
+	}
 
-	// next_buffer();
-	// assert(kill_bp != curbp);
-	// delete_buffer(kill_bp);
+	e.nextBuffer()
+	if killbp != e.CurrentBuffer {
+		e.deleteBuffer(killbp)
+	}
 }
 
 func (e *Editor) iblock() {
@@ -234,7 +236,6 @@ func (e *Editor) killtoeol() {
 }
 
 func (e *Editor) copyCut(cut bool) {
-	/* if no mark or point == marker, nothing doing */
 	bp := e.CurrentBuffer
 	pt := bp.Point()
 	if bp.Mark == nomark || pt == bp.Mark {
