@@ -7,10 +7,6 @@ import (
 	"runtime"
 )
 
-/*
- * Buffer
- */
-
 // Buffer main struct
 type Buffer struct {
 	data    []rune
@@ -36,9 +32,6 @@ type Buffer struct {
 	modified   bool
 }
 
-// var RootBuffer *Buffer = nil
-// var CurrentBuffer *Buffer = nil
-
 // MarkModified xxx
 func (bp *Buffer) MarkModified() {
 	bp.modified = true
@@ -63,10 +56,8 @@ func (bp *Buffer) SetText(s string) {
 // GetText  xxx
 func (bp *Buffer) GetText() string {
 	ret := make([]rune, bp.preLen+bp.postLen)
-
 	copy(ret, bp.data)
 	copy(ret[bp.preLen:], bp.data[bp.postStart():])
-
 	return string(ret)
 }
 
@@ -81,7 +72,7 @@ func (bp *Buffer) logBufferEOB(pt int) {
 	}
 }
 
-// RuneAt finally have a reliable!!
+// RuneAt finally reliable!!
 func (bp *Buffer) RuneAt(pt int) (rune, error) {
 	bp.logBufferEOB(pt)
 	if pt >= len(bp.data) {
@@ -373,9 +364,6 @@ func (bp *Buffer) LineForPoint(point int) (line int) {
 			doIncr = true
 		}
 	}
-	// if pt == bp.BufferLen() {
-	// 	line--
-	// }
 	return
 }
 
@@ -459,23 +447,19 @@ func (bp *Buffer) SegNext(start, finish, limit int) int {
 		}
 		rch, err := bp.RuneAt(scan)
 		checkErr(err)
-		//if (bp.b_ebuf <= p || COLS <= c)
 		if limit <= c {
 			break
 		}
-		//scan += utf8_size(*ptr(bp,scan));
 		scan++
 		if rch == '\n' {
 			break
 		}
-		//c += *p == '\t' ? 8 - (c & 7) : 1;
 		if rch == '\t' {
 			c += 4 //8 - (c % 7)
 		} else {
 			c++
 		}
 	}
-	//(p < bp.b_ebuf ? scan : );
 	if scan < bp.BufferLen() {
 		return scan
 	}
@@ -526,7 +510,6 @@ func (bp *Buffer) PointDown() {
 	if l2l < c1 {
 		npt = l2 + l2l - 1
 	}
-	//bp.logBufferEOB(npt)
 	if npt > bp.PageEnd {
 		bp.Reframe = true
 	}
@@ -539,11 +522,9 @@ func (bp *Buffer) PointNext() {
 	if bp.postLen <= 1 { //== 0 {
 		return
 	}
-	//log.Printf("PointNext>> preLen %d postLen %d buflen %d\n", bp.preLen, bp.postLen, bp.BufferLen())
 	bp.data[bp.preLen] = bp.data[bp.postStart()]
 	bp.preLen++
 	bp.postLen--
-	//bp.logBufferEOB(bp.preLen)
 }
 
 // PointPrevious move point right one
@@ -561,7 +542,6 @@ func (bp *Buffer) PointPrevious() {
 
 // UpUp Move up one screen line
 func (bp *Buffer) UpUp(pt, cc int) int {
-	//bp := e.CurrentBuffer
 	curr := bp.LineStart(pt)
 	seg := bp.SegStart(curr, pt, cc)
 	if curr < seg {
@@ -569,10 +549,6 @@ func (bp *Buffer) UpUp(pt, cc int) int {
 	} else {
 		pt = bp.SegStart(bp.LineStart(curr-1), curr-1, cc)
 	}
-	// x, y := bp.XYForPoint(pt)
-	// if (y - 1) >= 1 {
-	// 	pt = bp.PointForXY(x, y-1)
-	// }
 	return pt
 }
 
@@ -580,10 +556,6 @@ func (bp *Buffer) UpUp(pt, cc int) int {
 func (bp *Buffer) DownDown(pt, cc int) int {
 	//bp := e.CurrentBuffer
 	return bp.SegNext(bp.LineStart(pt), pt, cc)
-	// x, y := bp.XYForPoint(pt)
-	// npt := bp.PointForXY(x, y+1)
-	// log.Printf("npt %d pt %d x %d y %d\n", npt, pt, x, y)
-	// return npt
 }
 
 // GetLineStats scan buffer and fill in curline and lastline
