@@ -9,6 +9,6 @@ import (
 func main() {
 	argv := os.Args // array of filenames to edit
 	argc := len(argv)
-
-	kg.StartEditor(argv, argc)
+	edit := &kg.Editor{}
+	edit.StartEditor(argv, argc)
 }

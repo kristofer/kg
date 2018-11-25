@@ -75,10 +75,12 @@ func (e *Editor) StartEditor(argv []string, argc int) {
 	e.Cols, e.Lines = termbox.Size()
 
 	if argc > 1 {
-		e.CurrentBuffer = e.FindBuffer(argv[1], true)
-		e.InsertFile(argv[1], false)
-		/* Save filename regardless of load() success. */
-		e.CurrentBuffer.Filename = argv[1]
+		for k := 1; k < argc; k++ {
+			e.CurrentBuffer = e.FindBuffer(argv[k], true)
+			e.InsertFile(argv[k], false)
+			/* Save filename regardless of load() success. */
+			e.CurrentBuffer.Filename = argv[k]
+		}
 	} else {
 		e.msg("NO file to open, creating scratch buffer")
 		e.CurrentBuffer = e.FindBuffer("*scratch*", true)
@@ -215,7 +217,6 @@ func (e *Editor) OnSysKey(ev *termbox.Event) bool {
 	default:
 		return e.searchAndPerform(ev)
 	}
-	//return false
 }
 
 func (e *Editor) searchAndPerform(ev *termbox.Event) bool {
@@ -271,13 +272,10 @@ func (e *Editor) displayMsg() {
 }
 
 // Display draws the window, minding the buffer pagestart/pageend
-func (e *Editor) Display(wp *Window, flag bool) {
-	//termbox.Clear(termbox.ColorDefault, termbox.ColorDefault)
-	//log.Printf("Disp Win %d %d (%s)\n", wp.TopPt, wp.Rows, wp.Buffer.Filename)
+func (e *Editor) Display(wp *Window, shouldDrawCursor bool) {
 	bp := wp.Buffer
 	pt := bp.Point()
 	// /* find start of screen, handle scroll up off page or top of file  */
-	// /* Point is always within b_page and b_epage */
 	if pt < bp.PageStart {
 		bp.PageStart = bp.SegStart(bp.LineStart(pt), pt, e.Cols)
 	}
@@ -305,15 +303,11 @@ func (e *Editor) Display(wp *Window, flag bool) {
 	l2 := l1 + wp.Rows
 	l2end := bp.LineEnd(bp.PointForLine(l2))
 	bp.PageEnd = l2end
-	//log.Printf("P0 lines %d %d PageStart %d Point %d, bp.PageEnd %d BufL %d", l1, l2, bp.PageStart, pt, bp.PageEnd, bp.BufferLen())
 	r, c := wp.TopPt, 0
 	for k := bp.PageStart; k <= bp.PageEnd; k++ {
-		/* reached point - store the cursor position */
 		if pt == k {
 			bp.PointCol = c
-			//wp.Col = c
 			bp.PointRow = r
-			//wp.Row = r
 		}
 		rch, err := bp.RuneAt(k)
 		if err != nil {
@@ -347,7 +341,7 @@ func (e *Editor) Display(wp *Window, flag bool) {
 
 	buffer2Window(wp)
 	e.ModeLine(wp)
-	if wp == e.CurrentWindow && flag {
+	if wp == e.CurrentWindow && shouldDrawCursor {
 		e.displayMsg()
 		e.setTermCursor(wp.Col, wp.Row) //bp.PointCol, bp.PointRow)
 	}
@@ -370,7 +364,6 @@ func (e *Editor) setTermCursor(c, r int) {
 func (e *Editor) updateDisplay() {
 	bp := e.CurrentWindow.Buffer
 	bp.OrigPoint = bp.Point() /* OrigPoint only ever set here */
-
 	/* only one window */
 	if e.RootWindow.Next == nil {
 		e.Display(e.CurrentWindow, true)
@@ -378,10 +371,8 @@ func (e *Editor) updateDisplay() {
 		bp.PrevSize = bp.TextSize
 		return
 	}
-
-	e.Display(e.CurrentWindow, false)
 	/* this is key, we must call our win first to get accurate page and epage etc */
-
+	e.Display(e.CurrentWindow, false)
 	/* never CurrentWin,  but same buffer in different window or update flag set*/
 	for wp := e.RootWindow; wp != nil; wp = wp.Next {
 		if wp != e.CurrentWindow && (wp.Buffer == bp || wp.Updated) {
@@ -389,7 +380,6 @@ func (e *Editor) updateDisplay() {
 			e.Display(wp, false)
 		}
 	}
-
 	/* now display our window and buffer */
 	window2Buffer(e.CurrentWindow)
 	e.displayMsg()
@@ -412,8 +402,6 @@ func (e *Editor) SetPointForMouse(mc, mr int) {
 		nc = mll
 	}
 	npt := bp.PointForXY(nc, ml)
-	//log.Printf("startline %d mouseline %d ml length %d\n", sl, ml, mll)
-	//log.Printf("nc %d nr %d npt %d\n", nc, ml, npt)
 	bp.SetPoint(npt)
 }
 
@@ -439,7 +427,6 @@ func (e *Editor) ModeLine(wp *Window) {
 	y := wp.TopPt + wp.Rows + 1
 	for _, c := range temp {
 		termbox.SetCell(x, y, c, termbox.ColorBlack, e.BGColor)
-		//mch = c
 		x++
 	}
 
@@ -450,7 +437,6 @@ func (e *Editor) ModeLine(wp *Window) {
 
 func (e *Editor) displayPromptAndResponse(prompt string, response string) {
 	e.drawString(0, e.Lines-1, e.FGColor, termbox.ColorDefault, prompt)
-	/* if we have a value print it and go to end of it */
 	if response != "" {
 		e.drawString(len(prompt), e.Lines-1, e.FGColor, termbox.ColorDefault, response)
 	}
@@ -566,25 +552,15 @@ func (e *Editor) ModifiedBuffers() bool {
 
 // FindBuffer Find a buffer by filename or create if requested
 func (e *Editor) FindBuffer(fname string, cflag bool) *Buffer {
-	var bp *Buffer
-	var sb *Buffer
-
-	bp = e.RootBuffer
+	bp := e.RootBuffer
 	for bp != nil {
 		if strings.Compare(fname, bp.Filename) == 0 || strings.Compare(fname, bp.Buffername) == 0 {
 			return bp
 		}
 		bp = bp.Next
 	}
-
 	if cflag != false {
-		// if ((bp = (buffer_t *) malloc (sizeof (buffer_t))) == nil)
-		// 	return (0);
 		bp = NewBuffer()
-
-		//BufferInit(bp)
-		//assert(bp != nil);
-
 		/* find the place in the list to insert this buffer */
 		if e.RootBuffer == nil {
 			e.RootBuffer = bp
@@ -593,10 +569,12 @@ func (e *Editor) FindBuffer(fname string, cflag bool) *Buffer {
 			bp.Next = e.RootBuffer
 			e.RootBuffer = bp
 		} else {
-			for sb = e.RootBuffer; sb.Next != nil; sb = sb.Next {
+			sb := e.RootBuffer
+			for sb.Next != nil {
 				if strings.Compare(sb.Next.Filename, fname) > 0 {
 					break
 				}
+				sb = sb.Next
 			}
 			/* and insert it */
 			bp.Next = sb.Next
@@ -646,7 +624,7 @@ func (e *Editor) nextWindow() {
 	e.CurrentBuffer = e.CurrentWindow.Buffer
 
 	if e.CurrentBuffer.WinCount > 1 {
-		//w2b(Curwp) /* push win vars to buffer */
+		/* push win vars to buffer */
 		window2Buffer(e.CurrentWindow)
 	}
 }
@@ -673,7 +651,6 @@ func (e *Editor) freeOtherWindows() {
 		}
 		wp = next
 	}
-
 	e.RootWindow = winp
 	e.CurrentWindow = winp
 	winp.OneWindow()

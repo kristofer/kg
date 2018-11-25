@@ -8,14 +8,14 @@ const (
 )
 
 func (e *Editor) search() {
-	searchtext := e.getInput("Search: ")
-	found := e.CurrentBuffer.searchForward(e.CurrentBuffer.Point(), searchtext)
-	e.displaySearchResult(found, fwdsearch, "Search: ", searchtext)
+	e.Searchtext = e.getInput("Search: ")
+	found := e.CurrentBuffer.searchForward(e.CurrentBuffer.Point(), e.Searchtext)
+	e.displaySearchResult(found, fwdsearch, "Search: ", e.Searchtext)
 }
 func (e *Editor) rsearch() {
-	searchtext := e.getInput("R-Search: ")
-	found := e.CurrentBuffer.searchBackwards(e.CurrentBuffer.Point(), searchtext)
-	e.displaySearchResult(found, revsearch, "R-Search: ", searchtext)
+	e.Searchtext = e.getInput("R-Search: ")
+	found := e.CurrentBuffer.searchBackwards(e.CurrentBuffer.Point(), e.Searchtext)
+	e.displaySearchResult(found, revsearch, "R-Search: ", e.Searchtext)
 }
 
 func (e *Editor) displaySearchResult(found int, dir int, prompt string, search string) {
