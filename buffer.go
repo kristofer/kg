@@ -1,4 +1,4 @@
-package tkg
+package kg
 
 import (
 	"errors"
@@ -15,9 +15,9 @@ type Buffer struct {
 	Next    *Buffer /* b_next Link to next buffer_t */
 	Mark    int     /* b_mark the mark */
 	//Point      int     /* b_point the point */
-	OrigPoint  int    /* b_cpoint the original current point, used for mutliple window displaying */
-	PageStart  int    /* b_page start of page */
-	PageEnd    int    /* b_epage end of page */
+	OrigPoint int /* b_cpoint the original current point, used for mutliple window displaying */
+	PageStart int /* b_page start of page */
+	PageEnd   int /* b_epage end of page */
 	// FirstLine  int    /* b_page start of page */
 	// LastLine   int    /* b_epage end of page */
 	Reframe    bool   /* b_reframe force a reframe of the display */

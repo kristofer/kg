@@ -1,4 +1,4 @@
-package tkg
+package kg
 
 import "log"
 

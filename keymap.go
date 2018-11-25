@@ -1,4 +1,4 @@
-package tkg
+package kg
 
 type actionFunc func(*Editor)
 
