@@ -84,7 +84,6 @@ func (bp *Buffer) RuneAt(pt int) (rune, error) {
 	if npt := bp.dataPointForBufferPoint(pt); npt < len(bp.data) {
 		return bp.data[npt], nil
 	}
-	//log.Println("RuneAt", pt, bp.BufferLen(), bp.ActualLen())
 	return 0, errors.New("Ran over end of data buffer in RuneAt")
 }
 

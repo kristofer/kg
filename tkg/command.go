@@ -95,9 +95,12 @@ func (e *Editor) redraw() {
 	termbox.Clear(termbox.ColorDefault, termbox.ColorDefault)
 	e.CurrentWindow.Updated = true
 	e.CurrentBuffer.Reframe = true
+	k := 0
 	for wp := e.RootWindow; wp != nil; wp = wp.Next {
 		wp.Updated = true
+		k++
 	}
+	e.msg("editor redraw win(%d)", k)
 	e.updateDisplay()
 }
 
@@ -262,7 +265,7 @@ func (e *Editor) copyCut(cut bool) {
 		log.Println("rune", rch)
 		l++
 	}
-	log.Printf("CopyCut start %d len %d, %#v", start, extent, scrap)
+	//log.Printf("CopyCut start %d len %d, %#v", start, extent, scrap)
 	e.PasteBuffer = string(scrap)
 	if cut == true {
 		bp.Remove(start, extent)

@@ -191,22 +191,6 @@ func (e *Editor) handleEvent(ev *termbox.Event) bool {
 	return true
 }
 
-// ConsumeMoreEvents handles
-// func (e *Editor) ConsumeMoreEvents() bool {
-// 	for {
-// 		select {
-// 		case ev := <-e.EventChan:
-// 			ok := e.handleEvent(&ev)
-// 			if !ok {
-// 				return false
-// 			}
-// 		default:
-// 			return true
-// 		}
-// 	}
-// 	panic("unreachable")
-// }
-
 // OnSysKey on Ctrl key pressed
 func (e *Editor) OnSysKey(ev *termbox.Event) bool {
 	switch ev.Key {
@@ -283,11 +267,13 @@ func (e *Editor) displayMsg() {
 	if e.Msgflag {
 		e.drawString(0, e.Lines-1, e.FGColor, termbox.ColorDefault, e.Msgline)
 	}
+	e.blankFrom(e.Lines-1, len(e.Msgline))
 }
 
 // Display draws the window, minding the buffer pagestart/pageend
 func (e *Editor) Display(wp *Window, flag bool) {
-	termbox.Clear(termbox.ColorDefault, termbox.ColorDefault)
+	//termbox.Clear(termbox.ColorDefault, termbox.ColorDefault)
+	log.Printf("Disp Win %d %d (%s)\n", wp.TopPt, wp.Rows, wp.Buffer.Filename)
 	bp := wp.Buffer
 	pt := bp.Point()
 	// /* find start of screen, handle scroll up off page or top of file  */
@@ -320,14 +306,14 @@ func (e *Editor) Display(wp *Window, flag bool) {
 	l2end := bp.LineEnd(bp.PointForLine(l2))
 	bp.PageEnd = l2end
 	//log.Printf("P0 lines %d %d PageStart %d Point %d, bp.PageEnd %d BufL %d", l1, l2, bp.PageStart, pt, bp.PageEnd, bp.BufferLen())
-	r, c := 0, 0
+	r, c := wp.TopPt, 0
 	for k := bp.PageStart; k <= bp.PageEnd; k++ {
 		/* reached point - store the cursor position */
 		if pt == k {
 			bp.PointCol = c
-			wp.Col = c
+			//wp.Col = c
 			bp.PointRow = r
-			wp.Row = r
+			//wp.Row = r
 		}
 		rch, err := bp.RuneAt(k)
 		if err != nil {
@@ -347,6 +333,7 @@ func (e *Editor) Display(wp *Window, flag bool) {
 		}
 
 		if rch == '\n' || e.Cols <= c {
+			e.blankFrom(r, c)
 			c -= e.Cols
 			if c < 0 {
 				c = 0
@@ -355,14 +342,26 @@ func (e *Editor) Display(wp *Window, flag bool) {
 		}
 	}
 
-	PushBuffer2Window(wp)
+	buffer2Window(wp)
 	e.ModeLine(wp)
 	if wp == e.CurrentWindow && flag {
 		e.displayMsg()
-		e.SetTermCursor(wp.Col, wp.Row) //bp.PointCol, bp.PointRow)
-		termbox.Flush()                 //refresh();
+		e.setTermCursor(wp.Col, wp.Row) //bp.PointCol, bp.PointRow)
 	}
+	termbox.Flush() //refresh();
 	wp.Updated = false
+}
+
+func (e *Editor) blankFrom(r, c int) { // blank line to end of term
+	for k := c; k < (e.Cols - 1); k++ {
+		termbox.SetCell(k, r, ' ', e.FGColor, termbox.ColorDefault)
+	}
+}
+func (e *Editor) setTermCursor(c, r int) {
+	wp := e.CurrentWindow
+	wp.Col, wp.Row = c, r
+	termbox.SetCursor(c, r)
+	log.Printf("c %d r %d\n", c, r)
 }
 
 func (e *Editor) updateDisplay() {
@@ -372,6 +371,7 @@ func (e *Editor) updateDisplay() {
 	/* only one window */
 	if e.RootWindow.Next == nil {
 		e.Display(e.CurrentWindow, true)
+		termbox.Flush()
 		bp.PrevSize = bp.TextSize
 		return
 	}
@@ -382,22 +382,16 @@ func (e *Editor) updateDisplay() {
 	/* never CurrentWin,  but same buffer in different window or update flag set*/
 	for wp := e.RootWindow; wp != nil; wp = wp.Next {
 		if wp != e.CurrentWindow && (wp.Buffer == bp || wp.Updated) {
-			SyncBuffer(wp)
+			window2Buffer(wp)
 			e.Display(wp, false)
 		}
 	}
 
 	/* now display our window and buffer */
-	SyncBuffer(e.CurrentWindow)
+	window2Buffer(e.CurrentWindow)
 	e.displayMsg()
+	e.setTermCursor(e.CurrentWindow.Col, e.CurrentWindow.Row)
 	bp.PrevSize = bp.TextSize /* now safe to save previous size for next time */
-}
-
-// SetTermCursor -
-func (e *Editor) SetTermCursor(c, r int) {
-	wp := e.CurrentWindow
-	wp.Col, wp.Row = c, r
-	termbox.SetCursor(c, r)
 }
 
 // SetPointForMouse xxx
@@ -454,14 +448,12 @@ func (e *Editor) ModeLine(wp *Window) {
 }
 
 func (e *Editor) displayPromptAndResponse(prompt string, response string) {
-	//log.Println("dpr", prompt, response)
 	e.drawString(0, e.Lines-1, e.FGColor, termbox.ColorDefault, prompt)
 	/* if we have a value print it and go to end of it */
 	if response != "" {
 		e.drawString(len(prompt), e.Lines-1, e.FGColor, termbox.ColorDefault, response)
-		blanks := strings.Repeat(" ", e.Cols-len(prompt)+len(response))
-		e.drawString(len(prompt)+len(response), e.Lines-1, e.FGColor, termbox.ColorDefault, blanks)
 	}
+	e.blankFrom(e.Lines-1, len(prompt)+len(response))
 	termbox.SetCursor(len(prompt)+len(response), e.Lines-1)
 	termbox.Flush()
 }
@@ -483,7 +475,6 @@ loop:
 			case termbox.KeyEnter, termbox.KeyCtrlR:
 				break loop
 			case termbox.KeyBackspace2, termbox.KeyBackspace:
-				//log.Println("delete/backspace")
 				if len(fname) > 0 {
 					fname = fname[:len(fname)-1]
 				} else {
@@ -504,11 +495,9 @@ loop:
 // DeleteBuffer unlink from the list of buffers, free associated memory,
 // assumes buffer has been saved if modified
 func (e *Editor) deleteBuffer(bp *Buffer) bool {
-	//editor := bp.CurrentWindow.Editor
 	var sb *Buffer
 
 	/* we must have switched to a different buffer first */
-	//assert(bp != CurrentBuffer)
 	if bp != e.CurrentBuffer {
 		/* if buffer is the head buffer */
 		if bp == e.RootBuffer {
@@ -521,11 +510,6 @@ func (e *Editor) deleteBuffer(bp *Buffer) bool {
 				sb.Next = bp.Next
 			}
 		}
-
-		/* now we can delete */
-		//free(bp.BufferStart);
-		//bp.BufferStart = nil
-		//free(bp);
 		bp = nil
 	} else {
 		return false
@@ -621,51 +605,47 @@ func (e *Editor) FindBuffer(fname string, cflag bool) *Buffer {
 }
 
 func (e *Editor) splitWindow() {
-	var editor = e
-	var wp *Window
-	var wp2 *Window
-	ntru, ntrl := 0, 0
-
-	if editor.CurrentWindow.Rows < 3 {
-		editor.msg("Cannot split a %d line window", editor.CurrentWindow.Rows)
+	if e.CurrentWindow.Rows < 3 {
+		e.msg("Cannot split a %d line window", e.CurrentWindow.Rows)
 		return
 	}
 
-	wp = NewWindow(editor)
-	wp.AssociateBuffer(editor.CurrentWindow.Buffer)
-	//b2w(wp) /* inherit buffer settings */
-	PushBuffer2Window(wp)
+	nwp := NewWindow(e)
+	nwp.AssociateBuffer(e.CurrentWindow.Buffer)
+	buffer2Window(nwp)
 
-	ntru = (editor.CurrentWindow.Rows - 1) / 2    /* Upper size */
-	ntrl = (editor.CurrentWindow.Rows - 1) - ntru /* Lower size */
+	ntru := (e.CurrentWindow.Rows - 1) / 2    /* Upper size */
+	ntrl := (e.CurrentWindow.Rows - 1) - ntru /* Lower size */
 
 	/* Old is upper window */
-	editor.CurrentWindow.Rows = ntru
-	wp.TopPt = editor.CurrentWindow.TopPt + ntru + 1
-	wp.Rows = ntrl
+	e.CurrentWindow.Rows = ntru
+	nwp.TopPt = e.CurrentWindow.TopPt + ntru + 2
+	nwp.Rows = ntrl - 1
+	log.Printf("New win %d %d\n", nwp.TopPt, nwp.Rows)
+	log.Printf("Old win %d %d\n", e.CurrentWindow.TopPt, e.CurrentWindow.Rows)
 
 	/* insert it in the list */
-	wp2 = editor.CurrentWindow.Next
-	editor.CurrentWindow.Next = wp
-	wp.Next = wp2
+	wp2 := e.CurrentWindow.Next
+	e.CurrentWindow.Next = nwp
+	nwp.Next = wp2
 	/* mark the lot for update */
 	e.redraw()
 }
 
 // NextWindow
 func (e *Editor) nextWindow() {
-	var editor = e
-	editor.CurrentWindow.Updated = true /* make sure modeline gets updated */
+	e.CurrentWindow.Updated = true /* make sure modeline gets updated */
 	//Curwp = (Curwp.Next == nil ? Wheadp : Curwp.Next)
-	if editor.CurrentWindow.Next == nil {
-		editor.CurrentWindow = editor.RootWindow
+	if e.CurrentWindow.Next == nil {
+		e.CurrentWindow = e.RootWindow
 	} else {
-		editor.CurrentWindow = editor.CurrentWindow.Next
+		e.CurrentWindow = e.CurrentWindow.Next
 	}
-	editor.CurrentBuffer = editor.CurrentWindow.Buffer
+	e.CurrentBuffer = e.CurrentWindow.Buffer
 
-	if editor.CurrentBuffer.WinCount > 1 {
+	if e.CurrentBuffer.WinCount > 1 {
 		//w2b(Curwp) /* push win vars to buffer */
+		window2Buffer(e.CurrentWindow)
 	}
 }
 
