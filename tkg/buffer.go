@@ -18,8 +18,8 @@ type Buffer struct {
 	OrigPoint  int    /* b_cpoint the original current point, used for mutliple window displaying */
 	PageStart  int    /* b_page start of page */
 	PageEnd    int    /* b_epage end of page */
-	FirstLine  int    /* b_page start of page */
-	LastLine   int    /* b_epage end of page */
+	// FirstLine  int    /* b_page start of page */
+	// LastLine   int    /* b_epage end of page */
 	Reframe    bool   /* b_reframe force a reframe of the display */
 	WinCount   int    /* b_cnt count of windows referencing this buffer */
 	TextSize   int    /* b_size current size of text being edited (not including gap) */

@@ -273,7 +273,7 @@ func (e *Editor) displayMsg() {
 // Display draws the window, minding the buffer pagestart/pageend
 func (e *Editor) Display(wp *Window, flag bool) {
 	//termbox.Clear(termbox.ColorDefault, termbox.ColorDefault)
-	log.Printf("Disp Win %d %d (%s)\n", wp.TopPt, wp.Rows, wp.Buffer.Filename)
+	//log.Printf("Disp Win %d %d (%s)\n", wp.TopPt, wp.Rows, wp.Buffer.Filename)
 	bp := wp.Buffer
 	pt := bp.Point()
 	// /* find start of screen, handle scroll up off page or top of file  */
@@ -364,7 +364,7 @@ func (e *Editor) setTermCursor(c, r int) {
 	wp := e.CurrentWindow
 	wp.Col, wp.Row = c, r
 	termbox.SetCursor(c, r)
-	log.Printf("c %d r %d\n", c, r)
+	//log.Printf("c %d r %d\n", c, r)
 }
 
 func (e *Editor) updateDisplay() {
@@ -459,7 +459,7 @@ func (e *Editor) displayPromptAndResponse(prompt string, response string) {
 	termbox.Flush()
 }
 
-func (e *Editor) getFilename(prompt string) string {
+func (e *Editor) getInput(prompt string) string {
 	fname := ""
 	var ev termbox.Event
 	e.displayPromptAndResponse(prompt, "")

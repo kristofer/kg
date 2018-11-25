@@ -138,7 +138,7 @@ func (e *Editor) delete() {
 }
 
 func (e *Editor) gotoline() {
-	fname := e.getFilename("Goto Line: ")
+	fname := e.getInput("Goto Line: ")
 	ln, err := strconv.Atoi(fname)
 	if err != nil {
 		e.msg("Invalid Line.")
@@ -148,7 +148,7 @@ func (e *Editor) gotoline() {
 }
 
 func (e *Editor) insertfile() {
-	fname := e.getFilename("Insert file: ")
+	fname := e.getInput("Insert file: ")
 	if fname != "" {
 		res := e.InsertFile(fname, false)
 		if res {
@@ -159,7 +159,7 @@ func (e *Editor) insertfile() {
 
 func (e *Editor) readfile() {
 
-	fname := e.getFilename("Find file: ")
+	fname := e.getInput("Find file: ")
 	if fname == "" {
 		e.msg("Nope")
 		return
@@ -188,7 +188,7 @@ func (e *Editor) savebuffer() {
 }
 
 func (e *Editor) writefile() {
-	fname := e.getFilename("Write file: ")
+	fname := e.getInput("Write file: ")
 	if e.Save(fname) == true {
 		e.CurrentBuffer.Filename = fname
 	}
