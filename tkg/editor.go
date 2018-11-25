@@ -341,6 +341,9 @@ func (e *Editor) Display(wp *Window, flag bool) {
 			r++
 		}
 	}
+	for k := r; k < wp.TopPt+wp.Rows+1; k++ {
+		e.blankFrom(k, 0)
+	}
 
 	buffer2Window(wp)
 	e.ModeLine(wp)
@@ -429,11 +432,9 @@ func (e *Editor) ModeLine(wp *Window) {
 		mch = '*'
 	}
 	och = lch
-	temp := fmt.Sprintf("%c%c%c kg: %c%c %s wp(%d,%d) (h %d, w%d) rows %d", lch, och, mch, lch, lch,
+	temp := fmt.Sprintf("%c%c%c kg: %c%c %s wp(%d,%d)", lch, och, mch, lch, lch,
 		e.GetBufferName(wp.Buffer),
-		wp.Col, wp.Row,
-		//c, r,
-		e.Lines, e.Cols, wp.TopPt+wp.Rows)
+		wp.Col, wp.Row)
 	x := 0
 	y := wp.TopPt + wp.Rows + 1
 	for _, c := range temp {
@@ -528,6 +529,7 @@ func (e *Editor) nextBuffer() {
 			e.CurrentBuffer = e.RootBuffer
 		}
 		e.CurrentWindow.AssociateBuffer(e.CurrentBuffer)
+		e.CurrentBuffer.Reframe = true
 	}
 }
 
@@ -675,14 +677,4 @@ func (e *Editor) freeOtherWindows() {
 	e.RootWindow = winp
 	e.CurrentWindow = winp
 	winp.OneWindow()
-}
-
-// PointUp attempt for new PointUp
-func (e *Editor) PointUp() {
-	// urbp->b_point = lncolumn(curbp, upup(curbp, curbp->b_point),curbp->b_col);
-	bp := e.CurrentBuffer
-	pt := bp.Point()
-	c1 := bp.ColumnForPoint(pt)
-	npt := bp.UpUp(pt, c1)
-	bp.SetPointAndCursor(npt)
 }
