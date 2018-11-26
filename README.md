@@ -144,7 +144,10 @@ You will also need the `github.com/nsf/termbox-go`
 
     cd to the kg source directory...
 
-    $ 
+    $ cd cmd
+    $ go build -o kg main.go
+
+    and then move into your binary PATH
 
 ## Future Enhancements
 
