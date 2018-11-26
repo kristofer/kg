@@ -12,12 +12,9 @@ type Buffer struct {
 	postLen int
 	Next    *Buffer /* b_next Link to next buffer_t */
 	Mark    int     /* b_mark the mark */
-	//Point      int     /* b_point the point */
 	OrigPoint int /* b_cpoint the original current point, used for mutliple window displaying */
 	PageStart int /* b_page start of page */
 	PageEnd   int /* b_epage end of page */
-	// FirstLine  int    /* b_page start of page */
-	// LastLine   int    /* b_epage end of page */
 	Reframe    bool   /* b_reframe force a reframe of the display */
 	WinCount   int    /* b_cnt count of windows referencing this buffer */
 	TextSize   int    /* b_size current size of text being edited (not including gap) */
@@ -60,14 +57,7 @@ func (bp *Buffer) GetText() string {
 }
 
 func (bp *Buffer) logBufferEOB(pt int) {
-	// if bp.EndOfBuffer(pt) == true {
-	// 	pc, file, no, ok := runtime.Caller(1)
-	// 	details := runtime.FuncForPC(pc)
-	// 	if ok && details != nil {
-	// 		// log.Printf(">>Called from %s\n>> %s Ln# %d\n", details.Name(), file, no)
-	// 	}
-	// 	// log.Println(">>Setting Point to EOB", pt, bp.BufferLen())
-	// }
+
 }
 
 // RuneAt finally reliable!!
@@ -143,11 +133,6 @@ func (bp *Buffer) setCursor() {
 	x, y := bp.XYForPoint(bp.preLen)
 	bp.PointRow = y
 	bp.PointCol = x
-}
-
-// PrintPoint print Point point
-func (bp *Buffer) PrintPoint() {
-	fmt.Println("C: ", bp.Point())
 }
 
 // BufferLen length of buffer
