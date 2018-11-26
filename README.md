@@ -1,23 +1,25 @@
 # kg Emacs
 
-The smallest functional Emacs in less than 2000 lines of Go
+The small functional Emacs in Go
 
-kg Emacs is inspired by Atto Emacs, MicroEmacs, Nano, Pico and my earlier project known as Perfect Emacs [1].
+kg Emacs is inspired by Atto Emacs (by Hugh Barney), MicroEmacs, Nano, Pico and his earlier project known as Perfect Emacs [1].
 
 
 > A designer knows he has achieved perfection not when there is nothing left to add, but when there is nothing left to take away.
+> -- <cite>Antoine de Saint-Exupery</cite>
+
+> If you want to build a ship, don't drum up people to collect wood and don't assign them tasks and work, but rather teach them to long for the endless immensity of the sea.
 > -- <cite>Antoine de Saint-Exupery</cite>
 
 ## Goals of kg Emacs
 
 * Mine own, finally.
 * no damn Overwrite mode. Too bad.
+* pure Go implementation
 * ...
-* Be the smallest fuctional Emacs in less than 2000 lines of C.
-* Provide a rich level of functionality in the smallest amount of code
 * Be easy to understand without extensive study (to encourage further experimentation).
 
-In Defining Atto as the lowest functional Emacs I have had to consider the essential feature set that makes Emacs, 'Emacs'.  I have defined this point as a basic Emacs command set and key bindings; the ability to edit multiple files (buffers), and switch between them; edit the buffers in mutliple windows, cut, copy and paste; forward and reverse searching, a replace function, basic syntax hilighting and UTF8 support. The proviso being that all this will fit in less than 2000 lines of C.
+Using Atto as the lowest functional Emacs, Hugh had to consider the essential feature set that makes Emacs, 'Emacs'.  From his Readme: _I have defined this point as a basic Emacs command set and key bindings; the ability to edit multiple files (buffers), and switch between them; edit the buffers in mutliple windows, cut, copy and paste; forward and reverse searching, a replace function, basic syntax hilighting and UTF8 support. The proviso being that all this will fit in less than 2000 lines of C._
 
 
 ## Derivation
@@ -42,7 +44,12 @@ kg is based on the design of Atto Emacs which is based on the public domain code
     ue3.10         uemacs    171664    52.4K     16
     GNUEmacs       emacs   14632920   358.0k    186
 
-## Atto Key Bindings
+    kg             kg       2719864     1.9k      8
+
+* _Due to Go's single-binary, 2.7mb is pretty normal for a go binary size. It uses NO shared libraries, etc. The code itself though, is more like 720496, since that's (kg - HelloWorld) (2719864 - 1999368)._
+* _While I did not aim for less than 2000 LOC, surprisingly, it is. And no, I did not count test LOC._ 
+
+## kg Key Bindings
 
     C-A   begining-of-line
     C-B   backward-character
@@ -127,31 +134,21 @@ Generally, the procedure for copying or moving text is:
     ESC will escape from the search prompt and return to the point of the match
     C-G abort the search and return to point before the search started
 
-## Building on Ubuntu
+## Building on Linux
 
-When building on Ubuntu you will need to install the libcurses dev package.
+When building on Ubuntu you will need to install Go v1.11 or greater.
+You will also need the `guthub.com/nsf/termbox-go`
 
-    $ sudo apt-get install apt-file
-    $ apt-file update
+    $ go get `this repo`
+    $ 
 
-now search for which package would have curses.h and install it:
+## Future Enhancements
 
-    $ apt-file search curses.h
-    libncurses5-dev: /usr/include/curses.h
-    $ sudo apt-get install libncurses5-dev
-
-## Future Enhancements and Collaboration
-
-The priority now is bug fixes and keeping the code count below 2000 lines. Bug fixes and optimisations are welcome especially if they deliver code reductions which make space for further fixes.
+Maybe a piece-table or piece-chain implementation? Maybe a different key mapping set to make it more mac-like.
 
 ## Multiple Windows or Not?
 
-Atto supports multiple windows !  This was the hardest part of the project to get working reliably.
-
-The lack of multiple windows would have been quickly noticed as it is a very visible feature of the Emacs user interface.  It is very useful to be able to look at some code in one window whilst editing another section of the same file (or a different file) in another window.  As more than one window can access the same buffer the current point now has now to be associated with the window structure and updated back to the buffer structure whenever any gap or display code is called that accesses the point location. The strategy I used in the end was to treat the buffer as the master and update the window structure with copies of the critical values (point, page, epage, cursor row & col) after each display update of that window.  This is because the display code does the calculations necessary to reframe the sceen when the point scrolls up off the screen or below the screen. Getting everthing to work correctly when displaying the same buffer in more that one winow was a reall challenge and took arpund 15-20 hours to get it working.
-
-A multi-window display issue (specifically evident in a buffer-gap editor) was resolved in Atto 1.6.  This is where you are editing a file that is displayed in more than one window.  Say you are in window1 and delete 3 lines, the current point in the other windows (if the point is below the point in window1) have to be adjusted to take into account that thier relative positions in the buffer have now shifted up. We do this by tracking the size of the text in the buffer before and after each command.  At the start of the display function we can work out the difference and adjust the other windows when they are updated. This mechanism works well even when inserting a text file that means that the gap has to be re-allocated.
-
+Kg supports multiple windows 
 
 ## Known Issues
 
@@ -159,14 +156,16 @@ A multi-window display issue (specifically evident in a buffer-gap editor) was r
 
 ## Copying
 
-  Atto code is released to the public domain.
-  hughbarney AT gmail.com 2017
+  Kg code is released to the public domain.
+  kryounger AT gmail.com - 2018
 
 ## Acknowledgements
+    Hugh Barney for Atto (and his other work).
     Ed Davies for bringing Athony's Editor to my attention
     Anthony Howe for his original codebase
     Matt Fielding (Magnetic Realms) for providing fixes for multi-byte / wide characters, delete, backspace and cursor position
     The Infinnovation team for bug fixes to complete.c
+    James Gosling for telling me long ago that to build an Emacs just something you did.
 
 ## References
 
