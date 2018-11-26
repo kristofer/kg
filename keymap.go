@@ -48,7 +48,7 @@ var keymap = []keymapt{
 	{"esc f forward-word       ", "\x1B\x66", (*Editor).wright},
 	{"esc g gotoline           ", "\x1B\x67", (*Editor).gotoline},
 	{"esc k kill-region        ", "\x1B\x6B", (*Editor).cut},
-	//	{"esc r query-replace      ", "\x1B\x72", (*Editor).query_replace},
+	{"esc r query-replace      ", "\x1B\x72", (*Editor).queryReplace},
 	{"esc v backward-page      ", "\x1B\x76", (*Editor).pgup},
 	{"esc w copy-region        ", "\x1B\x77", (*Editor).copy},
 	{"esc @ set-mark           ", "\x1B\x40", (*Editor).iblock}, /* esc-@ */

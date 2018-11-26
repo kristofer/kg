@@ -21,7 +21,7 @@ func (e *Editor) rsearch() {
 func (e *Editor) displaySearchResult(found int, dir int, prompt string, search string) {
 	if found != -1 {
 		e.CurrentBuffer.SetPoint(found)
-		e.msg("%s%s", prompt, search)
+		e.msg("%s/%s", prompt, search)
 		e.Display(e.CurrentWindow, true)
 	} else {
 		e.msg("Failing %s%s", prompt, search)
