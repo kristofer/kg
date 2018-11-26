@@ -1,6 +1,6 @@
 # kg Emacs
 
-The small functional Emacs in Go
+A small functional Emacs in Go
 
 kg Emacs is inspired by Atto Emacs (by Hugh Barney), MicroEmacs, Nano, Pico and his earlier project known as Perfect Emacs [1].
 
@@ -134,12 +134,16 @@ Generally, the procedure for copying or moving text is:
     ESC will escape from the search prompt and return to the point of the match
     C-G abort the search and return to point before the search started
 
-## Building on Linux
+## Building on Linux/MacOS
 
 When building on Ubuntu you will need to install Go v1.11 or greater.
-You will also need the `guthub.com/nsf/termbox-go`
+You will also need the `github.com/nsf/termbox-go`
 
-    $ go get `this repo`
+    $ go get github.com/kristofer/kg
+    $ go get github.com/nsf/termbox-go
+
+    cd to the kg source directory...
+
     $ 
 
 ## Future Enhancements

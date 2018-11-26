@@ -62,7 +62,7 @@ outer:
 					break inner
 
 				//case 0x1B: /* esc */
-					//flushinp() /* discard any escape sequence without writing in buffer */
+				//flushinp() /* discard any escape sequence without writing in buffer */
 				case 'q': /* controlled exit */
 					break outer
 
