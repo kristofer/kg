@@ -3,7 +3,6 @@ package kg
 import (
 	"errors"
 	"fmt"
-	"runtime"
 )
 
 // Buffer main struct
@@ -61,14 +60,14 @@ func (bp *Buffer) GetText() string {
 }
 
 func (bp *Buffer) logBufferEOB(pt int) {
-	if bp.EndOfBuffer(pt) == true {
-		pc, file, no, ok := runtime.Caller(1)
-		details := runtime.FuncForPC(pc)
-		if ok && details != nil {
-			// log.Printf(">>Called from %s\n>> %s Ln# %d\n", details.Name(), file, no)
-		}
-		// log.Println(">>Setting Point to EOB", pt, bp.BufferLen())
-	}
+	// if bp.EndOfBuffer(pt) == true {
+	// 	pc, file, no, ok := runtime.Caller(1)
+	// 	details := runtime.FuncForPC(pc)
+	// 	if ok && details != nil {
+	// 		// log.Printf(">>Called from %s\n>> %s Ln# %d\n", details.Name(), file, no)
+	// 	}
+	// 	// log.Println(">>Setting Point to EOB", pt, bp.BufferLen())
+	// }
 }
 
 // RuneAt finally reliable!!
