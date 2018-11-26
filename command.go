@@ -2,7 +2,6 @@ package kg
 
 import (
 	"io/ioutil"
-	"log"
 	"strconv"
 	"strings"
 	"unicode"
@@ -259,13 +258,13 @@ func (e *Editor) copyCut(cut bool) {
 		rch, err := bp.RuneAt(l)
 		if err != nil {
 			e.msg("Copy/Cut failed. %s", err)
-			log.Println("Copy/Cut failed.", err)
+			// log.Println("Copy/Cut failed.", err)
 		}
 		scrap[k] = rch
-		log.Println("rune", rch)
+		// log.Println("rune", rch)
 		l++
 	}
-	//log.Printf("CopyCut start %d len %d, %#v", start, extent, scrap)
+	//// log.Printf("CopyCut start %d len %d, %#v", start, extent, scrap)
 	e.PasteBuffer = string(scrap)
 	if cut == true {
 		bp.Remove(start, extent)

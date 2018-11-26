@@ -1,7 +1,5 @@
 package kg
 
-import "log"
-
 const (
 	fwdsearch = 1
 	revsearch = 2
@@ -52,7 +50,7 @@ func (bp *Buffer) searchForward(startp int, stext string) int {
 			}
 		}
 		if ss == len(s) {
-			log.Printf("Found %s at pt %d\n", stext, pp)
+			// log.Printf("Found %s at pt %d\n", stext, pp)
 			return pp
 		}
 	}
@@ -77,7 +75,7 @@ func (bp *Buffer) searchBackwards(startp int, stext string) int {
 			}
 		}
 		if ss == len(s) {
-			log.Printf("Found %s at pt %d\n", stext, pp)
+			// log.Printf("Found %s at pt %d\n", stext, pp)
 			return pp
 		}
 	}

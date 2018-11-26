@@ -3,7 +3,6 @@ package kg
 import (
 	"errors"
 	"fmt"
-	"log"
 	"runtime"
 )
 
@@ -66,9 +65,9 @@ func (bp *Buffer) logBufferEOB(pt int) {
 		pc, file, no, ok := runtime.Caller(1)
 		details := runtime.FuncForPC(pc)
 		if ok && details != nil {
-			log.Printf(">>Called from %s\n>> %s Ln# %d\n", details.Name(), file, no)
+			// log.Printf(">>Called from %s\n>> %s Ln# %d\n", details.Name(), file, no)
 		}
-		log.Println(">>Setting Point to EOB", pt, bp.BufferLen())
+		// log.Println(">>Setting Point to EOB", pt, bp.BufferLen())
 	}
 }
 
@@ -129,7 +128,7 @@ func (bp *Buffer) SetPoint(np int) {
 		bp.postLen++
 	}
 	if bp.PageEnd < bp.preLen {
-		//log.Println("reframing!")
+		//// log.Println("reframing!")
 		bp.Reframe = true
 	}
 }

@@ -2,8 +2,6 @@ package kg
 
 import (
 	"fmt"
-	"log"
-	"os"
 	"strings"
 	"unicode"
 
@@ -57,19 +55,19 @@ type Editor struct {
 // StartEditor is the old C main function
 func (e *Editor) StartEditor(argv []string, argc int) {
 	// log setup....
-	f, err := os.OpenFile("logfile", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
-	if err != nil {
-		log.Fatalf("error opening file: %v", err)
-	}
-	defer f.Close()
+	// f, err := os.OpenFile("logfile", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+	// if err != nil {
+	// 	log.Fatalf("error opening file: %v", err)
+	// }
+	// defer f.Close()
 
-	log.SetOutput(f)
-	f.Truncate(0)
-	log.Println("Start of Log...")
+	// log.SetOutput(f)
+	// f.Truncate(0)
+	// // log.Println("Start of Log...")
 	//
 	e.FGColor = termbox.ColorDefault
 	e.BGColor = termbox.ColorWhite
-	err = termbox.Init()
+	err := termbox.Init()
 	checkErr(err)
 	defer termbox.Close()
 	e.Cols, e.Lines = termbox.Size()
@@ -120,8 +118,8 @@ func (e *Editor) StartEditor(argv []string, argc int) {
 	for {
 		select {
 		case ev := <-e.EventChan:
-			//log.Printf("%#v\n", ev)
-			//log.Println(">>\n ", time.Now().Unix(), "\n>>")
+			//// log.Printf("%#v\n", ev)
+			//// log.Println(">>\n ", time.Now().Unix(), "\n>>")
 
 			ok := e.handleEvent(&ev)
 			if !ok {
@@ -233,7 +231,7 @@ func (e *Editor) searchAndPerform(ev *termbox.Event) bool {
 	}
 	for i, j := range e.Keymap {
 		if strings.Compare(lookfor, j.KeyBytes) == 0 {
-			//log.Println("SearchAndPerform FOUND ", lookfor, e.Keymap[i])
+			//// log.Println("SearchAndPerform FOUND ", lookfor, e.Keymap[i])
 			do := e.Keymap[i].Do
 			if do != nil {
 				do(e) // execute function for key
@@ -311,7 +309,7 @@ func (e *Editor) Display(wp *Window, shouldDrawCursor bool) {
 		}
 		rch, err := bp.RuneAt(k)
 		if err != nil {
-			log.Println("Error on RuneAt", err)
+			// log.Println("Error on RuneAt", err)
 		}
 		if rch != '\r' {
 			if unicode.IsPrint(rch) || rch == '\t' || rch == '\n' {
@@ -358,7 +356,7 @@ func (e *Editor) setTermCursor(c, r int) {
 	wp := e.CurrentWindow
 	wp.Col, wp.Row = c, r
 	termbox.SetCursor(c, r)
-	//log.Printf("c %d r %d\n", c, r)
+	//// log.Printf("c %d r %d\n", c, r)
 }
 
 func (e *Editor) updateDisplay() {
@@ -601,8 +599,8 @@ func (e *Editor) splitWindow() {
 	e.CurrentWindow.Rows = ntru
 	nwp.TopPt = e.CurrentWindow.TopPt + ntru + 2
 	nwp.Rows = ntrl - 1
-	log.Printf("New win %d %d\n", nwp.TopPt, nwp.Rows)
-	log.Printf("Old win %d %d\n", e.CurrentWindow.TopPt, e.CurrentWindow.Rows)
+	// log.Printf("New win %d %d\n", nwp.TopPt, nwp.Rows)
+	// log.Printf("Old win %d %d\n", e.CurrentWindow.TopPt, e.CurrentWindow.Rows)
 
 	/* insert it in the list */
 	wp2 := e.CurrentWindow.Next

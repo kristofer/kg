@@ -1,4 +1,3 @@
 # To Do
 
-* search commented out
-* mouse to change windows
+* mouse to change windows (only works with one-window)

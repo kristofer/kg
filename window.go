@@ -48,7 +48,7 @@ func NewWindow(e *Editor) *Window {
 func (wp *Window) OneWindow() {
 	wp.TopPt = 0
 	wp.Rows = wp.Editor.Lines - 3
-	log.Printf("OneWindow rows %d line %d\n", wp.Rows, wp.Editor.Lines)
+	// log.Printf("OneWindow rows %d line %d\n", wp.Rows, wp.Editor.Lines)
 	wp.Next = nil
 }
 
@@ -68,11 +68,11 @@ func (wp *Window) OnKey(ev *termbox.Event) {
 		wp.Buffer.AddRune('\t')
 	default:
 		if ev.Mod&termbox.ModAlt != 0 && wp.Editor.OnAltKey(ev) {
-			log.Println("Alt!", ev.Key, ev.Ch)
+			// log.Println("Alt!", ev.Key, ev.Ch)
 			break
 		}
 		//ch := ev.Ch
-		//log.Printf("Win OnKey %#U Point is %d\n", ch, wp.Buffer.Point())
+		//// log.Printf("Win OnKey %#U Point is %d\n", ch, wp.Buffer.Point())
 		wp.Buffer.AddRune(ev.Ch)
 	}
 
