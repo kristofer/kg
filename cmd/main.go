@@ -3,7 +3,7 @@ package main
 import (
 	"os"
 
-	"tioga.co/kristofer/kg"
+	"github.com/kristofer/kg"
 )
 
 func main() {
