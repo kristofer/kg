@@ -22,15 +22,12 @@ func TestBufferGrow(t *testing.T) {
 	r := "[Ut enim ad minima]"
 	//u := "[veniam, quis nostrum exercitationem]"
 	//w := "Οὐχὶ ταὐτὰ παρίσταταί \nμοι γιγνώσκειν, ὦ ἄνδρες\n"
-	gb.PrintPoint()
-	gb.SetText(s)
+	gb.setText(s)
 	for i := 0; i < 11; i++ {
 		gb.PointNext()
 	}
-	gb.PrintPoint()
 	gb.Insert(r)
-	gb.PrintPoint()
-	fmt.Printf("|%v|\n", gb.GetText())
+	fmt.Printf("|%v|\n", gb.getText())
 }
 
 func TestAddRune2(t *testing.T) {
@@ -39,7 +36,7 @@ func TestAddRune2(t *testing.T) {
 	//      012345678 91123 4567892 123456789 3123456
 	s := "Lorem\nlite\nsed ut\naliqua. \nhhh"
 	//    01234 56789 1123456 789212345 67893
-	gb.SetText(s)
+	gb.setText(s)
 	gb.DebugPrint()
 	//gb.Insert("foo")
 	gb.AddRune('f')
@@ -57,7 +54,7 @@ func TestCollapseGap(t *testing.T) {
 	//      012345678 91123 4567892 123456789 3123456
 	s := "Lorem\nlite\nsed ut\naliqua. \nhhh"
 	//    01234 56789 1123456 789212345 67893
-	gb.SetText(s)
+	gb.setText(s)
 	gb.DebugPrint()
 	//gb.Insert("foo")
 	gb.AddRune('f')
@@ -77,16 +74,16 @@ func TestTextLines(t *testing.T) {
 	gb := NewBuffer()
 	s := "Lorem ipsum dolor sit amet,\nconsectetur adipiscing elit,\nsed do eiusmod tempor incididunt ut\nlabore et dolore magna aliqua. "
 	//    0123456789112345678921234567 89312345678941234567895123456 7896123456789612345678971234567898123456789
-	gb.SetText(s)
-	//fmt.Printf("%v\n", gb.GetText())
+	gb.setText(s)
+	//fmt.Printf("%v\n", gb.getText())
 	fmt.Println("--- [1, 3)")
-	fmt.Printf("%v\n", gb.GetTextForLines(1, 3))
+	fmt.Printf("%v\n", gb.getTextForLines(1, 3))
 	fmt.Println("--- [1, 2)")
-	fmt.Printf("%v\n", gb.GetTextForLines(1, 2))
+	fmt.Printf("%v\n", gb.getTextForLines(1, 2))
 	fmt.Println("--- [2, 3)")
-	fmt.Printf("%v\n", gb.GetTextForLines(2, 3))
+	fmt.Printf("%v\n", gb.getTextForLines(2, 3))
 	fmt.Println("--- [2, 5)")
-	fmt.Printf("%v\n", gb.GetTextForLines(2, 5))
+	fmt.Printf("%v\n", gb.getTextForLines(2, 5))
 	gb.DebugPrint()
 	t.Error("force print")
 }
@@ -95,7 +92,7 @@ func TestLineStart(t *testing.T) {
 	gb := NewBuffer()
 	s := "Lorem\nlite\nsed ut\naliqua.-\nhhh"
 	//    01234 56789 1123456 789212345 67893
-	gb.SetText(s)
+	gb.setText(s)
 	// gb.Insert("foo")
 	// gb.AddRune('k')
 	// gb.AddRune('r')
@@ -124,7 +121,7 @@ func TestLineStart2(t *testing.T) {
 	//    012345678 91123 4567892 123456789 3123456
 	//s := "fooLorem\nlite\nsed ut\naliqua.-\nhhh"
 	//      012345678 91123 4567892 123456789 3123456
-	gb.SetText(s)
+	gb.setText(s)
 	//gb.Insert("foo")
 	gb.AddRune('f')
 	gb.AddRune('o')
@@ -161,7 +158,7 @@ func TestLineForPoint(t *testing.T) {
 	//    012345 67891 1234567 892123456 7893123456
 	//s := "fooLorem\nlite\nsed ut\naliqua.-\nhhh"
 	//      012345678 91123 4567892 123456789 3123456
-	gb.SetText(s)
+	gb.setText(s)
 	//gb.Insert("foo")
 	// gb.AddRune('f')
 	// gb.AddRune('o')
@@ -201,7 +198,7 @@ func TestLineForPoint2(t *testing.T) {
 	//      111111111 22222 3333333 444444444 555
 	//s := "fooLorem\nlite\nsed ut\naliqua.-\nhhh"
 	//      012345678 91123 4567892 123456789 3123456
-	gb.SetText(s)
+	gb.setText(s)
 	gb.Insert("foo")
 	// gb.AddRune('f')
 	// gb.AddRune('o')
@@ -241,7 +238,7 @@ func TestLineEnd(t *testing.T) {
 	//    01234 56789 1123456 789212345 67893
 	//s := "fookris\nLorem\nlite\nsed ut\naliqua. \nhhh"
 	//    	01234567 891123 45678 9212345 678931234 56789412345
-	gb.SetText(s)
+	gb.setText(s)
 	gb.Insert("foo")
 	gb.AddRune('k')
 	gb.AddRune('r')
@@ -262,7 +259,7 @@ func TestLineLenAtPoint(t *testing.T) {
 	gb := NewBuffer()
 	s := "Lorem\nlite\nsed ut\naliqua.-\nhhh"
 	//    01234 56789 1123456 789212345 67893
-	gb.SetText(s)
+	gb.setText(s)
 	// gb.Insert("foo")
 	// gb.AddRune('k')
 	// gb.AddRune('r')
@@ -294,7 +291,7 @@ func TestLineLenAtPoint2(t *testing.T) {
 	//    01234 56789 1123456 789212345 67893
 	//s := "fookris\nLorem\nlite\nsed ut\naliqua. \nhhh"
 	//    	01234567 891123 45678 9212345 678931234 56789412345
-	gb.SetText(s)
+	gb.setText(s)
 	gb.Insert("foo")
 	gb.AddRune('k')
 	gb.AddRune('r')
@@ -332,9 +329,9 @@ func TestPointForLine(t *testing.T) {
 	//    01234 56789 1123456 789212345 67893
 	//s := "fookris\nLorem\nlite\nsed ut\naliqua. \nhhh"
 	//    	01234567 891123 45678 9212345 678931234 56789412345
-	gb.SetText(s)
+	gb.setText(s)
 	gb.DebugPrint()
-	// gb.SetText(s)
+	// gb.setText(s)
 	// gb.Insert("foo")
 	// gb.AddRune('k')
 	// gb.AddRune('r')
@@ -357,8 +354,8 @@ func TestPointForLine2(t *testing.T) {
 	//    01234 56789 1123456 789212345 67893
 	//s := "fookris\nLorem\nlite\nsed ut\naliqua. \nhhh"
 	//    	01234567 891123 45678 9212345 678931234 56789412345
-	gb.SetText(s)
-	// gb.SetText(s)
+	gb.setText(s)
+	// gb.setText(s)
 	gb.Insert("foo")
 	gb.AddRune('k')
 	gb.AddRune('r')
@@ -380,8 +377,8 @@ func TestColumnForPoint(t *testing.T) {
 	//    01234 56789 1123456 789212345 67893
 	//s := "fookris\nLorem\nlite\nsed ut\naliqua. \nhhh"
 	//    	01234567 891123 45678 9212345 678931234 56789412345
-	gb.SetText(s)
-	gb.SetText(s)
+	gb.setText(s)
+	gb.setText(s)
 	gb.Insert("foo")
 	gb.AddRune('k')
 	gb.AddRune('r')
@@ -414,7 +411,7 @@ func TestPointForXY(t *testing.T) {
 	//    01234 56789 1123456 789212345 67893
 	//s := "fookris\nLorem\nlite\nsed ut\naliqua. \nhhh"
 	//    	01234567 891123 45678 9212345 678931234 56789412345
-	gb.SetText(s)
+	gb.setText(s)
 	gb.Insert("foo")
 	gb.AddRune('k')
 	gb.AddRune('r')
@@ -447,7 +444,7 @@ func TestXYForPoint(t *testing.T) {
 	//    01234 56789 1123456 789212345 67893
 	//s := "fookris\nLorem\nlite\nsed ut\naliqua. \nhhh"
 	//    	01234567 891123 45678 9212345 678931234 56789412345
-	gb.SetText(s)
+	gb.setText(s)
 	gb.Insert("foo")
 	gb.AddRune('k')
 	gb.AddRune('r')
@@ -522,7 +519,7 @@ func TestSetPoint(t *testing.T) {
 	//    01234 56789 1123456 789212345 67893
 	//s := "fookris\nLXorem\nlite\nsed ut\naliqua. \nhhh"
 	//    	01234567 8911234 5678 9212345 678931234 56789412345
-	gb.SetText(s)
+	gb.setText(s)
 	gb.DebugPrint()
 	gb.Insert("foo")
 	gb.AddRune('k')
@@ -565,7 +562,7 @@ func TestSetPoint(t *testing.T) {
 func TestRuneAt(t *testing.T) {
 	gb := NewBuffer()
 	s := "Lorem ipsum dolor sit amet,\nconsectetur adipiscing elit,\nsed do eiusmod tempor incididunt ut\nlabore et dolore magna aliqua. "
-	gb.SetText(s)
+	gb.setText(s)
 	gb.Insert("foo")
 	gb.AddRune('k')
 	gb.AddRune('r')
@@ -601,8 +598,8 @@ func TestSegStart(t *testing.T) {
 	//    01234 56789 1123456 789212345 67893
 	//s := "fookris\nLorem\nlite\nsed ut\naliqua. \nhhh"
 	//    	01234567 891123 45678 9212345 678931234 56789412345
-	gb.SetText(s)
-	gb.SetText(s)
+	gb.setText(s)
+	gb.setText(s)
 	gb.Insert("foo")
 	gb.AddRune('k')
 	gb.AddRune('r')
@@ -629,8 +626,8 @@ func TestSegNext(t *testing.T) {
 	//    01234 56789 1123456 789212345 67893
 	//s := "fookris\nLorem\nlite\nsed ut\naliqua. \nhhh"
 	//    	01234567 891123 45678 9212345 678931234 56789412345
-	gb.SetText(s)
-	gb.SetText(s)
+	gb.setText(s)
+	gb.setText(s)
 	gb.Insert("foo")
 	gb.AddRune('k')
 	gb.AddRune('r')
@@ -657,8 +654,8 @@ func TestUpUp(t *testing.T) {
 	//    01234 56789 1123456 789212345 67893
 	//s := "fookris\nLorem\nlite\nsed ut\naliqua. \nhhh"
 	//    	01234567 891123 45678 9212345 678931234 56789412345
-	gb.SetText(s)
-	gb.SetText(s)
+	gb.setText(s)
+	gb.setText(s)
 	gb.Insert("foo")
 	gb.AddRune('k')
 	gb.AddRune('r')
@@ -685,8 +682,8 @@ func TestDownDown(t *testing.T) {
 	//    01234 56789 1123456 789212345 67893
 	//s := "fookris\nLorem\nlite\nsed ut\naliqua. \nhhh"
 	//    	01234567 891123 45678 9212345 678931234 56789412345
-	gb.SetText(s)
-	gb.SetText(s)
+	gb.setText(s)
+	gb.setText(s)
 	gb.Insert("foo")
 	gb.AddRune('k')
 	gb.AddRune('r')

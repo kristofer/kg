@@ -1,8 +1,8 @@
 # kg Emacs
 
-A small functional Emacs in Go
+A small functional Emacs written in Go
 
-kg Emacs is inspired by Atto Emacs (by Hugh Barney), MicroEmacs, Nano, Pico and his earlier project known as Perfect Emacs [1].
+kg Emacs is inspired by Atto Emacs (by Hugh Barney), MicroEmacs, Nano, Pico and his earlier project known as Perfect Emacs [1]. Also by JOE, uEmacs, MicroEmacs, mg, zile and of course, GNU Emacs. I learnt Emacs on a Sun 2/120 a long time ago in a galaxy far, far, away.
 
 
 > A designer knows he has achieved perfection not when there is nothing left to add, but when there is nothing left to take away.
@@ -13,9 +13,12 @@ kg Emacs is inspired by Atto Emacs (by Hugh Barney), MicroEmacs, Nano, Pico and 
 
 ## Goals of kg Emacs
 
-* Mine own, finally.
+* Mine own, finally, in Go.
+* uses an array of Rune to handle Unicode codepoints.
 * no damn Overwrite mode. Too bad.
 * pure Go implementation
+* removal of the C-based hilite stuff
+* add go routines for some operations.
 * ...
 * Be easy to understand without extensive study (to encourage further experimentation).
 
@@ -24,7 +27,7 @@ Using Atto as the lowest functional Emacs, Hugh had to consider the essential fe
 
 ## Derivation
 
-kg is based on the design of Atto Emacs which is based on the public domain code of Anthony Howe's editor (commonly known as Anthony's Editor or AE, [2]).  Rather than representing a file as a linked list of lines, the AE Editor uses the concept of a Buffer-Gap [4,5,6].  A Buffer-Gap editor stores the file in a single piece of contiguous memory with some extra unused space known as the buffer gap.  On character insertion and deletion the gap is first moved to the current point.  A character deletion then extends the gap by moving the gap pointer back by 1 OR the gap is reduced by 1 when a character is inserted.  The Buffer-Gap technique is elegant and significantly reduces the amount of code required to load a file, modify it and redraw the display.  The proof of this is seen when you consider that Atto supports almost the same command set that Pico supports,  but Pico requires almost 17 times the amount of code.
+kg is based on the design of _Atto Emacs which is based on the public domain code of Anthony Howe's editor (commonly known as Anthony's Editor or AE, [2]).  Rather than representing a file as a linked list of lines, the AE Editor uses the concept of a Buffer-Gap [4,5,6].  A Buffer-Gap editor stores the file in a single piece of contiguous memory with some extra unused space known as the buffer gap.  On character insertion and deletion the gap is first moved to the current point.  A character deletion then extends the gap by moving the gap pointer back by 1 OR the gap is reduced by 1 when a character is inserted.  The Buffer-Gap technique is elegant and significantly reduces the amount of code required to load a file, modify it and redraw the display.  The proof of this is seen when you consider that Atto supports almost the same command set that Pico supports,  but Pico requires almost 17 times the amount of code._
 
 ## Comparisons with Other Emacs Implementations
 
@@ -155,7 +158,7 @@ Maybe a piece-table or piece-chain implementation? Maybe a different key mapping
 
 ## Multiple Windows or Not?
 
-Kg supports multiple windows 
+Kg supports multiple windows.
 
 ## Known Issues
 
@@ -181,5 +184,5 @@ Kg supports multiple windows
     [3] MG - https://github.com/rzalamena/mg
     [4] Jonathan Payne, Buffer-Gap: http://ned.rubyforge.org/doc/buffer-gap.txt
     [5] Anthony Howe,  http://ned.rubyforge.org/doc/editor-101.txt
-    [6] Anthony Howe, http://ned.rubyforge.org/doc/editor-102.txt
+    [6] Hugh Barney, https://github.com/hughbarney/atto
 

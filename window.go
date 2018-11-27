@@ -11,21 +11,20 @@ var winCount = 0
 
 // Window main type
 type Window struct {
-	Editor *Editor
-	Next   *Window /* w_next Next window */
-	Buffer *Buffer /* w_bufp Buffer displayed in window */
-	Point  int     // w_point
-	//
-	Mark     int    // w_mark
-	WinStart int    // w_page
-	WinEnd   int    // w_epage
-	TopPt    int    /* w_top Origin 0 top row of window  on screen */
-	Rows     int    /* w_rows no. of rows of text in window */
-	Row      int    /* w_row cursor row */
-	Col      int    /* w_col cursor col */
-	Updated  bool   // int w_update
-	Name     string // w_name[STRBUF_S];
-} //window_t;
+	Editor   *Editor
+	Next     *Window /* w_next Next window */
+	Buffer   *Buffer /* w_bufp Buffer displayed in window */
+	Point    int     // w_point
+	Mark     int     // w_mark
+	WinStart int     // w_page
+	WinEnd   int     // w_epage
+	TopPt    int     /* w_top Origin 0 top row of window  on screen */
+	Rows     int     /* w_rows no. of rows of text in window */
+	Row      int     /* w_row cursor row */
+	Col      int     /* w_col cursor col */
+	Updated  bool    // int w_update
+	Name     string  // w_name[STRBUF_S];
+}
 
 // NewWindow xxx
 func NewWindow(e *Editor) *Window {
@@ -70,21 +69,8 @@ func (wp *Window) OnKey(ev *termbox.Event) {
 			// log.Println("Alt!", ev.Key, ev.Ch)
 			break
 		}
-		//ch := ev.Ch
-		//// log.Printf("Win OnKey %#U Point is %d\n", ch, wp.Buffer.Point())
 		wp.Buffer.AddRune(ev.Ch)
 	}
-
-}
-
-// PointForXY returns the Point location for X, Y in the WINDOW
-// used to reverse map the mouse to a Buffer Point...
-func (wp *Window) PointForXY(x, y int) (finalpt int) {
-	//10, 1
-	// lpt := bp.PointForLine(y)
-	// c := x - 1
-	// finalpt = lpt + c //bp.DataPointForBufferPoint(lpt + c)
-	return 0 //finalpt
 }
 
 // AssociateBuffer xxx
@@ -104,14 +90,14 @@ func (wp *Window) DisassociateBuffer() {
 }
 
 // SyncBuffer xxx
-func window2Buffer(w *Window) { //sync w2b win to buff
+func window2Buffer(w *Window) {
 	b := w.Buffer
 	b.SetPoint(w.Point)
 	b.PageStart = w.WinStart
 	b.PageEnd = w.WinEnd
 	b.PointRow = w.Row
 	b.PointCol = w.Col
-
+	// this should be figured out.
 	/* fixup Pointers in other windows of the same buffer, if size of edit text changed */
 	// if b.Point() > b.OrigPoint {
 	// 	sizeDelta := b.TextSize - b.PrevSize
@@ -123,7 +109,7 @@ func window2Buffer(w *Window) { //sync w2b win to buff
 }
 
 // PushBuffer2Window xxx
-func buffer2Window(w *Window) { // b2w
+func buffer2Window(w *Window) {
 	b := w.Buffer
 	w.Point = b.Point()
 	w.WinStart = b.PageStart

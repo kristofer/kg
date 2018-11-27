@@ -24,11 +24,6 @@ func (e *Editor) displaySearchResult(found int, dir int, prompt string, search s
 	} else {
 		e.msg("Failing %s%s", prompt, search)
 		e.displayMsg()
-		// if dir == fwdsearch {
-		// 	e.bottom()
-		// } else {
-		// 	e.top()
-		// }
 	}
 }
 
@@ -50,7 +45,6 @@ func (bp *Buffer) searchForward(startp int, stext string) int {
 			}
 		}
 		if ss == len(s) {
-			// log.Printf("Found %s at pt %d\n", stext, pp)
 			return pp
 		}
 	}
@@ -75,7 +69,6 @@ func (bp *Buffer) searchBackwards(startp int, stext string) int {
 			}
 		}
 		if ss == len(s) {
-			// log.Printf("Found %s at pt %d\n", stext, pp)
 			return pp
 		}
 	}

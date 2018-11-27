@@ -5,25 +5,30 @@ import (
 	"fmt"
 )
 
+/*
+ * Buffer is where all the opertions on the main rune array are implemented.
+ * Because of the Gap, all the indexing around it should be done by these routines.
+ */
+
 // Buffer main struct
 type Buffer struct {
-	data    []rune
-	preLen  int
-	postLen int
-	Next    *Buffer /* b_next Link to next buffer_t */
-	Mark    int     /* b_mark the mark */
-	OrigPoint int /* b_cpoint the original current point, used for mutliple window displaying */
-	PageStart int /* b_page start of page */
-	PageEnd   int /* b_epage end of page */
-	Reframe    bool   /* b_reframe force a reframe of the display */
-	WinCount   int    /* b_cnt count of windows referencing this buffer */
-	TextSize   int    /* b_size current size of text being edited (not including gap) */
-	PrevSize   int    /* b_psize previous size */
-	PointRow   int    /* b_row Point row */
-	PointCol   int    /* b_col Point col */
-	Filename   string // b_fname[NAME_MAX + 1]; /* filename */
-	Buffername string //[b_bnameSTRBUF_S];   /* buffer name */
-	Flags      byte   /* char b_flags buffer flags */
+	data       []rune
+	preLen     int
+	postLen    int
+	Next       *Buffer /* b_next Link to next buffer_t */
+	Mark       int     /* b_mark the mark */
+	OrigPoint  int     /* b_cpoint the original current point, used for mutliple window displaying */
+	PageStart  int     /* b_page start of page */
+	PageEnd    int     /* b_epage end of page */
+	Reframe    bool    /* b_reframe force a reframe of the display */
+	WinCount   int     /* b_cnt count of windows referencing this buffer */
+	TextSize   int     /* b_size current size of text being edited (not including gap) */
+	PrevSize   int     /* b_psize previous size */
+	PointRow   int     /* b_row Point row */
+	PointCol   int     /* b_col Point col */
+	Filename   string  // b_fname[NAME_MAX + 1]; /* filename */
+	Buffername string  //[b_bnameSTRBUF_S];   /* buffer name */
+	Flags      byte    /* char b_flags buffer flags */
 	modified   bool
 }
 
@@ -35,34 +40,27 @@ func (bp *Buffer) MarkModified() {
 // NewBuffer - Create a new Buffer
 func NewBuffer() *Buffer {
 	nb := Buffer{}
-	nb.data = []rune("\n")
-	nb.preLen = 0
-	nb.postLen = len(nb.data)
+	nb.setText("\n")
 	return &nb
 }
 
-// SetText xxx
-func (bp *Buffer) SetText(s string) {
+// setText xxx
+func (bp *Buffer) setText(s string) {
 	bp.data = []rune(s)
 	bp.preLen = 0
 	bp.postLen = len(bp.data)
 }
 
-// GetText  xxx
-func (bp *Buffer) GetText() string {
+// getText  xxx
+func (bp *Buffer) getText() string {
 	ret := make([]rune, bp.preLen+bp.postLen)
 	copy(ret, bp.data)
 	copy(ret[bp.preLen:], bp.data[bp.postStart():])
 	return string(ret)
 }
 
-func (bp *Buffer) logBufferEOB(pt int) {
-
-}
-
 // RuneAt finally reliable!!
 func (bp *Buffer) RuneAt(pt int) (rune, error) {
-	bp.logBufferEOB(pt)
 	if pt >= len(bp.data) {
 		return 0, errors.New("Beyond data buffer in RuneAt")
 	}
@@ -88,10 +86,6 @@ func (bp *Buffer) dataPointForBufferPoint(pt int) int {
 
 // AddRune add a run to the buffer
 func (bp *Buffer) AddRune(ch rune) {
-	// if bp.data == nil {
-	// 	bp.SetText(string(ch))
-	// 	return
-	// }
 	if bp.gapLen() == 0 {
 		_ = bp.GrowGap(gapchunk)
 	}
@@ -107,7 +101,6 @@ func (bp *Buffer) Point() int {
 
 // SetPoint set the current point to np
 func (bp *Buffer) SetPoint(np int) {
-	bp.logBufferEOB(np)
 	bp.CollapseGap()
 	// move gap <-(left) by np chars
 	gs := bp.gapStart()
@@ -117,15 +110,8 @@ func (bp *Buffer) SetPoint(np int) {
 		bp.postLen++
 	}
 	if bp.PageEnd < bp.preLen {
-		//// log.Println("reframing!")
 		bp.Reframe = true
 	}
-}
-
-//SetPointAndCursor xxx
-func (bp *Buffer) SetPointAndCursor(np int) {
-	bp.SetPoint(np)
-	bp.setCursor()
 }
 
 // setCursor xxx
@@ -184,11 +170,10 @@ func (bp *Buffer) Insert(s string) {
 	bp.MarkModified()
 }
 
-// GetTextForLines return string for [l1, l2) (l2 not included)
-func (bp *Buffer) GetTextForLines(l1, l2 int) string {
+// getTextForLines return string for [l1, l2) (l2 not included)
+func (bp *Buffer) getTextForLines(l1, l2 int) string {
 	pt1 := bp.PointForLine(l1)
 	pt2 := bp.PointForLine(l2)
-	//fmt.Println(pt1, pt2)
 	ret := make([]rune, pt2-pt1)
 	j := 0
 	for i := pt1; j < len(ret); i++ {
@@ -479,7 +464,8 @@ func (bp *Buffer) PointUp() {
 	if npt < bp.PageStart {
 		bp.Reframe = true
 	}
-	bp.SetPointAndCursor(npt)
+	bp.SetPoint(npt)
+	bp.setCursor()
 }
 
 // PointDown move point down one line
@@ -495,7 +481,8 @@ func (bp *Buffer) PointDown() {
 	if npt > bp.PageEnd {
 		bp.Reframe = true
 	}
-	bp.SetPointAndCursor(npt)
+	bp.SetPoint(npt)
+	bp.setCursor()
 }
 
 // PointNext move point left one
@@ -518,8 +505,6 @@ func (bp *Buffer) PointPrevious() {
 	bp.data[bp.postStart()-1] = bp.data[bp.preLen-1]
 	bp.preLen--
 	bp.postLen++
-	//bp.setCursor()
-	bp.logBufferEOB(bp.preLen)
 }
 
 // UpUp Move up one screen line
@@ -536,7 +521,6 @@ func (bp *Buffer) UpUp(pt, cc int) int {
 
 // DownDown Move down one screen line
 func (bp *Buffer) DownDown(pt, cc int) int {
-	//bp := e.CurrentBuffer
 	return bp.SegNext(bp.LineStart(pt), pt, cc)
 }
 
@@ -548,7 +532,7 @@ func (bp *Buffer) GetLineStats() (curline int, lastline int) {
 	return curline, lastline
 }
 
-// DebugPrint xxx
+// DebugPrint prints out a view of the buffer and the gap and so on.
 func (bp *Buffer) DebugPrint() {
 	fmt.Printf("*********(gap)\n")
 	for i := 0; i < len(bp.data); i++ {

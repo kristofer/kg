@@ -14,7 +14,6 @@ func (e *Editor) PosixFile(fname string) bool {
 	if fn[0] == '_' {
 		return false
 	}
-
 	for f := range fn {
 		if (unicode.IsLetter(rune(f))) && f != '.' && f != '_' && f != '-' && f != '/' {
 			return false
@@ -29,7 +28,7 @@ func (e *Editor) Save(fname string) bool {
 		e.msg("Not a portable POSIX file name.")
 		return false
 	}
-	d1 := []byte(e.CurrentBuffer.GetText())
+	d1 := []byte(e.CurrentBuffer.getText())
 	rch := d1[len(d1)-1]
 	if rch != '\n' {
 		prompt := "Last character is not newline. Add one?"
@@ -54,14 +53,13 @@ func (e *Editor) LoadFile(fname string) bool {
 
 // InsertFile reads file into buffer at point
 func (e *Editor) InsertFile(fname string, modflag bool) bool {
-
 	bp := e.CurrentBuffer
 	dat, err := ioutil.ReadFile(fname)
 	if err != nil {
 		e.msg("Failed to read and insert file \"%s\".", fname)
 	}
 	if modflag == true {
-		bp.SetText(string(dat))
+		bp.setText(string(dat))
 	} else {
 		bp.Insert(string(dat))
 	}

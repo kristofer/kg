@@ -17,7 +17,6 @@ func (e *Editor) quitquit() {
 }
 func (e *Editor) up() {
 	e.CurrentBuffer.PointUp()
-	//e.PointUp()
 }
 func (e *Editor) down() {
 	e.CurrentBuffer.PointDown()
@@ -37,9 +36,6 @@ func (e *Editor) bottom() {
 	e.CurrentBuffer.SetPoint(e.CurrentBuffer.BufferLen() - 1)
 	e.CurrentBuffer.Reframe = true
 	e.CurrentBuffer.PageEnd = e.CurrentBuffer.BufferLen() - 1
-	// if e.CurrentBuffer.PageEnd < e.CurrentBuffer.BufferLen() {
-	// 	e.CurrentBuffer.Reframe = true
-	// }
 }
 func (e *Editor) block() {
 	e.CurrentBuffer.Mark = e.CurrentBuffer.Point()
@@ -66,8 +62,6 @@ func (e *Editor) quitAsk() {
 
 /* flag = default answer, FALSE=n, TRUE=y */
 func (e *Editor) yesno(flag bool, prompt string) bool {
-	//var ch rune
-
 	e.displayPromptAndResponse(prompt, "")
 	e.MiniBufActive = true
 	defer func() { e.MiniBufActive = false }()
@@ -80,15 +74,6 @@ func (e *Editor) yesno(flag bool, prompt string) bool {
 	return unicode.ToLower(ch) == 'y'
 }
 
-// func (e *Editor) redraw() {
-// 	termbox.Clear(termbox.ColorDefault, termbox.ColorDefault)
-// 	e.CurrentWindow.Updated = true
-// 	e.CurrentBuffer.Reframe = true
-// 	e.msg("editor redraw")
-// 	e.updateDisplay()
-// 	termbox.Sync()
-// 	termbox.Flush()
-// }
 func (e *Editor) redraw() {
 
 	termbox.Clear(termbox.ColorDefault, termbox.ColorDefault)
@@ -157,7 +142,6 @@ func (e *Editor) insertfile() {
 }
 
 func (e *Editor) readfile() {
-
 	fname := e.getInput("Find file: ")
 	if fname == "" {
 		e.msg("Nope")
@@ -168,13 +152,12 @@ func (e *Editor) readfile() {
 		e.msg("Failed to find file \"%s\".", fname)
 		return
 	}
-
 	bp := e.FindBuffer(fname, true)
 	e.CurrentWindow.DisassociateBuffer()
 	e.CurrentBuffer = bp
 	e.CurrentWindow.AssociateBuffer(bp)
 	e.CurrentBuffer.Filename = fname
-	bp.SetText(string(dat))
+	bp.setText(string(dat))
 }
 
 func (e *Editor) savebuffer() {
@@ -196,24 +179,20 @@ func (e *Editor) writefile() {
 func (e *Editor) killBuffer() {
 	killbp := e.CurrentBuffer
 	bcount := e.CountBuffers()
-
 	// do nothing if only buffer left is the scratch buffer
 	if bcount == 1 && strings.Compare(e.GetBufferName(e.CurrentBuffer), "*scratch*") == 0 {
 		return
 	}
-
 	if e.CurrentBuffer.modified == true {
 		q := "Discard changes (y/n) ?"
 		if !e.yesno(false, q) {
 			return
 		}
 	}
-
 	if bcount == 1 {
 		bp := e.FindBuffer("*scratch*", true)
 		bp.Filename = "*scratch*"
 	}
-
 	e.nextBuffer()
 	if killbp != e.CurrentBuffer {
 		e.deleteBuffer(killbp)
@@ -258,13 +237,10 @@ func (e *Editor) copyCut(cut bool) {
 		rch, err := bp.RuneAt(l)
 		if err != nil {
 			e.msg("Copy/Cut failed. %s", err)
-			// log.Println("Copy/Cut failed.", err)
 		}
 		scrap[k] = rch
-		// log.Println("rune", rch)
 		l++
 	}
-	//// log.Printf("CopyCut start %d len %d, %#v", start, extent, scrap)
 	e.PasteBuffer = string(scrap)
 	if cut == true {
 		bp.Remove(start, extent)

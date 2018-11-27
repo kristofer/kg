@@ -10,7 +10,6 @@ func (e *Editor) queryReplace() {
 	}
 	e.Replace = e.getInput("With: ")
 	slen := len(e.Searchtext)
-	//rlen := len(e.Replace)
 	bp := e.CurrentBuffer
 	opoint := bp.Point()
 	lpoint := -1
@@ -52,34 +51,27 @@ outer:
 				switch c {
 				case 'y': /* yes, substitute */
 					break inner
-
 				case 'n': /* no, find next */
 					bp.SetPoint(found) /* set to end of search string */
-					//continue inner
-
 				case '!': /* yes/stop asking, do the lot */
 					ask = false
 					break inner
-
 				//case 0x1B: /* esc */
 				//flushinp() /* discard any escape sequence without writing in buffer */
 				case 'q': /* controlled exit */
 					break outer
-
 				default: /* help me */
 					answer = e.getInput("(y)es, (n)o, (!)do the rest, (q)uit: ")
 					//continue inner
 				}
 			}
 		}
-
-		for k := 0; k < slen; k++ {
+		for k := 0; k < slen; k++ { // delete found search text
 			bp.Delete()
 		}
-		bp.Insert(e.Replace)
+		bp.Insert(e.Replace) // qed
 		lpoint = bp.Point()
 		numsub++
 	}
-
 	e.msg("%d substitutions", numsub)
 }
