@@ -170,6 +170,7 @@ Kg supports multiple windows.
   kryounger AT gmail.com - 2018
 
 ## Acknowledgements
+
     Hugh Barney for Atto (and his other work).
     Ed Davies for bringing Athony's Editor to my attention
     Anthony Howe for his original codebase
