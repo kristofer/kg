@@ -139,18 +139,18 @@ Generally, the procedure for copying or moving text is:
 
 ## Building on Linux/MacOS
 
-When building on Ubuntu you will need to install Go v1.11 or greater.
+When building on Linux/MacOS you will need to install Go v1.11 or greater.
 You will also need the `github.com/nsf/termbox-go`
 
     $ go get github.com/kristofer/kg
     $ go get github.com/nsf/termbox-go
 
-    cd to the kg source directory...
+cd to the kg source directory...
 
     $ cd cmd
     $ go build -o kg main.go
 
-    and then move into your binary PATH
+and then move into your binary PATH
 
 ## Future Enhancements
 
