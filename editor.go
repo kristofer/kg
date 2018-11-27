@@ -457,6 +457,10 @@ loop:
 		}
 		if ev.Ch == 0 {
 			switch ev.Key {
+			case termbox.KeyTab:
+				fname = fname + string('\t')
+			case termbox.KeySpace:
+				fname = fname + string(' ')
 			case termbox.KeyEnter, termbox.KeyCtrlR:
 				break loop
 			case termbox.KeyBackspace2, termbox.KeyBackspace:
