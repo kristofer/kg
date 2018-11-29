@@ -2,6 +2,8 @@ package kg
 
 import (
 	"fmt"
+	"log"
+	"os"
 	"strings"
 	"unicode"
 
@@ -55,19 +57,19 @@ type Editor struct {
 // StartEditor is the old C main function
 func (e *Editor) StartEditor(argv []string, argc int) {
 	// log setup....
-	// f, err := os.OpenFile("logfile", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
-	// if err != nil {
-	// 	log.Fatalf("error opening file: %v", err)
-	// }
-	// defer f.Close()
+	f, err := os.OpenFile("logfile", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+	if err != nil {
+		log.Fatalf("error opening file: %v", err)
+	}
+	defer f.Close()
 
-	// log.SetOutput(f)
-	// f.Truncate(0)
-	// // log.Println("Start of Log...")
+	log.SetOutput(f)
+	f.Truncate(0)
+	log.Println("Start of Log...")
 	//
 	e.FGColor = termbox.ColorDefault
 	e.BGColor = termbox.ColorWhite
-	err := termbox.Init()
+	err = termbox.Init()
 	checkErr(err)
 	defer termbox.Close()
 	e.Cols, e.Lines = termbox.Size()
@@ -83,16 +85,6 @@ func (e *Editor) StartEditor(argv []string, argc int) {
 		e.msg("NO file to open, creating scratch buffer")
 		e.CurrentBuffer = e.FindBuffer("*scratch*", true)
 		e.CurrentBuffer.Buffername = "*scratch*"
-		//_ = e.CurrentBuffer.GrowGap(gapchunk)
-		//s := "Lorem ipsum dolor sit amet,\nconsectetur adipiscing elit,\nsed do eiusmod tempor incididunt ut\nlabore et dolore magna aliqua. \n"
-
-		// e.CurrentBuffer.SetText("\n")
-		// e.CurrentBuffer.Insert(s)
-		// e.CurrentBuffer.Insert(" foo")
-		// e.CurrentBuffer.Insert(s)
-		// e.CurrentBuffer.Insert(" baz 2\n")
-		// e.CurrentBuffer.Insert(s)
-		// e.CurrentBuffer.Insert(" baz 2\n")
 		e.top()
 	}
 	e.CurrentWindow = NewWindow(e)
@@ -387,20 +379,38 @@ func (e *Editor) updateDisplay() {
 
 // SetPointForMouse xxx
 func (e *Editor) SetPointForMouse(mc, mr int) {
-	if mr > e.CurrentWindow.Rows {
-		mr = e.CurrentWindow.Rows
-	}
+	c, r := e.setWindowForMouse(mc, mr)
 	bp := e.CurrentBuffer
 	sl := bp.LineForPoint(bp.PageStart) // sl is startline of buffer frame
-	ml := sl + mr
+	ml := sl + r
 	mlpt := bp.PointForLine(ml)
 	mll := bp.LineLenAtPoint(mlpt) // how wide is line?
-	nc := mc + 1
-	if mll < mc {
+	nc := c + 1
+	if mll < c {
 		nc = mll
 	}
 	npt := bp.PointForXY(nc, ml)
 	bp.SetPoint(npt)
+}
+
+func (e *Editor) setWindowForMouse(mc, mr int) (c, r int) {
+	log.Printf("col %d row %d ", mc, mr)
+
+	wp := e.RootWindow
+	for wp != nil {
+		if (mr <= wp.Rows+wp.TopPt) && (mr >= wp.TopPt) {
+			log.Printf("set win rows %d top %d\n", wp.Rows, wp.TopPt)
+			e.setWindow(wp)
+			r = mr - wp.TopPt
+			// if mr == wp.Rows+wp.TopPt {
+			// 	r--
+			// }
+			c = mc
+			return
+		}
+		wp = wp.Next
+	}
+	return 0, e.Lines - 1
 }
 
 // ModeLine draw modeline for window
@@ -603,9 +613,7 @@ func (e *Editor) splitWindow() {
 	e.CurrentWindow.Rows = ntru
 	nwp.TopPt = e.CurrentWindow.TopPt + ntru + 2
 	nwp.Rows = ntrl - 1
-	// log.Printf("New win %d %d\n", nwp.TopPt, nwp.Rows)
-	// log.Printf("Old win %d %d\n", e.CurrentWindow.TopPt, e.CurrentWindow.Rows)
-
+	
 	/* insert it in the list */
 	wp2 := e.CurrentWindow.Next
 	e.CurrentWindow.Next = nwp
@@ -629,6 +637,18 @@ func (e *Editor) nextWindow() {
 		/* push win vars to buffer */
 		window2Buffer(e.CurrentWindow)
 	}
+}
+
+func (e *Editor) setWindow(wp *Window) {
+	e.CurrentWindow.Updated = true /* make sure modeline gets updated */
+	e.CurrentWindow = wp
+	e.CurrentWindow.Updated = true /* make sure modeline gets updated */
+	e.CurrentBuffer = e.CurrentWindow.Buffer
+	// if e.CurrentBuffer.WinCount > 1 {
+	// 	/* push win vars to buffer */
+	// 	window2Buffer(e.CurrentWindow)
+	// }
+	e.updateDisplay()
 }
 
 // DeleteOtherWindows

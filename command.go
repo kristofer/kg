@@ -2,6 +2,7 @@ package kg
 
 import (
 	"io/ioutil"
+	"log"
 	"strconv"
 	"strings"
 	"unicode"
@@ -75,7 +76,6 @@ func (e *Editor) yesno(flag bool, prompt string) bool {
 }
 
 func (e *Editor) redraw() {
-
 	termbox.Clear(termbox.ColorDefault, termbox.ColorDefault)
 	e.CurrentWindow.Updated = true
 	e.CurrentBuffer.Reframe = true
@@ -104,11 +104,21 @@ func (e *Editor) wright() {
 }
 
 func (e *Editor) pgdown() {
-
+	pt := e.CurrentBuffer.Point
+	l1 := e.CurrentBuffer.LineForPoint(e.CurrentBuffer.PageEnd)
+	l2 := l1 + e.CurrentWindow.Rows - 2
+	npt := e.CurrentBuffer.PointForLine(l2)
+	log.Printf("start %d last line %d next %d new pt %d\n", pt, l1, l2, npt)
+	e.CurrentBuffer.SetPoint(npt)
+	e.CurrentWindow.Updated = true
 }
 
 func (e *Editor) pgup() {
-
+	l1 := e.CurrentBuffer.LineForPoint(e.CurrentBuffer.PageStart)
+	l2 := l1 - e.CurrentWindow.Rows - 2
+	npt := e.CurrentBuffer.PointForLine(l2)
+	log.Printf("last line %d next %d new pt %d\n", l1, l2, npt)
+	e.CurrentBuffer.SetPoint(npt)
 }
 
 func (e *Editor) backsp() {
@@ -127,8 +137,7 @@ func (e *Editor) gotoline() {
 	if err != nil {
 		e.msg("Invalid Line.")
 	}
-	pt := e.CurrentBuffer.PointForLine(ln)
-	e.CurrentBuffer.SetPoint(pt)
+	e.CurrentBuffer.gotoLine(ln)
 }
 
 func (e *Editor) insertfile() {

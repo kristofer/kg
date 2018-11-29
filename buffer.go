@@ -3,6 +3,7 @@ package kg
 import (
 	"errors"
 	"fmt"
+	"log"
 )
 
 /*
@@ -104,11 +105,16 @@ func (bp *Buffer) SetPoint(np int) {
 	//bp.MoveGap(np - bp.Point)
 	// move gap <-(left) by np chars
 	gs := bp.gapStart()
+	log.Printf("gap start %d len %d new pt %d dist %d\n", gs, bp.gapLen(), np, gs-np)
+	f := 0
 	for i := gs - np; i > 0; i-- {
 		bp.data[bp.postStart()-1] = bp.data[bp.Point-1]
 		bp.Point--
 		bp.postLen++
+		f++
 	}
+	log.Printf("shuffled %d\n", f)
+
 	if bp.PageEnd < bp.Point {
 		bp.Reframe = true
 	}
@@ -133,7 +139,7 @@ func (bp *Buffer) postStart() int {
 	return len(bp.data) - bp.postLen
 }
 
-// CollapseGap moves the gap to the end of the buffer for replacement
+// CollapseGap moves the gap to the end of the buffer
 func (bp *Buffer) CollapseGap() {
 	//for i := bp.Point; bp.postLen > 0; i++ {
 	for bp.postLen > 0 {
@@ -505,6 +511,11 @@ func (bp *Buffer) GetLineStats() (curline int, lastline int) {
 	_, curline = bp.XYForPoint(pt)
 	_, lastline = bp.XYForPoint(bp.TextSize)
 	return curline, lastline
+}
+
+func (bp *Buffer) gotoLine(ln int) {
+	pt := bp.PointForLine(ln)
+	bp.SetPoint(pt)
 }
 
 // DebugPrint prints out a view of the buffer and the gap and so on.
