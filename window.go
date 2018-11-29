@@ -99,10 +99,10 @@ func window2Buffer(w *Window) {
 	b.PointCol = w.Col
 	// this should be figured out.
 	/* fixup Pointers in other windows of the same buffer, if size of edit text changed */
-	// if b.Point() > b.OrigPoint {
+	// if b.Point > b.OrigPoint {
 	// 	sizeDelta := b.TextSize - b.PrevSize
 	// 	//b.MoveGap(sizeDelta)
-	// 	b.SetPoint(b.Point() + sizeDelta)
+	// 	b.SetPoint(b.Point + sizeDelta)
 	// 	b.PageStart += sizeDelta
 	// 	b.PageEnd += sizeDelta
 	// }
@@ -111,10 +111,10 @@ func window2Buffer(w *Window) {
 // PushBuffer2Window xxx
 func buffer2Window(w *Window) {
 	b := w.Buffer
-	w.Point = b.Point()
+	w.Point = b.Point
 	w.WinStart = b.PageStart
 	w.WinEnd = b.PageEnd
 	w.Row = b.PointRow
 	w.Col = b.PointCol
-	b.TextSize = b.BufferLen()
+	//b.TextSize = b.TextSize
 }

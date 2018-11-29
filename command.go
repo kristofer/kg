@@ -23,22 +23,22 @@ func (e *Editor) down() {
 
 }
 func (e *Editor) lnbegin() {
-	e.CurrentBuffer.SetPoint(e.CurrentBuffer.LineStart(e.CurrentBuffer.Point()))
+	e.CurrentBuffer.SetPoint(e.CurrentBuffer.LineStart(e.CurrentBuffer.Point))
 }
 func (e *Editor) lnend() {
-	e.CurrentBuffer.SetPoint(e.CurrentBuffer.LineEnd(e.CurrentBuffer.Point()))
+	e.CurrentBuffer.SetPoint(e.CurrentBuffer.LineEnd(e.CurrentBuffer.Point))
 }
 func (e *Editor) version() { e.msg(version) }
 func (e *Editor) top() {
 	e.CurrentBuffer.SetPoint(0)
 }
 func (e *Editor) bottom() {
-	e.CurrentBuffer.SetPoint(e.CurrentBuffer.BufferLen() - 1)
+	e.CurrentBuffer.SetPoint(e.CurrentBuffer.TextSize - 1)
 	e.CurrentBuffer.Reframe = true
-	e.CurrentBuffer.PageEnd = e.CurrentBuffer.BufferLen() - 1
+	e.CurrentBuffer.PageEnd = e.CurrentBuffer.TextSize - 1
 }
 func (e *Editor) block() {
-	e.CurrentBuffer.Mark = e.CurrentBuffer.Point()
+	e.CurrentBuffer.Mark = e.CurrentBuffer.Point
 }
 func (e *Editor) copy() {
 	e.copyCut(false)
@@ -210,7 +210,7 @@ func (e *Editor) toggleOverwriteMode() {
 
 func (e *Editor) killtoeol() {
 	bp := e.CurrentBuffer
-	pt := e.CurrentBuffer.Point()
+	pt := e.CurrentBuffer.Point
 	for i := 0; i < bp.LineLenAtPoint(pt)-bp.ColumnForPoint(pt); i++ {
 		bp.Delete()
 	}
@@ -218,7 +218,7 @@ func (e *Editor) killtoeol() {
 
 func (e *Editor) copyCut(cut bool) {
 	bp := e.CurrentBuffer
-	pt := bp.Point()
+	pt := bp.Point
 	if bp.Mark == nomark || pt == bp.Mark {
 		return
 	}
@@ -227,7 +227,7 @@ func (e *Editor) copyCut(cut bool) {
 	if pt < bp.Mark {
 		extent = bp.Mark - pt
 		start = pt
-	} else { // bp.Point() > bp.Mark
+	} else { // bp.Point > bp.Mark
 		extent = pt - bp.Mark
 		start = bp.Mark
 	}
@@ -260,7 +260,7 @@ func (e *Editor) paste() {
 }
 
 func (e *Editor) showpos() {
-	x, y := e.CurrentBuffer.XYForPoint(e.CurrentBuffer.Point())
+	x, y := e.CurrentBuffer.XYForPoint(e.CurrentBuffer.Point)
 	cl, ll := e.CurrentBuffer.GetLineStats()
 	e.msg("(%d,%d) CurrLine %d LastLine %d", x, y, cl, ll)
 }

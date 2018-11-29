@@ -272,13 +272,13 @@ func (e *Editor) displayMsg() {
 // Display draws the window, minding the buffer pagestart/pageend
 func (e *Editor) Display(wp *Window, shouldDrawCursor bool) {
 	bp := wp.Buffer
-	pt := bp.Point()
+	pt := bp.Point
 	// /* find start of screen, handle scroll up off page or top of file  */
 	if pt < bp.PageStart {
 		bp.PageStart = bp.SegStart(bp.LineStart(pt), pt, e.Cols)
 	}
 
-	if bp.Reframe == true || (pt > bp.PageEnd && pt != bp.PageEnd && !bp.EndOfBuffer(pt)) {
+	if bp.Reframe == true || (pt > bp.PageEnd && pt != bp.PageEnd && !(pt >= bp.TextSize)) {
 		bp.Reframe = false
 		i := 0
 		/* Find end of screen plus one. */
@@ -361,7 +361,7 @@ func (e *Editor) setTermCursor(c, r int) {
 
 func (e *Editor) updateDisplay() {
 	bp := e.CurrentWindow.Buffer
-	bp.OrigPoint = bp.Point() /* OrigPoint only ever set here */
+	bp.OrigPoint = bp.Point /* OrigPoint only ever set here */
 	/* only one window */
 	if e.RootWindow.Next == nil {
 		e.Display(e.CurrentWindow, true)

@@ -280,7 +280,7 @@ func TestLineLenAtPoint(t *testing.T) {
 	assert.Equal(t, 9, gb.LineLenAtPoint(26))
 	assert.Equal(t, 3, gb.LineLenAtPoint(27))
 	assert.Equal(t, 3, gb.LineLenAtPoint(28))
-	assert.Equal(t, 3, gb.LineLenAtPoint(gb.BufferLen()-1))
+	assert.Equal(t, 3, gb.LineLenAtPoint(gb.TextSize-1))
 	// assert.Equal(t, 27, gb.ColumnForPoint(5))
 	// assert.Equal(t, 27, gb.ColumnForPoint(6))
 	// assert.Equal(t, 27, gb.ColumnForPoint(100))
@@ -318,7 +318,7 @@ func TestLineLenAtPoint2(t *testing.T) {
 	assert.Equal(t, 3, gb.LineLenAtPoint(35))
 	assert.Equal(t, 3, gb.LineLenAtPoint(36))
 	assert.Equal(t, 3, gb.LineLenAtPoint(37))
-	assert.Equal(t, 3, gb.LineLenAtPoint(gb.BufferLen()-1))
+	assert.Equal(t, 3, gb.LineLenAtPoint(gb.TextSize-1))
 	// assert.Equal(t, 27, gb.ColumnForPoint(5))
 	// assert.Equal(t, 27, gb.ColumnForPoint(6))
 	// assert.Equal(t, 27, gb.ColumnForPoint(100))
@@ -434,7 +434,7 @@ func TestPointForXY(t *testing.T) {
 	assert.Equal(t, 19, gb.PointForXY(1, 4))
 	assert.Equal(t, 20, gb.PointForXY(2, 4))
 	assert.Equal(t, 21, gb.PointForXY(3, 4))
-	//assert.Equal(t, gb.BufferLen()-1, gb.PointForXY(6, 6))
+	//assert.Equal(t, gb.TextSize-1, gb.PointForXY(6, 6))
 
 }
 
@@ -492,7 +492,7 @@ func TestXYForPoint(t *testing.T) {
 	x, y = gb.XYForPoint(21)
 	assert.Equal(t, 3, x)
 	assert.Equal(t, 4, y)
-	//assert.Equal(t, gb.BufferLen()-1, gb.PointForXY(6, 6))
+	//assert.Equal(t, gb.TextSize-1, gb.PointForXY(6, 6))
 	x, y = gb.XYForPoint(35)
 	assert.Equal(t, 1, x)
 	assert.Equal(t, 6, y)
@@ -505,10 +505,10 @@ func TestXYForPoint(t *testing.T) {
 	x, y = gb.XYForPoint(38)
 	assert.Equal(t, 3, x)
 	assert.Equal(t, 6, y)
-	x, y = gb.XYForPoint(gb.BufferLen())
+	x, y = gb.XYForPoint(gb.TextSize)
 	assert.Equal(t, 3, x)
 	assert.Equal(t, 6, y)
-	x, y = gb.XYForPoint(gb.BufferLen() + 1)
+	x, y = gb.XYForPoint(gb.TextSize + 1)
 	assert.Equal(t, 3, x)
 	assert.Equal(t, 6, y)
 
@@ -575,7 +575,7 @@ func TestRuneAt(t *testing.T) {
 	// gb.PointPrevious()
 	fmt.Printf("*********\n")
 	k := 0
-	for k < gb.BufferLen()-1 {
+	for k < gb.TextSize-1 {
 		rch, err := gb.RuneAt(k)
 		if err != nil {
 			t.Errorf("k %d rch %c %s", k, rch, err)

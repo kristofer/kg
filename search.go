@@ -7,12 +7,12 @@ const (
 
 func (e *Editor) search() {
 	e.Searchtext = e.getInput("Search: ")
-	found := e.CurrentBuffer.searchForward(e.CurrentBuffer.Point(), e.Searchtext)
+	found := e.CurrentBuffer.searchForward(e.CurrentBuffer.Point, e.Searchtext)
 	e.displaySearchResult(found, fwdsearch, "Search: ", e.Searchtext)
 }
 func (e *Editor) rsearch() {
 	e.Searchtext = e.getInput("R-Search: ")
-	found := e.CurrentBuffer.searchBackwards(e.CurrentBuffer.Point(), e.Searchtext)
+	found := e.CurrentBuffer.searchBackwards(e.CurrentBuffer.Point, e.Searchtext)
 	e.displaySearchResult(found, revsearch, "R-Search: ", e.Searchtext)
 }
 
@@ -27,7 +27,7 @@ func (e *Editor) displaySearchResult(found int, dir int, prompt string, search s
 }
 
 func (bp *Buffer) searchForward(startp int, stext string) int {
-	endpt := bp.BufferLen() - 1
+	endpt := bp.TextSize - 1
 	if len(stext) == 0 {
 		return -1
 	}
@@ -51,7 +51,7 @@ func (bp *Buffer) searchForward(startp int, stext string) int {
 }
 
 func (bp *Buffer) searchBackwards(startp int, stext string) int {
-	endpt := bp.BufferLen() - 1
+	endpt := bp.TextSize - 1
 	if len(stext) == 0 {
 		return startp
 	}

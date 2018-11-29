@@ -11,7 +11,7 @@ func (e *Editor) queryReplace() {
 	e.Replace = e.getInput("With: ")
 	slen := len(e.Searchtext)
 	bp := e.CurrentBuffer
-	opoint := bp.Point()
+	opoint := bp.Point
 	lpoint := -1
 	ask := true
 	/* build query replace question string */
@@ -20,7 +20,7 @@ func (e *Editor) queryReplace() {
 	numsub := 0
 outer:
 	for {
-		found := bp.searchForward(bp.Point(), e.Searchtext)
+		found := bp.searchForward(bp.Point, e.Searchtext)
 		/* if not found set the point to the last point of replacement, or where we started */
 		if found == -1 {
 			if lpoint == -1 {
@@ -70,7 +70,7 @@ outer:
 			bp.Delete()
 		}
 		bp.Insert(e.Replace) // qed
-		lpoint = bp.Point()
+		lpoint = bp.Point
 		numsub++
 	}
 	e.msg("%d substitutions", numsub)
