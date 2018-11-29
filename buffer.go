@@ -12,9 +12,10 @@ import (
 
 // Buffer main struct
 type Buffer struct {
-	Point      int
-	data       []rune
-	postLen    int
+	Point   int
+	postLen int
+	data    []rune
+
 	Next       *Buffer
 	Mark       int
 	OrigPoint  int    /* b_cpoint the original current point, used for mutliple window displaying */
@@ -50,12 +51,13 @@ func (bp *Buffer) setText(s string) {
 	bp.data = []rune(s)
 	bp.Point = 0
 	bp.postLen = len(bp.data)
+	bp.TextSize = bp.Point + bp.postLen
 }
 
 // getText  xxx
 func (bp *Buffer) getText() string {
-	bp.TextSize = bp.Point + bp.postLen
-	ret := make([]rune, bp.TextSize)
+	//bp.TextSize = bp.Point + bp.postLen
+	ret := make([]rune, bp.Point+bp.postLen)
 	copy(ret, bp.data)
 	copy(ret[bp.Point:], bp.data[bp.postStart():])
 	return string(ret)
@@ -133,7 +135,8 @@ func (bp *Buffer) postStart() int {
 
 // CollapseGap moves the gap to the end of the buffer for replacement
 func (bp *Buffer) CollapseGap() {
-	for i := bp.Point; bp.postLen > 0; i++ {
+	//for i := bp.Point; bp.postLen > 0; i++ {
+	for bp.postLen > 0 {
 		bp.data[bp.Point] = bp.data[len(bp.data)-bp.postLen]
 		bp.Point++
 		bp.postLen--
@@ -263,7 +266,9 @@ func (bp *Buffer) LineLenAtPoint(point int) int {
 	if point < 0 {
 		point = 0
 	}
-	return bp.LineEnd(point) - bp.LineStart(point) - 1
+	start := bp.LineStart(point) - 1
+	end := bp.LineEnd(point)
+	return end - start
 }
 
 // PointForLine return point for beginning of line ln
@@ -288,11 +293,12 @@ func (bp *Buffer) PointForLine(ln int) int {
 // LineForPoint returns the line number of point (origin = 1)
 func (bp *Buffer) LineForPoint(point int) (line int) {
 	line = 1
+	pt := 0
 	if point >= bp.TextSize {
 		point = bp.TextSize - 1
 	}
 	doIncr := false
-	for pt := 1; pt <= point; pt++ {
+	for pt = 0; pt <= point; pt++ {
 		if doIncr {
 			line++
 			doIncr = false

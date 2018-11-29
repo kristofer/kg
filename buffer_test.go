@@ -45,7 +45,7 @@ func TestAddRune2(t *testing.T) {
 
 	gb.DebugPrint()
 
-	t.Error("End of Buffer")
+	//t.Error("End of Buffer")
 
 }
 func TestCollapseGap(t *testing.T) {
@@ -66,7 +66,7 @@ func TestCollapseGap(t *testing.T) {
 	gb.CollapseGap()
 
 	gb.DebugPrint()
-	t.Error("End of Buffer")
+	//t.Error("End of Buffer")
 
 }
 
@@ -85,7 +85,7 @@ func TestTextLines(t *testing.T) {
 	fmt.Println("--- [2, 5)")
 	fmt.Printf("%v\n", gb.getTextForLines(2, 5))
 	gb.DebugPrint()
-	t.Error("force print")
+	//t.Error("force print")
 }
 
 func TestLineStart(t *testing.T) {
@@ -554,9 +554,9 @@ func TestSetPoint(t *testing.T) {
 	gb.AddRune('X')
 	gb.AddRune('X')
 	gb.DebugPrint()
-	assert.Equal(t, 10, gb.gapStart())
-	assert.Equal(t, 26, gb.gapLen())
-
+	assert.Equal(t, 12, gb.gapStart())
+	assert.Equal(t, 24, gb.gapLen())
+	gb.DebugPrint()
 }
 
 func TestRuneAt(t *testing.T) {
@@ -589,7 +589,7 @@ func TestRuneAt(t *testing.T) {
 	}
 	fmt.Printf("\n*********\n")
 	gb.DebugPrint()
-	t.Error("End of Buffer")
+	//t.Error("End of Buffer")
 }
 
 func TestSegStart(t *testing.T) {
