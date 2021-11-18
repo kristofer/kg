@@ -3,7 +3,6 @@ package kg
 import (
 	"errors"
 	"fmt"
-	"log"
 )
 
 /*
@@ -66,7 +65,7 @@ func (bp *Buffer) getText() string {
 
 // RuneAt finally reliable!! (well, maybe not)
 func (bp *Buffer) RuneAt(pt int) (rune, error) {
-	log.Println("RuneAt pt = ", pt)
+	//log.Println("RuneAt pt = ", pt)
 	if pt >= len(bp.data) {
 		return 0, errors.New("beyond data buffer in RuneAt")
 	}
@@ -107,7 +106,7 @@ func (bp *Buffer) SetPoint(np int) {
 	//bp.MoveGap(np - bp.Point)
 	// move gap <-(left) by np chars
 	gs := bp.gapStart()
-	log.Printf("gap start %d len %d new pt %d dist %d\n", gs, bp.gapLen(), np, gs-np)
+	//log.Printf("gap start %d len %d new pt %d dist %d\n", gs, bp.gapLen(), np, gs-np)
 	f := 0
 	for i := gs - np; i > 0; i-- {
 		bp.data[bp.postStart()-1] = bp.data[bp.Point-1]
@@ -115,7 +114,7 @@ func (bp *Buffer) SetPoint(np int) {
 		bp.postLen++
 		f++
 	}
-	log.Printf("shuffled %d\n", f)
+	//log.Printf("shuffled %d\n", f)
 
 	if bp.PageEnd < bp.Point {
 		bp.Reframe = true

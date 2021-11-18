@@ -390,9 +390,13 @@ func (e *Editor) SetPointForMouse(mc, mr int) {
 }
 
 func (e *Editor) setWindowForMouse(mc, mr int) (c, r int) {
-	log.Printf("col %d row %d ", mc, mr)
+	log.Printf("setWindowForMouse col %d row %d ", mc, mr)
 
 	wp := e.RootWindow
+	// if mr is modeline or modeline+1, reduce to last wp.Rows
+	if mr > wp.Rows {
+		mr = wp.Rows
+	}
 	for wp != nil {
 		if (mr <= wp.Rows+wp.TopPt) && (mr >= wp.TopPt) {
 			log.Printf("set win rows %d top %d\n", wp.Rows, wp.TopPt)
