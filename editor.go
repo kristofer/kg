@@ -169,7 +169,7 @@ func (e *Editor) handleEvent(ev *termbox.Event) bool {
 		e.updateDisplay()
 	case termbox.EventMouse:
 		termbox.Clear(termbox.ColorDefault, termbox.ColorDefault)
-		e.msg("Mouse: c %d, r %d ", ev.MouseX, ev.MouseY)
+		e.msg("Mouse: r %d, c %d ", ev.MouseY, ev.MouseX)
 		e.SetPointForMouse(ev.MouseX, ev.MouseY)
 		e.updateDisplay()
 	case termbox.EventError:
@@ -424,9 +424,9 @@ func (e *Editor) ModeLine(wp *Window) {
 		mch = '*'
 	}
 	och = lch
-	temp := fmt.Sprintf("%c%c%c kg: %c%c %s wp(%d,%d)", lch, och, mch, lch, lch,
+	temp := fmt.Sprintf("%c%c%c kg: %c%c %s L%d wp(%d,%d)", lch, och, mch, lch, lch,
 		e.GetBufferName(wp.Buffer),
-		wp.Col, wp.Row)
+		wp.Buffer.PointRow, wp.Row, wp.Col)
 	x := 0
 	y := wp.TopPt + wp.Rows + 1
 	for _, c := range temp {
