@@ -21,7 +21,6 @@ func (e *Editor) up() {
 }
 func (e *Editor) down() {
 	e.CurrentBuffer.PointDown()
-
 }
 func (e *Editor) lnbegin() {
 	e.CurrentBuffer.SetPoint(e.CurrentBuffer.LineStart(e.CurrentBuffer.Point))
@@ -143,7 +142,7 @@ func (e *Editor) gotoline() {
 func (e *Editor) insertfile() {
 	fname := e.getInput("Insert file: ")
 	if fname != "" {
-		res := e.InsertFile(fname, false)
+		res := e.InsertFile(fname, true)
 		if res {
 			e.msg("Loaded file %s", fname)
 		}

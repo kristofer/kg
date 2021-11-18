@@ -64,13 +64,15 @@ func (bp *Buffer) getText() string {
 	return string(ret)
 }
 
-// RuneAt finally reliable!!
+// RuneAt finally reliable!! (well, maybe not)
 func (bp *Buffer) RuneAt(pt int) (rune, error) {
+	log.Println("RuneAt pt = ", pt)
 	if pt >= len(bp.data) {
 		return 0, errors.New("beyond data buffer in RuneAt")
 	}
 	if pt < 0 {
-		return '\u0000', errors.New("negative buffer pointer in RuneAt")
+		//return '\u0000', errors.New("negative buffer pointer in RuneAt")
+		pt = 0
 	}
 	if npt := bp.dataPointForBufferPoint(pt); npt < len(bp.data) {
 		return bp.data[npt], nil
@@ -325,7 +327,6 @@ func (bp *Buffer) ColumnForPoint(point int) (column int) {
 		point = bp.TextSize - 1
 	}
 	return point - bp.LineStart(point) + 1
-
 }
 
 // XYForPoint returns the cursor location for a pt in the buffer
