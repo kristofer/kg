@@ -7,7 +7,7 @@ import (
 )
 
 /*
- * Buffer is where all the opertions on the main rune array are implemented.
+ * Buffer is where all the operations on the main rune array are implemented.
  * Because of the Gap, all the indexing around it should be done by these routines.
  */
 
@@ -19,7 +19,7 @@ type Buffer struct {
 
 	Next       *Buffer
 	Mark       int
-	OrigPoint  int    /* b_cpoint the original current point, used for mutliple window displaying */
+	OrigPoint  int    /* b_cpoint the original current point, used for multiple window displaying */
 	PageStart  int    /*  start of page */
 	PageEnd    int    /*  end of page */
 	Reframe    bool   /*  force a reframe of the display */
@@ -67,7 +67,7 @@ func (bp *Buffer) getText() string {
 // RuneAt finally reliable!!
 func (bp *Buffer) RuneAt(pt int) (rune, error) {
 	if pt >= len(bp.data) {
-		return 0, errors.New("Beyond data buffer in RuneAt")
+		return 0, errors.New("beyond data buffer in RuneAt")
 	}
 	if pt < 0 {
 		return '\u0000', errors.New("negative buffer pointer in RuneAt")
@@ -75,7 +75,7 @@ func (bp *Buffer) RuneAt(pt int) (rune, error) {
 	if npt := bp.dataPointForBufferPoint(pt); npt < len(bp.data) {
 		return bp.data[npt], nil
 	}
-	return 0, errors.New("Ran over end of data buffer in RuneAt")
+	return 0, errors.New("ran over end of data buffer in RuneAt")
 }
 
 func (bp *Buffer) dataPointForBufferPoint(pt int) int {
@@ -227,6 +227,7 @@ func (bp *Buffer) LineStart(point int) int {
 	}
 	sp := point - 1
 	p, err := bp.RuneAt(sp)
+	checkErr(err)
 	if p == '\n' {
 		sp++
 		return sp

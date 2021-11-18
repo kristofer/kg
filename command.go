@@ -262,7 +262,7 @@ func (e *Editor) copyCut(cut bool) {
 
 func (e *Editor) paste() {
 	if len(e.PasteBuffer) <= 0 {
-		e.msg("PasterBuffer is empty.  Nothing to paste.")
+		e.msg("PasteBuffer is empty.  Nothing to paste.")
 	} else {
 		e.CurrentBuffer.Insert(e.PasteBuffer)
 	}
