@@ -47,9 +47,9 @@ func (e *Editor) Save(fname string) bool {
 }
 
 // LoadFile foo
-func (e *Editor) LoadFile(fname string) bool {
-	return false
-}
+// func (e *Editor) LoadFile(fname string) bool {
+// 	return false
+// }
 
 // InsertFile reads file into buffer at point
 func (e *Editor) InsertFile(fname string, modflag bool) bool {
@@ -58,12 +58,13 @@ func (e *Editor) InsertFile(fname string, modflag bool) bool {
 	if err != nil {
 		e.msg("Failed to read and insert file \"%s\".", fname)
 	}
-	if modflag == true {
+	if !modflag { // just do a load into buffer with no modification
 		bp.setText(string(dat))
-	} else {
+		bp.modified = false
+	} else { // insert into buffer and mark as modified.
 		bp.Insert(string(dat))
+		bp.modified = true
 	}
-	bp.modified = true
 	e.msg("File \"%s\" %d bytes read.", fname, len(dat))
 	return true
 }

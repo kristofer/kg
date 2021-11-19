@@ -3,11 +3,10 @@ package kg
 import (
 	"errors"
 	"fmt"
-	"log"
 )
 
 /*
- * Buffer is where all the opertions on the main rune array are implemented.
+ * Buffer is where all the operations on the main rune array are implemented.
  * Because of the Gap, all the indexing around it should be done by these routines.
  */
 
@@ -19,7 +18,7 @@ type Buffer struct {
 
 	Next       *Buffer
 	Mark       int
-	OrigPoint  int    /* b_cpoint the original current point, used for mutliple window displaying */
+	OrigPoint  int    /* b_cpoint the original current point, used for multiple window displaying */
 	PageStart  int    /*  start of page */
 	PageEnd    int    /*  end of page */
 	Reframe    bool   /*  force a reframe of the display */
@@ -64,18 +63,20 @@ func (bp *Buffer) getText() string {
 	return string(ret)
 }
 
-// RuneAt finally reliable!!
+// RuneAt finally reliable!! (well, maybe not)
 func (bp *Buffer) RuneAt(pt int) (rune, error) {
+	//log.Println("RuneAt pt = ", pt)
 	if pt >= len(bp.data) {
-		return 0, errors.New("Beyond data buffer in RuneAt")
+		return 0, errors.New("beyond data buffer in RuneAt")
 	}
 	if pt < 0 {
-		return '\u0000', errors.New("negative buffer pointer in RuneAt")
+		//return '\u0000', errors.New("negative buffer pointer in RuneAt")
+		pt = 0
 	}
 	if npt := bp.dataPointForBufferPoint(pt); npt < len(bp.data) {
 		return bp.data[npt], nil
 	}
-	return 0, errors.New("Ran over end of data buffer in RuneAt")
+	return 0, errors.New("ran over end of data buffer in RuneAt")
 }
 
 func (bp *Buffer) dataPointForBufferPoint(pt int) int {
@@ -105,7 +106,7 @@ func (bp *Buffer) SetPoint(np int) {
 	//bp.MoveGap(np - bp.Point)
 	// move gap <-(left) by np chars
 	gs := bp.gapStart()
-	log.Printf("gap start %d len %d new pt %d dist %d\n", gs, bp.gapLen(), np, gs-np)
+	//log.Printf("gap start %d len %d new pt %d dist %d\n", gs, bp.gapLen(), np, gs-np)
 	f := 0
 	for i := gs - np; i > 0; i-- {
 		bp.data[bp.postStart()-1] = bp.data[bp.Point-1]
@@ -113,7 +114,7 @@ func (bp *Buffer) SetPoint(np int) {
 		bp.postLen++
 		f++
 	}
-	log.Printf("shuffled %d\n", f)
+	//log.Printf("shuffled %d\n", f)
 
 	if bp.PageEnd < bp.Point {
 		bp.Reframe = true
@@ -227,6 +228,7 @@ func (bp *Buffer) LineStart(point int) int {
 	}
 	sp := point - 1
 	p, err := bp.RuneAt(sp)
+	checkErr(err)
 	if p == '\n' {
 		sp++
 		return sp
@@ -324,7 +326,6 @@ func (bp *Buffer) ColumnForPoint(point int) (column int) {
 		point = bp.TextSize - 1
 	}
 	return point - bp.LineStart(point) + 1
-
 }
 
 // XYForPoint returns the cursor location for a pt in the buffer

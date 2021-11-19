@@ -17,7 +17,7 @@ func checkErr(e error) {
 }
 
 const (
-	version        = "kg 1.0, Public Domain, November 2018, Kristofer Younger,  No warranty."
+	version        = "kg 1.1, Public Domain, November 2021, Kristofer Younger,  No warranty."
 	nomark         = -1
 	gapchunk       = 16 //= 8096
 	idDefault      = 1
@@ -107,23 +107,19 @@ func (e *Editor) StartEditor(argv []string, argc int) {
 			e.EventChan <- termbox.PollEvent()
 		}
 	}()
-	for {
-		select {
-		case ev := <-e.EventChan:
-			//// log.Printf("%#v\n", ev)
-			//// log.Println(">>\n ", time.Now().Unix(), "\n>>")
 
-			ok := e.handleEvent(&ev)
-			if !ok {
-				return
-			}
-			//e.ConsumeMoreEvents()
-			e.updateDisplay()
-			termbox.Flush()
-			// }
+	// Instead of using for {
+	// 	select {
+	// 	case ev := <-e.EventChan:
+
+	for ev := range e.EventChan {
+		ok := e.handleEvent(&ev)
+		if !ok {
+			return
 		}
+		e.updateDisplay()
+		termbox.Flush()
 	}
-	//return
 }
 
 // handleEvent
@@ -173,7 +169,7 @@ func (e *Editor) handleEvent(ev *termbox.Event) bool {
 		e.updateDisplay()
 	case termbox.EventMouse:
 		termbox.Clear(termbox.ColorDefault, termbox.ColorDefault)
-		e.msg("Mouse: c %d, r %d ", ev.MouseX, ev.MouseY)
+		e.msg("Mouse: r %d, c %d ", ev.MouseY, ev.MouseX)
 		e.SetPointForMouse(ev.MouseX, ev.MouseY)
 		e.updateDisplay()
 	case termbox.EventError:
@@ -245,8 +241,8 @@ func (e *Editor) OnAltKey(ev *termbox.Event) bool {
 func (e *Editor) msg(fm string, args ...interface{}) {
 	e.Msgline = fmt.Sprintf(fm, args...)
 	e.Msgflag = true
-	return
 }
+
 func (e *Editor) drawString(x, y int, fg, bg termbox.Attribute, msg string) {
 	for _, c := range msg {
 		termbox.SetCell(x, y, c, fg, bg)
@@ -270,12 +266,12 @@ func (e *Editor) Display(wp *Window, shouldDrawCursor bool) {
 		bp.PageStart = bp.SegStart(bp.LineStart(pt), pt, e.Cols)
 	}
 
-	if bp.Reframe == true || (pt > bp.PageEnd && pt != bp.PageEnd && !(pt >= bp.TextSize)) {
+	if bp.Reframe || (pt > bp.PageEnd && pt != bp.PageEnd && !(pt >= bp.TextSize)) {
 		bp.Reframe = false
 		i := 0
 		/* Find end of screen plus one. */
 		bp.PageStart = bp.DownDown(pt, e.Cols)
-		/* if we scoll to EOF we show 1 blank line at bottom of screen */
+		/* if we scroll to EOF we show 1 blank line at bottom of screen */
 		if bp.PageEnd <= bp.PageStart {
 			bp.PageStart = bp.PageEnd
 			i = wp.Rows - 1 // 1
@@ -301,7 +297,7 @@ func (e *Editor) Display(wp *Window, shouldDrawCursor bool) {
 		}
 		rch, err := bp.RuneAt(k)
 		if err != nil {
-			// log.Println("Error on RuneAt", err)
+			e.msg("Error on RuneAt", err)
 		}
 		if rch != '\r' {
 			if unicode.IsPrint(rch) || rch == '\t' || rch == '\n' {
@@ -394,9 +390,13 @@ func (e *Editor) SetPointForMouse(mc, mr int) {
 }
 
 func (e *Editor) setWindowForMouse(mc, mr int) (c, r int) {
-	log.Printf("col %d row %d ", mc, mr)
+	log.Printf("setWindowForMouse col %d row %d ", mc, mr)
 
 	wp := e.RootWindow
+	// if mr is modeline or modeline+1, reduce to last wp.Rows
+	if mr > wp.Rows {
+		mr = wp.Rows
+	}
 	for wp != nil {
 		if (mr <= wp.Rows+wp.TopPt) && (mr >= wp.TopPt) {
 			log.Printf("set win rows %d top %d\n", wp.Rows, wp.TopPt)
@@ -428,9 +428,9 @@ func (e *Editor) ModeLine(wp *Window) {
 		mch = '*'
 	}
 	och = lch
-	temp := fmt.Sprintf("%c%c%c kg: %c%c %s wp(%d,%d)", lch, och, mch, lch, lch,
+	temp := fmt.Sprintf("%c%c%c kg: %c%c %s L%d wp(%d,%d)", lch, och, mch, lch, lch,
 		e.GetBufferName(wp.Buffer),
-		wp.Col, wp.Row)
+		wp.Buffer.PointRow, wp.Row, wp.Col)
 	x := 0
 	y := wp.TopPt + wp.Rows + 1
 	for _, c := range temp {
@@ -555,7 +555,7 @@ func (e *Editor) ModifiedBuffers() bool {
 	var bp *Buffer
 
 	for bp = e.RootBuffer; bp != nil; bp = bp.Next {
-		if bp.modified == true {
+		if bp.modified {
 			return true
 		}
 	}
@@ -571,7 +571,7 @@ func (e *Editor) FindBuffer(fname string, cflag bool) *Buffer {
 		}
 		bp = bp.Next
 	}
-	if cflag != false {
+	if cflag {
 		bp = NewBuffer()
 		/* find the place in the list to insert this buffer */
 		if e.RootBuffer == nil {
@@ -613,7 +613,7 @@ func (e *Editor) splitWindow() {
 	e.CurrentWindow.Rows = ntru
 	nwp.TopPt = e.CurrentWindow.TopPt + ntru + 2
 	nwp.Rows = ntrl - 1
-	
+
 	/* insert it in the list */
 	wp2 := e.CurrentWindow.Next
 	e.CurrentWindow.Next = nwp
