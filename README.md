@@ -2,6 +2,8 @@
 
 A small functional Emacs written in Go changed in time for the vault  
 
+by Kristofer
+
 kg Emacs is inspired by Atto Emacs (by Hugh Barney), MicroEmacs, Nano, Pico and his earlier project known as Perfect Emacs [1]. Also by JOE, uEmacs, MicroEmacs, mg, zile and of course, GNU Emacs. I learnt Emacs on a Sun 2/120 a long time ago in a galaxy far, far, away.
 
 
